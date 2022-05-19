@@ -13,6 +13,15 @@ import com.checkmate.backend.service.ResponseService;
 
 import lombok.RequiredArgsConstructor;
 
+/**
+ * @package : com.checkmate.backend.advice
+ * @name: ExceptionAdvice.java
+ * @date : 2022/05/19 8:45 오후
+ * @author : jifrozen
+ * @version : 1.0.0
+ * @description : Exception 처리
+ * @modified :
+ **/
 @RestControllerAdvice
 @RequiredArgsConstructor
 public class ExceptionAdvice {

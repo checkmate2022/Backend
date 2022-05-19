@@ -3,15 +3,16 @@ package com.checkmate.backend.common;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 import lombok.Setter;
+
 /**
-* @package : com.checkmate.backend.common
-* @name: CommonResult.java
-* @date : 2022/05/19 7:18 오후
-* @author : jifrozen
-* @version : 1.0.0
-* @description : REST API 결과 모델 생성
-* @modified :
-**/
+ * @package : com.checkmate.backend.common
+ * @name: CommonResult.java
+ * @date : 2022/05/19 7:18 오후
+ * @author : jifrozen
+ * @version : 1.0.0
+ * @description : REST API 결과 모델 생성
+ * @modified :
+ **/
 @Getter
 @Setter
 public class CommonResult {
