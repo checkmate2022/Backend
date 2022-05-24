@@ -8,6 +8,8 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import com.checkmate.backend.advice.exception.LoginFailedException;
+import com.checkmate.backend.advice.exception.OAuthProviderMissMatchException;
+import com.checkmate.backend.advice.exception.TokenValidFailedException;
 import com.checkmate.backend.common.CommonResult;
 import com.checkmate.backend.service.ResponseService;
 
@@ -38,5 +40,18 @@ public class ExceptionAdvice {
 	@ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
 	protected CommonResult loginFailedException(HttpServletRequest request, LoginFailedException e) {
 		return responseService.getFailResult(HttpStatus.INTERNAL_SERVER_ERROR.value(), "로그인 실패했습니다.");
+	}
+
+	@ExceptionHandler(TokenValidFailedException.class)
+	@ResponseStatus(HttpStatus.NOT_ACCEPTABLE)
+	protected CommonResult tokenValidFailedException(HttpServletRequest request, TokenValidFailedException e) {
+		return responseService.getFailResult(HttpStatus.NOT_ACCEPTABLE.value(), "토큰 만들기 실패.");
+	}
+
+	@ExceptionHandler(OAuthProviderMissMatchException.class)
+	@ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+	protected CommonResult oAuthProviderMissMatchException(HttpServletRequest request,
+		OAuthProviderMissMatchException e) {
+		return responseService.getFailResult(HttpStatus.INTERNAL_SERVER_ERROR.value(), "");
 	}
 }
