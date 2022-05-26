@@ -1,14 +1,21 @@
 package com.checkmate.backend.oauth.api.entity;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
@@ -16,6 +23,7 @@ import javax.validation.constraints.Size;
 import com.checkmate.backend.oauth.entity.ProviderType;
 import com.checkmate.backend.oauth.entity.RoleType;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -68,6 +76,14 @@ public class User {
 	@Column(name = "MODIFIED_AT")
 	@NotNull
 	private LocalDateTime modifiedAt;
+/*
+	@ManyToOne
+	@JoinColumn(name = "SCHEDULE_SEQ")
+	private Schedule participantSchedule;
+*/
+	@JsonIgnore
+	@OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	private List<Schedule> schedule = new ArrayList<>();
 
 	public User(
 		@NotNull @Size(max = 64) String userId,
@@ -86,5 +102,10 @@ public class User {
 		this.createdAt = createdAt;
 		this.modifiedAt = modifiedAt;
 	}
-
+/*
+	//user설정
+	public void setUser(User user){
+		this.user = user;
+		user.getSchedule().add(this);
+	}*/
 }
