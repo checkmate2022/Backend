@@ -1,11 +1,8 @@
 package com.checkmate.backend.oauth.api.entity;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Random;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -14,13 +11,10 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import com.checkmate.backend.oauth.model.ScheduleDto;
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -43,7 +37,6 @@ public class Schedule {
 	@JoinColumn(name = "USER_ID")
 	private User user;
 
-
 	@Column(name = "MEETING_ID")
 	private int meetingId;
 
@@ -59,12 +52,11 @@ public class Schedule {
 	@Column(name = "SCHEDULE_ENDDATE")
 	private LocalDateTime scheduleEnddate;
 
-	/*
-	@OneToMany(mappedBy = "participantSchedule", cascade = CascadeType.ALL)
-	@Column(name = "SCHEDULE_PARTICIPANTS")
-	private List<User> scheduleParticipants = new ArrayList<>();*/
+	// @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+	// @Column(name = "SCHEDULE_PARTICIPANTS")
+	// private List<User> scheduleParticipants = new ArrayList<User>();
 
-	public Schedule(ScheduleDto scheduleDto){
+	public Schedule(ScheduleDto scheduleDto) {
 		this.scheduleName = scheduleDto.getSchedule_name();
 		this.scheduleDescription = scheduleDto.getSchedule_description();
 		this.scheduleStartdate = scheduleDto.getSchedule_startdate();
@@ -79,14 +71,14 @@ public class Schedule {
 	}
 
 	//meetingId 랜덤생성
-	public void makeMeetingId(){
+	public void makeMeetingId() {
 		Random random = new Random();
-		int meetingId= random.nextInt(888888)+111111;
-		this.meetingId=meetingId;
+		int meetingId = random.nextInt(888888) + 111111;
+		this.meetingId = meetingId;
 	}
 
 	//user설정
-	public void setUser(User user){
+	public void setUser(User user) {
 		this.user = user;
 		user.getSchedule().add(this);
 	}

@@ -13,8 +13,6 @@ import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
@@ -23,7 +21,6 @@ import javax.validation.constraints.Size;
 import com.checkmate.backend.oauth.entity.ProviderType;
 import com.checkmate.backend.oauth.entity.RoleType;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.JsonProperty;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -76,11 +73,11 @@ public class User {
 	@Column(name = "MODIFIED_AT")
 	@NotNull
 	private LocalDateTime modifiedAt;
-/*
-	@ManyToOne
-	@JoinColumn(name = "SCHEDULE_SEQ")
-	private Schedule participantSchedule;
-*/
+	/*
+		@ManyToOne
+		@JoinColumn(name = "SCHEDULE_SEQ")
+		private Schedule participantSchedule;
+	*/
 	@JsonIgnore
 	@OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	private List<Schedule> schedule = new ArrayList<>();

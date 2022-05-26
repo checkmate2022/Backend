@@ -18,7 +18,6 @@ public class AvatarCreateDto {
 
 	private LocalDateTime avatar_date;
 
-
 	public AvatarCreateDto(String user_id, String avatar_name, String avatar_description, LocalDateTime avatar_date) {
 		this.user_id = user_id;
 		this.avatar_name = avatar_name;

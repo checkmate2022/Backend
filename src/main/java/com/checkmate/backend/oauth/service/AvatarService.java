@@ -20,7 +20,6 @@ public class AvatarService {
 	private final AvatarRepository avatarRepository;
 	//private final PersonalRepository personalRepository;
 
-
 	// 전체 캐릭터 조회
 	@Transactional(readOnly = true)
 	public List<Avatar> findAvatars() {
@@ -42,12 +41,12 @@ public class AvatarService {
 	}
 
 	//  캐릭터 수정
-	public Avatar update(Long avatarId,String user_id,String avatar_name,String avatar_description,
-		String OriginFileUrl,String CreatedFileUrl, LocalDateTime dateTime) {
+	public Avatar update(Long avatarId, String avatar_name, String avatar_description,
+		String OriginFileUrl, String CreatedFileUrl, LocalDateTime dateTime) {
 		Avatar avatar = avatarRepository.findById(avatarId).orElseThrow(
 			() -> new IllegalArgumentException("해당 캐릭터는 존재하지 않습니다.")
 		);
-		avatar.update(user_id,avatar_name,avatar_description,OriginFileUrl,CreatedFileUrl,dateTime);
+		avatar.update(avatar_name, avatar_description, OriginFileUrl, CreatedFileUrl, dateTime);
 		return avatar;
 	}
 
@@ -57,7 +56,7 @@ public class AvatarService {
 	}
 
 	//아바타 기본설정
-	public void setIsBasic(Long avatarId,String user_id) {
+	public void setIsBasic(Long avatarId, String user_id) {
 		Avatar avatar = avatarRepository.findById(avatarId).orElseThrow(
 			() -> new IllegalArgumentException("해당 캐릭터는 존재하지 않습니다.")
 		);

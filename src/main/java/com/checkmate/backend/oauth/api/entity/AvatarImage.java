@@ -17,7 +17,7 @@ public class AvatarImage {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	@Column(name="file_id")
+	@Column(name = "file_id")
 	private Long id;
 
 	private String file_name;

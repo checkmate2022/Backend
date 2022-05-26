@@ -22,7 +22,6 @@ public class ScheduleService {
 	private final ScheduleRepository scheduleRepository;
 	private final UserRepository userRepository;
 
-
 	// 전체 일정 조회
 	@Transactional(readOnly = true)
 	public List<Schedule> findSchedules() {
@@ -37,10 +36,8 @@ public class ScheduleService {
 		return schedule;
 	}
 
-
 	// 일정 등록
-	public Schedule make(Schedule schedule,String userId) {
-		User user = userRepository.findByUserId(userId);
+	public Schedule make(Schedule schedule, User user) {
 		schedule.setUser(user);
 		schedule.makeMeetingId();
 		Schedule save = scheduleRepository.save(schedule);

@@ -41,11 +41,11 @@ public class FileService {
 				} else if (contentType.contains("image/gif")) {
 					originalFileExtension = ".gif";
 				}
-				sb.append(name+"_origin" + originalFileExtension);
+				sb.append(name + "_origin" + originalFileExtension);
 			}
 
 			dest = new File(
-				"C:/Users/user/Desktop/졸업프로젝트/user완료/Backend/images" +"/" + sb.toString());
+				"C:/Users/user/Desktop/졸업프로젝트/user완료/Backend/images" + "/" + sb.toString());
 			try {
 				file.transferTo(dest);
 			} catch (IllegalStateException e) {
@@ -81,11 +81,11 @@ public class FileService {
 				} else if (contentType.contains("image/gif")) {
 					originalFileExtension = ".gif";
 				}
-				sb.append(name+"_created" + originalFileExtension);
+				sb.append(name + "_created" + originalFileExtension);
 			}
 
 			dest = new File(
-				"C:/Users/user/Desktop/졸업프로젝트/user완료/Backend/images" +"/" + sb.toString());
+				"C:/Users/user/Desktop/졸업프로젝트/user완료/Backend/images" + "/" + sb.toString());
 			try {
 				file.transferTo(dest);
 			} catch (IllegalStateException e) {
@@ -98,13 +98,13 @@ public class FileService {
 
 	}
 
-	public File updateOriginFile(MultipartFile file,String orgin_name, String name) {
+	public File updateOriginFile(MultipartFile file, String orgin_name, String name) {
 
-		String path = "C:/Users/user/Desktop/졸업프로젝트/user완료/Backend/images/"+orgin_name+"_origin";
+		String path = "C:/Users/user/Desktop/졸업프로젝트/user완료/Backend/images/" + orgin_name + "_origin";
 
 		File existfile = new File(path);
 
-		if(existfile.exists() == true){
+		if (existfile.exists() == true) {
 
 			existfile.delete();
 
@@ -132,11 +132,11 @@ public class FileService {
 				} else if (contentType.contains("image/gif")) {
 					originalFileExtension = ".gif";
 				}
-				sb.append(name+"_origin" + originalFileExtension);
+				sb.append(name + "_origin" + originalFileExtension);
 			}
 
 			dest = new File(
-				"C:/Users/user/Desktop/졸업프로젝트/user완료/Backend/images" +"/" + sb.toString());
+				"C:/Users/user/Desktop/졸업프로젝트/user완료/Backend/images" + "/" + sb.toString());
 			try {
 				file.transferTo(dest);
 			} catch (IllegalStateException e) {
@@ -149,13 +149,13 @@ public class FileService {
 
 	}
 
-	public File updateCreatedFile(MultipartFile file,String origin_name, String name) {
+	public File updateCreatedFile(MultipartFile file, String origin_name, String name) {
 
-		String path = "C:/Users/user/Desktop/졸업프로젝트/user완료/Backend/images/"+origin_name+"_created";
+		String path = "C:/Users/user/Desktop/졸업프로젝트/user완료/Backend/images/" + origin_name + "_created";
 
 		File existfile = new File(path);
 
-		if(existfile.exists() == true){
+		if (existfile.exists() == true) {
 
 			existfile.delete();
 
@@ -183,11 +183,11 @@ public class FileService {
 				} else if (contentType.contains("image/gif")) {
 					originalFileExtension = ".gif";
 				}
-				sb.append(name+"_created" + originalFileExtension);
+				sb.append(name + "_created" + originalFileExtension);
 			}
 
 			dest = new File(
-				"C:/Users/user/Desktop/졸업프로젝트/user완료/Backend/images" +"/" + sb.toString());
+				"C:/Users/user/Desktop/졸업프로젝트/user완료/Backend/images" + "/" + sb.toString());
 			try {
 				file.transferTo(dest);
 			} catch (IllegalStateException e) {
