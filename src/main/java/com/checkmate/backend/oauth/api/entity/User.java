@@ -73,6 +73,9 @@ public class User {
 	@Column(name = "MODIFIED_AT")
 	@NotNull
 	private LocalDateTime modifiedAt;
+
+	@Column(name = "USER_IMAGE")
+	private String userImage;
 	/*
 		@ManyToOne
 		@JoinColumn(name = "SCHEDULE_SEQ")
@@ -81,6 +84,10 @@ public class User {
 	@JsonIgnore
 	@OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	private List<Schedule> schedule = new ArrayList<>();
+
+	@JsonIgnore
+	@OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	private List<Avatar> avatar = new ArrayList<>();
 
 	public User(
 		@NotNull @Size(max = 64) String userId,
@@ -105,4 +112,9 @@ public class User {
 		this.user = user;
 		user.getSchedule().add(this);
 	}*/
+
+	//userImage 설정
+	public void setUserImage(String imageUrl){
+		this.userImage=imageUrl;
+	}
 }

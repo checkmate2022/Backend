@@ -11,6 +11,8 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -28,48 +30,72 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
-@Table(name = "Avatar")
-@JsonIdentityInfo(generator = ObjectIdGenerators.IntSequenceGenerator.class)
+@Table(name = "AVATAR")
 public class Avatar {
+	@JsonIgnore
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Id
 	@Column(name = "AVATAR_ID")
-	private Long id;
+	private Long avatarSeq;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "USER_ID")
 	@JsonIgnore
 	private User user;
 
-	private String avatar_name;
+	@Column(name = "AVATAR_NAME", length = 100)
+	@NotNull
+	@Size(max = 100)
+	private String avatarName;
 
-	private String avatar_description;
+	@Column(name = "AVATAR_DESCRIPTION", length = 300)
+	@NotNull
+	private String avatarDescription;
 
-	private String avatar_origin_url;
+	@Column(name = "AVATAR_ORIGIN_URL", length = 100)
+	@NotNull
+	private String avatarOriginUrl;
 
-	private String avatar_created_url;
+	@Column(name = "AVATAR_CREATED_URL", length = 100)
+	@NotNull
+	private String avatarCreatedUrl;
 
-	private LocalDateTime avatar_date;
-	
-	private Boolean isBasic;
+	@Column(name = "AVATAR_STYLE", length = 100)
+	@JsonIgnore
+	private String avatarStyle;
 
-	public Avatar(User user, String avatar_name, String avatar_description,
+	@Column(name = "AVATAR_STYLE_ID", length = 100)
+	private Long avatarStyleId;
+
+	@Column(name = "AVATAR_DATE", length = 100)
+	@NotNull
+	private LocalDateTime avatarDate;
+
+	@Column(name = "AVATAR_BASIC", length = 100)
+	private Boolean isBasic=false;
+
+	public Avatar(User user, String avatarName, String avatarDescription,String avatarStyle, Long avatarStyleId,
 		String originFileUrl, String createdFileUrl, LocalDateTime dateTime) {
 		this.user = user;
-		this.avatar_name = avatar_name;
-		this.avatar_description = avatar_description;
-		this.avatar_origin_url = originFileUrl;
-		this.avatar_created_url = createdFileUrl;
-		this.avatar_date = dateTime;
+		this.avatarName = avatarName;
+		this.avatarDescription = avatarDescription;
+		this.avatarStyle = avatarStyle;
+		this.avatarStyleId = avatarStyleId;
+		this.avatarOriginUrl = originFileUrl;
+		this.avatarCreatedUrl = createdFileUrl;
+		this.avatarDate = dateTime;
 	}
 
-	public void update(String avatar_name, String avatar_description,
+	public void update(String avatarName, String avatarDescription,String avatarStyle, Long avatarStyleId,
 		String originFileUrl, String createdFileUrl, LocalDateTime dateTime) {
-		this.avatar_name = avatar_name;
-		this.avatar_description = avatar_description;
-		this.avatar_origin_url = originFileUrl;
-		this.avatar_created_url = createdFileUrl;
-		this.avatar_date = dateTime;
+		this.avatarName = avatarName;
+		this.avatarDescription = avatarDescription;
+		this.avatarStyle = avatarStyle;
+		this.avatarStyleId = avatarStyleId;
+		this.avatarOriginUrl = originFileUrl;
+		this.avatarCreatedUrl = createdFileUrl;
+		this.avatarDate = dateTime;
+
 	}
 
 	public void setIsBasic() {
@@ -78,5 +104,13 @@ public class Avatar {
 		else
 			this.isBasic = false;
 	}
+	public void setIsBasicFalse(){
+		this.isBasic = false;
+	}
 
+	//user설정
+	public void setUser(User user) {
+		this.user = user;
+		user.getAvatar().add(this);
+	}
 }

@@ -11,22 +11,21 @@ import lombok.Setter;
 @NoArgsConstructor
 public class ScheduleDto {
 
-	private String schedule_name;
+	private String scheduleName;
 
-	private String schedule_description;
+	private String scheduleDescription;
 
 	//private List<String> schedule_participants;
 
-	private LocalDateTime schedule_startdate;
+	private LocalDateTime scheduleStartDate;
 
-	private LocalDateTime schedule_enddate;
+	private LocalDateTime scheduleEndDate;
 
-	public ScheduleDto(String schedule_name, String schedule_description, LocalDateTime schedule_startdate,
-		LocalDateTime schedule_enddate) {
-		this.schedule_name = schedule_name;
-		this.schedule_description = schedule_description;
-
-		this.schedule_startdate = schedule_startdate;
-		this.schedule_enddate = schedule_enddate;
+	public ScheduleDto(String scheduleName, String scheduleDescription, LocalDateTime scheduleStartDate,
+		LocalDateTime scheduleEndDate) {
+		this.scheduleName = scheduleName;
+		this.scheduleDescription = scheduleDescription;
+		this.scheduleStartDate = scheduleStartDate;
+		this.scheduleEndDate = scheduleEndDate;
 	}
 }

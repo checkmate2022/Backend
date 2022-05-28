@@ -30,8 +30,8 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
-@Tag(name = "SchduleController")
-@RequestMapping(value = "/api/schedule")
+@Tag(name = "Schdule")
+@RequestMapping(value = "/api/v1/schedule")
 @Slf4j
 @RequiredArgsConstructor
 @RestController
@@ -57,14 +57,14 @@ public class ScheduleController {
 
 	@Operation(description = "일정등록", security = {@SecurityRequirement(name = "bearer-key")})
 	@PostMapping("")
-	public CommonResult createSchedule(@Parameter @RequestBody ScheduleDto scheduleDto) {
+	public SingleResult<Schedule> createSchedule(@Parameter @RequestBody ScheduleDto scheduleDto) {
 		org.springframework.security.core.userdetails.User principal = (org.springframework.security.core.userdetails.User)SecurityContextHolder
 			.getContext().getAuthentication().getPrincipal();
 
 		User user = userService.getUser(principal.getUsername());
 		Schedule schedule = new Schedule(scheduleDto);
-		scheduleService.make(schedule, user);
-		return responseService.getSuccessResult();
+		Schedule result = scheduleService.make(schedule, user);
+		return responseService.getSingleResult(result);
 	}
 
 	@Operation(description = "일정수정")

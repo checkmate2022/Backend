@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.checkmate.backend.oauth.api.entity.Avatar;
+import com.checkmate.backend.oauth.api.entity.User;
 import com.checkmate.backend.oauth.api.repo.AvatarRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -35,18 +36,19 @@ public class AvatarService {
 	}
 
 	//  캐릭터 등록
-	public Avatar make(Avatar avatar) {
+	public Avatar make(Avatar avatar, User user) {
+		avatar.setUser(user);
 		Avatar save = avatarRepository.save(avatar);
 		return save;
 	}
 
 	//  캐릭터 수정
-	public Avatar update(Long avatarId, String avatar_name, String avatar_description,
+	public Avatar update(Long avatarId, String avatarName, String avatarDescription, String style,Long styleId,
 		String OriginFileUrl, String CreatedFileUrl, LocalDateTime dateTime) {
 		Avatar avatar = avatarRepository.findById(avatarId).orElseThrow(
 			() -> new IllegalArgumentException("해당 캐릭터는 존재하지 않습니다.")
 		);
-		avatar.update(avatar_name, avatar_description, OriginFileUrl, CreatedFileUrl, dateTime);
+		avatar.update(avatarName, avatarDescription,style,styleId, OriginFileUrl, CreatedFileUrl, dateTime);
 		return avatar;
 	}
 
@@ -56,20 +58,27 @@ public class AvatarService {
 	}
 
 	//아바타 기본설정
-	public void setIsBasic(Long avatarId, String user_id) {
+	public void setIsBasic(Long avatarId,User user) {
 		Avatar avatar = avatarRepository.findById(avatarId).orElseThrow(
 			() -> new IllegalArgumentException("해당 캐릭터는 존재하지 않습니다.")
 		);
-		avatar.setIsBasic();
-		//user_id에 해당하는 user에 캐릭터 리스트 가져와서 basic 바꾸기
+		List<Avatar> userAvatar = user.getAvatar();
+		for (Avatar ar : userAvatar ){
+			if (ar==avatar){
+				avatar.setIsBasic();
+			}
+			ar.setIsBasicFalse();
+		}
+
 		//프로필 사진변경
+		user.setUserImage(avatar.getAvatarCreatedUrl());
 	}
-/*
+
 	// 아바타 이름 중복 조회
 	public void validatenameDuplicateException(String name) {
-		List<Avatar> findAvatar = avatarRepository.findByAvatar_name(name);
+		List<Avatar> findAvatar = avatarRepository.findByAvatarName(name);
 		if (!findAvatar.isEmpty()) {
 			throw new IllegalStateException("이미 존재하는 name 입니다.");
 		}
-	}*/
+	}
 }

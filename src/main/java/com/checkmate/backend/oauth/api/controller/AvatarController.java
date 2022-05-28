@@ -32,8 +32,8 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
-@Tag(name = "AvatarController")
-@RequestMapping(value = "/api/avatar")
+@Tag(name = "Avatar")
+@RequestMapping(value = "/api/v1/avatar")
 @Slf4j
 @RequiredArgsConstructor
 @RestController
@@ -57,41 +57,46 @@ public class AvatarController {
 		return responseService.getSingleResult(avatarService.findOne(avatarId));
 	}
 
-	//postman 으로 테스트 해야함(localdate안됨), 아바타 이름 중복확인
+	//postman 으로 테스트 해야함, 아바타 이름 중복확인
 	@Operation(description = "캐릭터등록")
 	@PostMapping
-	public CommonResult createAvatar(MultipartFile originfile, MultipartFile createdfile, String avatar_name, String avatar_description) {
+	public SingleResult<Avatar> createAvatar(MultipartFile originfile, MultipartFile createdfile, String avatarName,
+		String avatarDescription,String avatarStyle, Long avatarStyleId) {
 		org.springframework.security.core.userdetails.User principal = (org.springframework.security.core.userdetails.User)SecurityContextHolder
 			.getContext().getAuthentication().getPrincipal();
 
 		User user = userService.getUser(principal.getUsername());
 		LocalDateTime now = LocalDateTime.now();
 
-		File OriginFile = fileService.saveOriginFile(originfile, avatar_name + "_" + user.getUserId());
-		File CreatedFile = fileService.saveCreatedFile(createdfile, avatar_name + "_" + user.getUserId());
-		Avatar avatar = new Avatar(user, avatar_name, avatar_description,
+		File OriginFile = fileService.saveOriginFile(originfile, avatarName + "_" + user.getUserId());
+		File CreatedFile = fileService.saveCreatedFile(createdfile, avatarName + "_" + user.getUserId());
+		Avatar avatar = new Avatar(user, avatarName, avatarDescription, avatarStyle, avatarStyleId,
 			OriginFile.getPath(), CreatedFile.getPath(), now);
-		avatarService.make(avatar);
-		return responseService.getSuccessResult();
+
+		Avatar result= avatarService.make(avatar,user);
+		return responseService.getSingleResult(result);
 	}
 
 	@Operation(description = "캐릭터수정", security = {@SecurityRequirement(name = "bearer-key")})
 	@PutMapping("/{avatarId}")
 	public SingleResult<Avatar> updateAvatar(@PathVariable Long avatarId, MultipartFile originfile,
-		MultipartFile createdfile,
-		String user_id, String avatar_name, String avatar_description, String avatar_date) {
+		MultipartFile createdfile, String avatarName, String avatarDescription,String avatarStyle, Long avatarStyleId) {
 
-		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-		LocalDateTime dateTime = LocalDateTime.parse(avatar_date, formatter);
+		org.springframework.security.core.userdetails.User principal = (org.springframework.security.core.userdetails.User)SecurityContextHolder
+			.getContext().getAuthentication().getPrincipal();
+
+		User user = userService.getUser(principal.getUsername());
+		LocalDateTime now = LocalDateTime.now();
 
 		Optional<Avatar> findAvtar = avatarService.findOne(avatarId);
 
-		File OriginFile = fileService.updateOriginFile(originfile, findAvtar.get().getAvatar_name() + "_" + user_id,
-			avatar_name + "_" + user_id);
-		File CreatedFile = fileService.updateCreatedFile(createdfile, findAvtar.get().getAvatar_name() + "_" + user_id,
-			avatar_name + "_" + user_id);
-		Avatar result = avatarService.update(avatarId, avatar_name, avatar_description,
-			OriginFile.getPath(), CreatedFile.getPath(), dateTime);
+		File OriginFile = fileService.updateOriginFile(originfile, findAvtar.get().getAvatarName() + "_" + user.getUserId(),
+			avatarName + "_" + user.getUserId());
+		File CreatedFile = fileService.updateCreatedFile(createdfile, findAvtar.get().getAvatarName() + "_" + user.getUserId(),
+			avatarName + "_" + user.getUserId());
+
+		Avatar result = avatarService.update(avatarId, avatarName, avatarDescription,
+			avatarStyle, avatarStyleId, OriginFile.getPath(), CreatedFile.getPath(), now);
 		return responseService.getSingleResult(result);
 	}
 
@@ -103,16 +108,21 @@ public class AvatarController {
 	}
 
 	@Operation(description = "캐릭터기본설정")
-	@PostMapping("/isBasic")
-	public CommonResult setBasic(@Parameter @PathVariable Long avatarId, String user_id) {
-		avatarService.setIsBasic(avatarId, user_id);
+	@PostMapping("/isBasic/{avatarId}")
+	public CommonResult setBasic(@Parameter @PathVariable Long avatarId) {
+		org.springframework.security.core.userdetails.User principal = (org.springframework.security.core.userdetails.User)SecurityContextHolder
+			.getContext().getAuthentication().getPrincipal();
+
+		User user = userService.getUser(principal.getUsername());
+		avatarService.setIsBasic(avatarId,user);
+
 		return responseService.getSuccessResult();
 	}
-/*
+
 	@Operation(description = "캐릭터이름 중복조회")
 	@GetMapping("/{avatar_name}")
-	public CommonResult getAvatarByName(@PathVariable String avatar_name) {
-		avatarService.validatenameDuplicateException(avatar_name);
+	public CommonResult getAvatarByName(@PathVariable String avatarName) {
+		avatarService.validatenameDuplicateException(avatarName);
 		return responseService.getSuccessResult();
-	}*/
+	}
 }

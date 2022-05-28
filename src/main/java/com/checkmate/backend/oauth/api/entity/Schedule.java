@@ -57,17 +57,17 @@ public class Schedule {
 	// private List<User> scheduleParticipants = new ArrayList<User>();
 
 	public Schedule(ScheduleDto scheduleDto) {
-		this.scheduleName = scheduleDto.getSchedule_name();
-		this.scheduleDescription = scheduleDto.getSchedule_description();
-		this.scheduleStartdate = scheduleDto.getSchedule_startdate();
-		this.scheduleEnddate = scheduleDto.getSchedule_enddate();
+		this.scheduleName = scheduleDto.getScheduleName();
+		this.scheduleDescription = scheduleDto.getScheduleDescription();
+		this.scheduleStartdate = scheduleDto.getScheduleStartDate();
+		this.scheduleEnddate = scheduleDto.getScheduleEndDate();
 	}
 
 	public void update(ScheduleDto scheduleDto) {
-		this.scheduleName = scheduleDto.getSchedule_name();
-		this.scheduleDescription = scheduleDto.getSchedule_description();
-		this.scheduleStartdate = scheduleDto.getSchedule_startdate();
-		this.scheduleEnddate = scheduleDto.getSchedule_enddate();
+		this.scheduleName = scheduleDto.getScheduleName();
+		this.scheduleDescription = scheduleDto.getScheduleDescription();
+		this.scheduleStartdate = scheduleDto.getScheduleStartDate();
+		this.scheduleEnddate = scheduleDto.getScheduleEndDate();
 	}
 
 	//meetingId 랜덤생성
