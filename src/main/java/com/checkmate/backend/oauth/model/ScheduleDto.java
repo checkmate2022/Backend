@@ -1,6 +1,7 @@
 package com.checkmate.backend.oauth.model;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -14,8 +15,6 @@ public class ScheduleDto {
 	private String scheduleName;
 
 	private String scheduleDescription;
-
-	//private List<String> schedule_participants;
 
 	private LocalDateTime scheduleStartDate;
 

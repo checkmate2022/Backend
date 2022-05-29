@@ -1,5 +1,7 @@
 package com.checkmate.backend.oauth.api.controller;
 
+import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -10,6 +12,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.checkmate.backend.common.CommonResult;
@@ -56,13 +59,15 @@ public class ScheduleController {
 	}
 
 	@Operation(description = "일정등록", security = {@SecurityRequirement(name = "bearer-key")})
-	@PostMapping("")
-	public SingleResult<Schedule> createSchedule(@Parameter @RequestBody ScheduleDto scheduleDto) {
+	@PostMapping
+	public SingleResult<Schedule> createSchedule(@RequestBody @Parameter ScheduleDto scheduledto) {
 		org.springframework.security.core.userdetails.User principal = (org.springframework.security.core.userdetails.User)SecurityContextHolder
 			.getContext().getAuthentication().getPrincipal();
 
 		User user = userService.getUser(principal.getUsername());
-		Schedule schedule = new Schedule(scheduleDto);
+
+		Schedule schedule = new Schedule(scheduledto);
+		//Schedule result = scheduleService.make(schedule, user,participants);
 		Schedule result = scheduleService.make(schedule, user);
 		return responseService.getSingleResult(result);
 	}

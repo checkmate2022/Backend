@@ -57,7 +57,7 @@ public class AvatarController {
 		return responseService.getSingleResult(avatarService.findOne(avatarId));
 	}
 
-	//postman 으로 테스트 해야함, 아바타 이름 중복확인
+	//postman 으로 테스트 해야함
 	@Operation(description = "캐릭터등록")
 	@PostMapping
 	public SingleResult<Avatar> createAvatar(MultipartFile originfile, MultipartFile createdfile, String avatarName,
@@ -120,7 +120,7 @@ public class AvatarController {
 	}
 
 	@Operation(description = "캐릭터이름 중복조회")
-	@GetMapping("/{avatar_name}")
+	@GetMapping("/checkName/{avatarName}")
 	public CommonResult getAvatarByName(@PathVariable String avatarName) {
 		avatarService.validatenameDuplicateException(avatarName);
 		return responseService.getSuccessResult();

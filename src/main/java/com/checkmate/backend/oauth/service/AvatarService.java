@@ -62,12 +62,13 @@ public class AvatarService {
 		Avatar avatar = avatarRepository.findById(avatarId).orElseThrow(
 			() -> new IllegalArgumentException("해당 캐릭터는 존재하지 않습니다.")
 		);
+
 		List<Avatar> userAvatar = user.getAvatar();
 		for (Avatar ar : userAvatar ){
-			if (ar==avatar){
+			if (ar.getAvatarSeq()==avatar.getAvatarSeq()){
 				avatar.setIsBasic();
-			}
-			ar.setIsBasicFalse();
+			}else{
+			ar.setIsBasicFalse();}
 		}
 
 		//프로필 사진변경

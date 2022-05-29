@@ -6,6 +6,7 @@ import java.util.Optional;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.checkmate.backend.oauth.api.entity.Participant;
 import com.checkmate.backend.oauth.api.entity.Schedule;
 import com.checkmate.backend.oauth.api.entity.User;
 import com.checkmate.backend.oauth.api.repo.ScheduleRepository;
@@ -39,10 +40,24 @@ public class ScheduleService {
 	// 일정 등록
 	public Schedule make(Schedule schedule, User user) {
 		schedule.setUser(user);
+
+
+		//List<String> participants= participnats;
+		/*Participant newPart = new Participant();
+
+		schedule.addParticipant(newPart);
+
+		for(String participant: participants ){
+			User findUser =userRepository.findByUserId(participant);
+			findUser.addParticipant(newPart);
+		}*/
+
 		schedule.makeMeetingId();
 		Schedule save = scheduleRepository.save(schedule);
 		return save;
 	}
+
+
 
 	// 일정 수정
 	public Schedule update(Long scheduleId, ScheduleDto scheduleDto) {

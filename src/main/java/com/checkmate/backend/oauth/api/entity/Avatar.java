@@ -31,8 +31,9 @@ import lombok.Setter;
 @AllArgsConstructor
 @Data
 @Table(name = "AVATAR")
+@JsonIdentityInfo(generator = ObjectIdGenerators.IntSequenceGenerator.class)
 public class Avatar {
-	@JsonIgnore
+
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Id
 	@Column(name = "AVATAR_ID")
@@ -99,10 +100,7 @@ public class Avatar {
 	}
 
 	public void setIsBasic() {
-		if (this.isBasic == false)
 			this.isBasic = true;
-		else
-			this.isBasic = false;
 	}
 	public void setIsBasicFalse(){
 		this.isBasic = false;

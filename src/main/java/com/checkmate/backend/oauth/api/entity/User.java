@@ -76,14 +76,15 @@ public class User {
 
 	@Column(name = "USER_IMAGE")
 	private String userImage;
-	/*
-		@ManyToOne
-		@JoinColumn(name = "SCHEDULE_SEQ")
-		private Schedule participantSchedule;
-	*/
+
 	@JsonIgnore
 	@OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	private List<Schedule> schedule = new ArrayList<>();
+
+
+	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+	@JsonIgnore
+	private List<Participant> participants = new ArrayList<>();
 
 	@JsonIgnore
 	@OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
@@ -106,15 +107,15 @@ public class User {
 		this.createdAt = createdAt;
 		this.modifiedAt = modifiedAt;
 	}
-/*
-	//user설정
-	public void setUser(User user){
-		this.user = user;
-		user.getSchedule().add(this);
-	}*/
 
 	//userImage 설정
 	public void setUserImage(String imageUrl){
 		this.userImage=imageUrl;
+	}
+
+	//participant 설정
+	public void addParticipant(Participant participant) {
+		participants.add(participant);
+		participant.setUser(this);
 	}
 }
