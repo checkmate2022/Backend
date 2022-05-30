@@ -6,7 +6,6 @@ import java.util.Optional;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.checkmate.backend.oauth.api.entity.Participant;
 import com.checkmate.backend.oauth.api.entity.Schedule;
 import com.checkmate.backend.oauth.api.entity.User;
 import com.checkmate.backend.oauth.api.repo.ScheduleRepository;
