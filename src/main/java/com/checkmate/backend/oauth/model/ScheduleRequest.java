@@ -1,6 +1,7 @@
 package com.checkmate.backend.oauth.model;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -9,7 +10,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-public class ScheduleDto {
+public class ScheduleRequest {
 
 	private String scheduleName;
 
@@ -19,11 +20,14 @@ public class ScheduleDto {
 
 	private LocalDateTime scheduleEndDate;
 
-	public ScheduleDto(String scheduleName, String scheduleDescription, LocalDateTime scheduleStartDate,
-		LocalDateTime scheduleEndDate) {
+	private List<String> participantName;
+
+	public ScheduleRequest(String scheduleName, String scheduleDescription, LocalDateTime scheduleStartDate,
+		LocalDateTime scheduleEndDate, List<String> participantName) {
 		this.scheduleName = scheduleName;
 		this.scheduleDescription = scheduleDescription;
 		this.scheduleStartDate = scheduleStartDate;
 		this.scheduleEndDate = scheduleEndDate;
+		this.participantName = participantName;
 	}
 }

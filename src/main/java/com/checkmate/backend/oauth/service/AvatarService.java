@@ -43,12 +43,12 @@ public class AvatarService {
 	}
 
 	//  캐릭터 수정
-	public Avatar update(Long avatarId, String avatarName, String avatarDescription, String style,Long styleId,
+	public Avatar update(Long avatarId, String avatarName, String avatarDescription, String style, Long styleId,
 		String OriginFileUrl, String CreatedFileUrl, LocalDateTime dateTime) {
 		Avatar avatar = avatarRepository.findById(avatarId).orElseThrow(
 			() -> new IllegalArgumentException("해당 캐릭터는 존재하지 않습니다.")
 		);
-		avatar.update(avatarName, avatarDescription,style,styleId, OriginFileUrl, CreatedFileUrl, dateTime);
+		avatar.update(avatarName, avatarDescription, style, styleId, OriginFileUrl, CreatedFileUrl, dateTime);
 		return avatar;
 	}
 
@@ -58,17 +58,18 @@ public class AvatarService {
 	}
 
 	//아바타 기본설정
-	public void setIsBasic(Long avatarId,User user) {
+	public void setIsBasic(Long avatarId, User user) {
 		Avatar avatar = avatarRepository.findById(avatarId).orElseThrow(
 			() -> new IllegalArgumentException("해당 캐릭터는 존재하지 않습니다.")
 		);
 
 		List<Avatar> userAvatar = user.getAvatar();
-		for (Avatar ar : userAvatar ){
-			if (ar.getAvatarSeq()==avatar.getAvatarSeq()){
+		for (Avatar ar : userAvatar) {
+			if (ar.getAvatarSeq() == avatar.getAvatarSeq()) {
 				avatar.setIsBasic();
-			}else{
-			ar.setIsBasicFalse();}
+			} else {
+				ar.setIsBasicFalse();
+			}
 		}
 
 		//프로필 사진변경
