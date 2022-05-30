@@ -61,7 +61,6 @@ public class Schedule {
 	@Column(name = "SCHEDULE_ENDDATE")
 	private LocalDateTime scheduleEnddate;
 
-
 	@OneToMany(mappedBy = "schedule", cascade = CascadeType.ALL)
 	@JsonIgnore
 	private List<Participant> participants = new ArrayList<>();
@@ -71,7 +70,6 @@ public class Schedule {
 		this.scheduleDescription = scheduleDto.getScheduleDescription();
 		this.scheduleStartdate = scheduleDto.getScheduleStartDate();
 		this.scheduleEnddate = scheduleDto.getScheduleEndDate();
-
 	}
 
 	public void update(ScheduleDto scheduleDto) {
@@ -94,11 +92,16 @@ public class Schedule {
 		user.getSchedule().add(this);
 	}
 
-
 	//participant 추가
 	public void addParticipant(Participant participant) {
 		participants.add(participant);
 		participant.setSchedule(this);
+	}
+
+	public void deleteAllParticipants() {
+		for (int i = 0; i < participants.size(); i++) {
+			participants.remove(i);
+		}
 	}
 
 }

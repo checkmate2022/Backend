@@ -1,7 +1,5 @@
 package com.checkmate.backend.oauth.api.controller;
 
-import java.time.LocalDateTime;
-import java.util.List;
 import java.util.Optional;
 
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -12,7 +10,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.checkmate.backend.common.CommonResult;
@@ -21,7 +18,8 @@ import com.checkmate.backend.common.SingleResult;
 import com.checkmate.backend.oauth.api.entity.Schedule;
 import com.checkmate.backend.oauth.api.entity.User;
 import com.checkmate.backend.oauth.api.repo.ScheduleRepository;
-import com.checkmate.backend.oauth.model.ScheduleDto;
+import com.checkmate.backend.oauth.model.ScheduleRequest;
+import com.checkmate.backend.oauth.model.ScheduleResponse;
 import com.checkmate.backend.oauth.service.ScheduleService;
 import com.checkmate.backend.oauth.service.UserService;
 import com.checkmate.backend.service.ResponseService;
@@ -58,25 +56,35 @@ public class ScheduleController {
 		return responseService.getSingleResult(scheduleService.findOne(scheduleId));
 	}
 
-	@Operation(description = "일정등록", security = {@SecurityRequirement(name = "bearer-key")})
-	@PostMapping
-	public SingleResult<Schedule> createSchedule(@RequestBody @Parameter ScheduleDto scheduledto) {
+	@Operation(description = "사용자별 일정 가져오기", security = {@SecurityRequirement(name = "bearer-key")})
+	@GetMapping("/user")
+	public ListResult<ScheduleResponse> getSchedulesByUser() {
 		org.springframework.security.core.userdetails.User principal = (org.springframework.security.core.userdetails.User)SecurityContextHolder
 			.getContext().getAuthentication().getPrincipal();
 
 		User user = userService.getUser(principal.getUsername());
 
-		Schedule schedule = new Schedule(scheduledto);
+		return responseService.getListResult(scheduleService.findScheduleByUser(user));
+	}
+
+	@Operation(description = "일정등록", security = {@SecurityRequirement(name = "bearer-key")})
+	@PostMapping
+	public SingleResult<Schedule> createSchedule(@RequestBody @Parameter ScheduleRequest scheduledto) {
+		org.springframework.security.core.userdetails.User principal = (org.springframework.security.core.userdetails.User)SecurityContextHolder
+			.getContext().getAuthentication().getPrincipal();
+
+		User user = userService.getUser(principal.getUsername());
+
 		//Schedule result = scheduleService.make(schedule, user,participants);
-		Schedule result = scheduleService.make(schedule, user);
+		Schedule result = scheduleService.make(scheduledto, user);
 		return responseService.getSingleResult(result);
 	}
 
 	@Operation(description = "일정수정")
 	@PutMapping("/{scheduleId}")
 	public SingleResult<Schedule> updateSchdule(@Parameter @PathVariable Long scheduleId,
-		@Parameter @RequestBody ScheduleDto scheduleDto) {
-		return responseService.getSingleResult(scheduleService.update(scheduleId, scheduleDto));
+		@Parameter @RequestBody ScheduleRequest scheduleRequest) {
+		return responseService.getSingleResult(scheduleService.update(scheduleId, scheduleRequest));
 	}
 
 	@Operation(description = "일정삭제")

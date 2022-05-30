@@ -70,6 +70,7 @@ dependencies {
     runtimeOnly 'com.h2database:h2:1.4.200'
     // Configuration
     annotationProcessor "org.springframework.boot:spring-boot-configuration-processor"
+    implementation 'com.fasterxml.jackson.core:jackson-databind'
 
 }
 

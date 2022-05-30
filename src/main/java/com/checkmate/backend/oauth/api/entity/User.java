@@ -81,11 +81,6 @@ public class User {
 	@OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	private List<Schedule> schedule = new ArrayList<>();
 
-
-	@OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
-	@JsonIgnore
-	private List<Participant> participants = new ArrayList<>();
-
 	@JsonIgnore
 	@OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	private List<Avatar> avatar = new ArrayList<>();
@@ -109,13 +104,13 @@ public class User {
 	}
 
 	//userImage 설정
-	public void setUserImage(String imageUrl){
-		this.userImage=imageUrl;
+	public void setUserImage(String imageUrl) {
+		this.userImage = imageUrl;
 	}
 
-	//participant 설정
-	public void addParticipant(Participant participant) {
-		participants.add(participant);
-		participant.setUser(this);
-	}
+	// //participant 설정
+	// public void addParticipant(Participant participant) {
+	// 	participants.add(participant);
+	// 	participant.setUser(this);
+	// }
 }

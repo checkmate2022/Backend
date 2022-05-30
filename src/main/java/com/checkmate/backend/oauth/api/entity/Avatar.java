@@ -73,9 +73,9 @@ public class Avatar {
 	private LocalDateTime avatarDate;
 
 	@Column(name = "AVATAR_BASIC", length = 100)
-	private Boolean isBasic=false;
+	private Boolean isBasic = false;
 
-	public Avatar(User user, String avatarName, String avatarDescription,String avatarStyle, Long avatarStyleId,
+	public Avatar(User user, String avatarName, String avatarDescription, String avatarStyle, Long avatarStyleId,
 		String originFileUrl, String createdFileUrl, LocalDateTime dateTime) {
 		this.user = user;
 		this.avatarName = avatarName;
@@ -87,7 +87,7 @@ public class Avatar {
 		this.avatarDate = dateTime;
 	}
 
-	public void update(String avatarName, String avatarDescription,String avatarStyle, Long avatarStyleId,
+	public void update(String avatarName, String avatarDescription, String avatarStyle, Long avatarStyleId,
 		String originFileUrl, String createdFileUrl, LocalDateTime dateTime) {
 		this.avatarName = avatarName;
 		this.avatarDescription = avatarDescription;
@@ -100,9 +100,10 @@ public class Avatar {
 	}
 
 	public void setIsBasic() {
-			this.isBasic = true;
+		this.isBasic = true;
 	}
-	public void setIsBasicFalse(){
+
+	public void setIsBasicFalse() {
 		this.isBasic = false;
 	}
 
