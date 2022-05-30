@@ -77,7 +77,9 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-validation'
 //    //gson
 //    implementation group: 'com.google.code.gson', name: 'gson', version: '2.7'
-
+//    implementation group: 'com.fasterxml.jackson.datatype', name: 'jackson-datatype-jsr310'
+//    implementation group: 'com.fasterxml.jackson.core', name: 'jackson-databind'
+//    implementation group: 'com.alibaba', name: 'fastjson', version: '1.1.25'
 }
 
 tasks.named('test') {
