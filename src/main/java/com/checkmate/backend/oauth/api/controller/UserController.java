@@ -5,6 +5,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.checkmate.backend.common.SingleResult;
@@ -51,12 +52,23 @@ public class UserController {
 		return responseService.getSingleResult(user);
 	}
 
-	//회원가입 로직 추가 필요
 	@Operation(summary = "회원가입", description = "회원가입 요청")
 	@PostMapping("/join")
 	public SingleResult<User> join(@RequestBody @Parameter(description = "회원가입 정보", required = true) UserDto user) {
 		log.info("회원가입 - {}", user);
 		User signedUser = userService.signUpUser(user);
 		return responseService.getSingleResult(signedUser);
+	}
+
+	@Operation(summary = "name 중복 확인", description = "닉네임 증복 확인")
+	@PostMapping("/check/name")
+	public SingleResult<Integer> checkName(@Parameter @RequestParam String username) {
+		return responseService.getSingleResult(userService.checkUsername(username));
+	}
+
+	@Operation(summary = "ID 중복 확인", description = "닉네임 증복 확인")
+	@PostMapping("/check/userId")
+	public SingleResult<Integer> checkId(@Parameter @RequestParam String userId) {
+		return responseService.getSingleResult(userService.checkId(userId));
 	}
 }
