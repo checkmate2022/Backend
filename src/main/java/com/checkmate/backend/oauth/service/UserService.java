@@ -37,11 +37,11 @@ public class UserService {
 		return userRepository.save(u);
 	}
 
-	public int checkUsername(String username){
+	public int checkUsername(String username) {
 		return userRepository.countByUsername(username);
 	}
 
-	public int checkId(String userId){
+	public int checkId(String userId) {
 		return userRepository.countByUserId(userId);
 	}
 
