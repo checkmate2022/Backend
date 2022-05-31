@@ -12,6 +12,7 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.stereotype.Component;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
@@ -37,6 +38,7 @@ import lombok.RequiredArgsConstructor;
  * @description : Spring security를 위한 설정 파일
  * @modified :
  **/
+@Component
 @Configuration
 @RequiredArgsConstructor
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
@@ -65,8 +67,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 			// .and()
 			// .headers().httpStrictTransportSecurity().disable()
 			.and()
-			// .cors()//cors 허용
-			// .and()
+			.cors()//cors 허용
+			.and()
 			.sessionManagement() // session Creation Policy를 STATELESS로 정의해 session을 사용하지 않겠다 선언
 			.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
 			.and()
@@ -84,7 +86,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 			.authorizeRequests()
 			// .requestMatchers().permitAll()
 			// .requestMatchers(CorsUtils::isPreFlightRequest).permitAll()
-			.antMatchers("/**", "/h2-console/**").permitAll()
+			.antMatchers("/**", "/h2-console/**", "/api/**").permitAll()
 			// .antMatchers("/api/**","**/oauth/**").permitAll()
 			// .antMatchers("/api/**").hasAnyAuthority(RoleType.USER.getCode())
 			// .antMatchers("/api/**/admin/**").hasAnyAuthority(RoleType.ADMIN.getCode())
