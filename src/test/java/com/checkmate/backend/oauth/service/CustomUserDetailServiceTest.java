@@ -10,6 +10,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 import com.checkmate.backend.oauth.api.entity.User;
 import com.checkmate.backend.oauth.api.repo.UserRepository;
@@ -39,6 +40,17 @@ class CustomUserDetailServiceTest {
 
 		assertNotNull(userDetails);
 		assertEquals(user.getUserId(), userDetails.getUsername());
+	}
+
+	@Test
+	@DisplayName("user가 null인경우 UsernameNotFoundException 에러 반환")
+	public void userNullThrowUsernameNotFoundException(){
+		String userId = "test";
+		User user = mock(User.class);
+
+		when(userRepository.findByUserId(userId)).thenReturn(null);
+
+		assertThrows(UsernameNotFoundException.class,() -> customUserDetailService.loadUserByUsername(userId));
 	}
 
 }
