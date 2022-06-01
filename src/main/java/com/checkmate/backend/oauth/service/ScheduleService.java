@@ -7,10 +7,13 @@ import java.util.Optional;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.checkmate.backend.oauth.api.entity.Participant;
 import com.checkmate.backend.oauth.api.entity.Schedule;
+import com.checkmate.backend.oauth.api.entity.Team;
 import com.checkmate.backend.oauth.api.entity.User;
 import com.checkmate.backend.oauth.api.repo.ParticipantRepository;
 import com.checkmate.backend.oauth.api.repo.ScheduleRepository;
+import com.checkmate.backend.oauth.api.repo.TeamRepository;
 import com.checkmate.backend.oauth.api.repo.UserRepository;
 import com.checkmate.backend.oauth.model.ScheduleDto;
 import com.checkmate.backend.oauth.model.ScheduleRequest;
@@ -26,6 +29,7 @@ public class ScheduleService {
 	private final ScheduleRepository scheduleRepository;
 	private final UserRepository userRepository;
 	private final ParticipantRepository participantRepository;
+	private final TeamRepository teamRepository;
 
 	// 전체 일정 조회
 	@Transactional(readOnly = true)
@@ -37,9 +41,36 @@ public class ScheduleService {
 
 	// 일정 단건 조회
 	@Transactional(readOnly = true)
-	public Optional<Schedule> findOne(Long scheduleId) {
-		Optional<Schedule> schedule = scheduleRepository.findById(scheduleId);
-		return schedule;
+	public ScheduleResponse findOne(Long scheduleId) {
+		Schedule schedule = scheduleRepository.findById(scheduleId).orElseThrow(
+			() -> new IllegalArgumentException("해당 schedule은 존재하지 않습니다.")
+		);
+		ScheduleResponse response=new ScheduleResponse();
+
+		List<String> users = new ArrayList<>();
+
+		response = ScheduleResponse.builder().
+				scheduleSeq(schedule.getScheduleSeq())
+				.meetingId(schedule.getMeetingId())
+				.scheduleName(schedule.getScheduleName())
+				.scheduleDescription(schedule.getScheduleDescription())
+				.scheduleStartDate(schedule.getScheduleStartdate())
+				.scheduleEndDate(schedule.getScheduleEnddate())
+				.user(schedule.getUser())
+				.build();
+			//참여자 정보 담아줌
+		for (Participant scheduleP : schedule.getParticipants()) {
+				users.add(scheduleP.getUser().getUsername()); }
+			response.setParticipants(users);
+			response.setTeam(schedule.getTeam());
+		return response;
+	}
+
+	//팀별 스케쥴 조회
+	public List<Schedule> findScheduleByTeam(Long teamId) {
+		Optional<Team> team = teamRepository.findById(teamId);
+		List<Schedule> schedules = scheduleRepository.findAllByTeam(team);
+		return schedules;
 	}
 
 	// 사용자별 스케쥴 조회
@@ -56,6 +87,7 @@ public class ScheduleService {
 			ScheduleResponse response = ScheduleResponse.builder().
 				scheduleSeq(schedule.get().getScheduleSeq())
 				.meetingId(schedule.get().getMeetingId())
+				.scheduleName(schedule.get().getScheduleName())
 				.scheduleDescription(schedule.get().getScheduleDescription())
 				.scheduleStartDate(schedule.get().getScheduleStartdate())
 				.scheduleEndDate(schedule.get().getScheduleEnddate())
@@ -66,6 +98,7 @@ public class ScheduleService {
 				users.add(scheduleP.getUser().getUsername());
 			}
 			response.setParticipants(users);
+			response.setTeam(schedule.get().getTeam());
 			//List 담기
 			schedules.add(response);
 		}
@@ -84,6 +117,11 @@ public class ScheduleService {
 		Schedule save = scheduleRepository.save(schedule);
 		//작성자 설정
 		save.setUser(user);
+		//team 설정
+		Team team = teamRepository.findById(scheduleReq.getTeamId()).orElseThrow(
+			() -> new IllegalArgumentException("해당 team은 존재하지 않습니다.")
+		);
+		save.setTeam(team);
 		//participant 닉네임으로 담음
 		for (String p : participants) {
 			//닉네임으로 User 찾음
