@@ -1,7 +1,5 @@
 package com.checkmate.backend.oauth.model;
 
-import java.time.LocalDateTime;
-
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;

@@ -20,5 +20,6 @@ public interface ParticipantRepository extends JpaRepository<Participant, Long> 
 	void deleteAllBySchedule(@Param("schedule") Schedule schedule);
 
 	List<Participant> findAllByUser(User user);
+
 	List<Participant> findAllBySchedule(Schedule schedule);
 }

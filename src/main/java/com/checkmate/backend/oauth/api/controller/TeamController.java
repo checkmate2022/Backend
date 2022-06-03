@@ -15,12 +15,9 @@ import org.springframework.web.bind.annotation.RestController;
 import com.checkmate.backend.common.CommonResult;
 import com.checkmate.backend.common.ListResult;
 import com.checkmate.backend.common.SingleResult;
-import com.checkmate.backend.oauth.api.entity.Schedule;
 import com.checkmate.backend.oauth.api.entity.Team;
 import com.checkmate.backend.oauth.api.entity.User;
 import com.checkmate.backend.oauth.api.repo.ScheduleRepository;
-import com.checkmate.backend.oauth.model.ScheduleRequest;
-import com.checkmate.backend.oauth.model.ScheduleResponse;
 import com.checkmate.backend.oauth.model.TeamRequest;
 import com.checkmate.backend.oauth.model.TeamResponse;
 import com.checkmate.backend.oauth.service.ScheduleService;
@@ -71,7 +68,6 @@ public class TeamController {
 
 		return responseService.getListResult(teamService.findTeamByUser(user));
 	}
-
 
 	@Operation(description = "팀등록", security = {@SecurityRequirement(name = "bearer-key")})
 	@PostMapping

@@ -25,7 +25,7 @@ public class ScheduleRequest {
 	private Long teamId;
 
 	public ScheduleRequest(String scheduleName, String scheduleDescription, LocalDateTime scheduleStartDate,
-		LocalDateTime scheduleEndDate, List<String> participantName,Long teamId) {
+		LocalDateTime scheduleEndDate, List<String> participantName, Long teamId) {
 		this.scheduleName = scheduleName;
 		this.scheduleDescription = scheduleDescription;
 		this.scheduleStartDate = scheduleStartDate;

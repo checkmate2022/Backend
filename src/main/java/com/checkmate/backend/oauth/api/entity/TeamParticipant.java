@@ -40,7 +40,7 @@ public class TeamParticipant {
 	@JoinColumn(name = "TEAM_SEQ")
 	private Team team;
 
-	public TeamParticipant(User user,Team team) {
+	public TeamParticipant(User user, Team team) {
 		this.user = user;
 		this.team = team;
 	}

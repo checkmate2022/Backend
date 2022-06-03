@@ -40,29 +40,29 @@ public class ScheduleService {
 	}
 
 	// 일정 단건 조회
-	@Transactional(readOnly = true)
 	public ScheduleResponse findOne(Long scheduleId) {
 		Schedule schedule = scheduleRepository.findById(scheduleId).orElseThrow(
 			() -> new IllegalArgumentException("해당 schedule은 존재하지 않습니다.")
 		);
-		ScheduleResponse response=new ScheduleResponse();
+		ScheduleResponse response = new ScheduleResponse();
 
 		List<String> users = new ArrayList<>();
 
 		response = ScheduleResponse.builder().
-				scheduleSeq(schedule.getScheduleSeq())
-				.meetingId(schedule.getMeetingId())
-				.scheduleName(schedule.getScheduleName())
-				.scheduleDescription(schedule.getScheduleDescription())
-				.scheduleStartDate(schedule.getScheduleStartdate())
-				.scheduleEndDate(schedule.getScheduleEnddate())
-				.user(schedule.getUser())
-				.build();
-			//참여자 정보 담아줌
+			scheduleSeq(schedule.getScheduleSeq())
+			.meetingId(schedule.getMeetingId())
+			.scheduleName(schedule.getScheduleName())
+			.scheduleDescription(schedule.getScheduleDescription())
+			.scheduleStartDate(schedule.getScheduleStartdate())
+			.scheduleEndDate(schedule.getScheduleEnddate())
+			.team(schedule.getTeam().getTeamName())
+			.user(schedule.getUser())
+			.build();
+		//참여자 정보 담아줌
 		for (Participant scheduleP : schedule.getParticipants()) {
-				users.add(scheduleP.getUser().getUsername()); }
-			response.setParticipants(users);
-			response.setTeam(schedule.getTeam());
+			users.add(scheduleP.getUser().getUsername());
+		}
+		response.setParticipants(users);
 		return response;
 	}
 
@@ -83,22 +83,24 @@ public class ScheduleService {
 		for (Participant p : participants) {
 			List<String> users = new ArrayList<>();
 			//response 객체 생성
-			Optional<Schedule> schedule = scheduleRepository.findById(p.getSchedule().getScheduleSeq());
+			Schedule schedule = scheduleRepository.findById(p.getSchedule().getScheduleSeq()).orElseThrow(
+				() -> new IllegalArgumentException("해당 schedule은 존재하지 않습니다.")
+			);
 			ScheduleResponse response = ScheduleResponse.builder().
-				scheduleSeq(schedule.get().getScheduleSeq())
-				.meetingId(schedule.get().getMeetingId())
-				.scheduleName(schedule.get().getScheduleName())
-				.scheduleDescription(schedule.get().getScheduleDescription())
-				.scheduleStartDate(schedule.get().getScheduleStartdate())
-				.scheduleEndDate(schedule.get().getScheduleEnddate())
-				.user(schedule.get().getUser())
+				scheduleSeq(schedule.getScheduleSeq())
+				.meetingId(schedule.getMeetingId())
+				.scheduleName(schedule.getScheduleName())
+				.scheduleDescription(schedule.getScheduleDescription())
+				.scheduleStartDate(schedule.getScheduleStartdate())
+				.scheduleEndDate(schedule.getScheduleEnddate())
+				.user(schedule.getUser())
+				.team(schedule.getTeam().getTeamName())
 				.build();
 			//참여자 정보 담아줌
-			for (Participant scheduleP : schedule.get().getParticipants()) {
+			for (Participant scheduleP : schedule.getParticipants()) {
 				users.add(scheduleP.getUser().getUsername());
 			}
 			response.setParticipants(users);
-			response.setTeam(schedule.get().getTeam());
 			//List 담기
 			schedules.add(response);
 		}

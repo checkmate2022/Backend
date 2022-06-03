@@ -1,7 +1,5 @@
 package com.checkmate.backend.oauth.api.controller;
 
-import java.util.Optional;
-
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -72,7 +70,6 @@ public class ScheduleController {
 
 		return responseService.getListResult(scheduleService.findScheduleByUser(user));
 	}
-
 
 	@Operation(description = "일정등록", security = {@SecurityRequirement(name = "bearer-key")})
 	@PostMapping
