@@ -35,7 +35,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
-@Tag(name = "Team")
+@Tag(name = "Team", description = "팀 API")
 @RequestMapping(value = "/api/v1/team")
 @Slf4j
 @RequiredArgsConstructor
@@ -48,20 +48,20 @@ public class TeamController {
 	private final ResponseService responseService;
 	private final UserService userService;
 
-	@Operation(description = "전체팀조회")
+	@Operation(summary = "전체 팀 조회",description = "전체팀조회")
 	@GetMapping
 	public ListResult<Team> getTeams() {
 		return responseService.getListResult(teamService.findTeams());
 	}
 
-	@Operation(description = "단건팀조회")
+	@Operation(summary = "단건 팀 조회",description = "단건팀조회")
 	@GetMapping("/{teamId}")
 	public SingleResult<Optional<Team>> getTeam(
 		@Parameter(description = "팀id", required = true, example = "3") @PathVariable Long teamId) {
 		return responseService.getSingleResult(teamService.findOne(teamId));
 	}
 
-	@Operation(description = "사용자별 팀 가져오기", security = {@SecurityRequirement(name = "bearer-key")})
+	@Operation(summary = "사용자별 팀 조회",description = "사용자별 팀 가져오기", security = {@SecurityRequirement(name = "bearer-key")})
 	@GetMapping("/user")
 	public ListResult<TeamResponse> getTeamByUser() {
 		org.springframework.security.core.userdetails.User principal = (org.springframework.security.core.userdetails.User)SecurityContextHolder
@@ -73,7 +73,7 @@ public class TeamController {
 	}
 
 
-	@Operation(description = "팀등록", security = {@SecurityRequirement(name = "bearer-key")})
+	@Operation(summary = "팀 등록",description = "팀등록", security = {@SecurityRequirement(name = "bearer-key")})
 	@PostMapping
 	public SingleResult<Team> createTeam(@RequestBody @Parameter TeamRequest teamdto) {
 		org.springframework.security.core.userdetails.User principal = (org.springframework.security.core.userdetails.User)SecurityContextHolder
@@ -85,14 +85,14 @@ public class TeamController {
 		return responseService.getSingleResult(result);
 	}
 
-	@Operation(description = "팀수정")
+	@Operation(summary = "팀 수정",description = "팀수정")
 	@PutMapping("/{teamId}")
 	public SingleResult<Team> updateTeam(@Parameter @PathVariable Long teamId,
 		@Parameter @RequestBody TeamRequest teamRequest) {
 		return responseService.getSingleResult(teamService.update(teamId, teamRequest));
 	}
 
-	@Operation(description = "팀삭제")
+	@Operation(summary = "팀 삭제",description = "팀삭제")
 	@DeleteMapping("/{teamId}")
 	public CommonResult deleteTeam(@Parameter @PathVariable Long teamId) {
 		teamService.delete(teamId);
