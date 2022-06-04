@@ -57,7 +57,7 @@ public class AvatarController {
 	}
 
 	//postman 으로 테스트 해야함
-	@Operation(description = "캐릭터등록")
+	@Operation(description = "캐릭터등록", security = {@SecurityRequirement(name = "bearer-key")})
 	@PostMapping
 	public SingleResult<Avatar> createAvatar(MultipartFile originfile, MultipartFile createdfile, String avatarName,
 		String avatarDescription, String avatarStyle, Long avatarStyleId) {
@@ -102,7 +102,7 @@ public class AvatarController {
 		return responseService.getSingleResult(result);
 	}
 
-	@Operation(description = "캐릭터삭제")
+	@Operation(description = "캐릭터삭제", security = {@SecurityRequirement(name = "bearer-key")})
 	@DeleteMapping("/{avatarId}")
 	public CommonResult deleteAvatar(@Parameter @PathVariable Long avatarId) {
 		avatarService.delete(avatarId);

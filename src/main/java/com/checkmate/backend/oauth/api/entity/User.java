@@ -36,7 +36,7 @@ import lombok.Setter;
 @Entity
 @Table(name = "USER")
 public class User {
-	@JsonIgnore
+
 	@Id
 	@Column(name = "USER_SEQ")
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -85,6 +85,10 @@ public class User {
 
 	@JsonIgnore
 	@OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	private List<Team> team = new ArrayList<>();
+
+	@JsonIgnore
+	@OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
 	private List<Avatar> avatar = new ArrayList<>();
 
 	public User(
@@ -110,9 +114,4 @@ public class User {
 		this.userImage = imageUrl;
 	}
 
-	// //participant 설정
-	// public void addParticipant(Participant participant) {
-	// 	participants.add(participant);
-	// 	participant.setUser(this);
-	// }
 }

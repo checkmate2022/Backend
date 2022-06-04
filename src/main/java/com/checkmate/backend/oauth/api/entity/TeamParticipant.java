@@ -22,13 +22,13 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "PATICIPANT")
-public class Participant {
+@Table(name = "TEAMPATICIPANT")
+public class TeamParticipant {
 	@JsonIgnore
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Id
-	@Column(name = "PARTICIPANT_ID")
-	private Long participantSeq;
+	@Column(name = "TEAMPARTICIPANT_ID")
+	private Long teamparticipantSeq;
 
 	@JsonIgnore
 	@ManyToOne(fetch = FetchType.LAZY)
@@ -37,15 +37,15 @@ public class Participant {
 
 	@JsonIgnore
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "SCHEDULE_SEQ")
-	private Schedule schedule;
+	@JoinColumn(name = "TEAM_SEQ")
+	private Team team;
 
-	public Participant(User user, Schedule schedule) {
+	public TeamParticipant(User user, Team team) {
 		this.user = user;
-		this.schedule = schedule;
+		this.team = team;
 	}
 
-	public Schedule getSchedule() {
-		return this.schedule;
+	public Team getTeam() {
+		return this.team;
 	}
 }

@@ -1,6 +1,7 @@
 package com.checkmate.backend.oauth.service;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -8,8 +9,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.checkmate.backend.oauth.api.entity.Avatar;
+import com.checkmate.backend.oauth.api.entity.Participant;
+import com.checkmate.backend.oauth.api.entity.Schedule;
+import com.checkmate.backend.oauth.api.entity.Team;
 import com.checkmate.backend.oauth.api.entity.User;
 import com.checkmate.backend.oauth.api.repo.AvatarRepository;
+import com.checkmate.backend.oauth.model.ScheduleGetDto;
+import com.checkmate.backend.oauth.model.ScheduleResponse;
 
 import lombok.RequiredArgsConstructor;
 
@@ -33,6 +39,12 @@ public class AvatarService {
 	public Optional<Avatar> findOne(Long avatarId) {
 		Optional<Avatar> avatar = avatarRepository.findById(avatarId);
 		return avatar;
+	}
+
+	// 사용자별 캐릭터 조회
+	public List<Avatar> findAvatarByUser(User user) {
+		List<Avatar> avatars = avatarRepository.findAllByUser(user);
+		return avatars;
 	}
 
 	//  캐릭터 등록

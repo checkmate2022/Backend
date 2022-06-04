@@ -22,12 +22,15 @@ public class ScheduleRequest {
 
 	private List<String> participantName;
 
+	private Long teamId;
+
 	public ScheduleRequest(String scheduleName, String scheduleDescription, LocalDateTime scheduleStartDate,
-		LocalDateTime scheduleEndDate, List<String> participantName) {
+		LocalDateTime scheduleEndDate, List<String> participantName, Long teamId) {
 		this.scheduleName = scheduleName;
 		this.scheduleDescription = scheduleDescription;
 		this.scheduleStartDate = scheduleStartDate;
 		this.scheduleEndDate = scheduleEndDate;
 		this.participantName = participantName;
+		this.teamId = teamId;
 	}
 }

@@ -1,8 +1,8 @@
 package com.checkmate.backend.oauth.model;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
+import com.checkmate.backend.oauth.api.entity.Schedule;
 import com.checkmate.backend.oauth.api.entity.User;
 
 import lombok.AllArgsConstructor;
@@ -16,31 +16,25 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class ScheduleResponse {
+public class TeamResponse {
 
-	private Long scheduleSeq;
+	private Long teamSeq;
 
 	private User user;
 
-	private int meetingId;
+	private String teamName;
 
-	private String scheduleName;
+	private String teamDescription;
 
-	private String scheduleDescription;
-
-	private LocalDateTime scheduleStartDate;
-
-	private LocalDateTime scheduleEndDate;
+	private List<Schedule> schedules;
 
 	private List<String> participants;
-
-	private String team;
 
 	public void setParticipants(List<String> participants) {
 		this.participants = participants;
 	}
 
-	public void setTeam(String team) {
-		this.team = team;
+	public void setSchedules(List<Schedule> schedules) {
+		this.schedules = schedules;
 	}
 }

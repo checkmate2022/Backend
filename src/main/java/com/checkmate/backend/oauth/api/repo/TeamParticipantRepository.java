@@ -8,18 +8,17 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.checkmate.backend.oauth.api.entity.Participant;
-import com.checkmate.backend.oauth.api.entity.Schedule;
+import com.checkmate.backend.oauth.api.entity.Team;
+import com.checkmate.backend.oauth.api.entity.TeamParticipant;
 import com.checkmate.backend.oauth.api.entity.User;
 
-public interface ParticipantRepository extends JpaRepository<Participant, Long> {
+public interface TeamParticipantRepository extends JpaRepository<TeamParticipant, Long> {
 
 	@Transactional
 	@Modifying
-	@Query("delete from Participant p where p.schedule=:schedule")
-	void deleteAllBySchedule(@Param("schedule") Schedule schedule);
+	@Query("delete from TeamParticipant p where p.team=:team")
+	void deleteAllByTeam(@Param("team") Team team);
 
-	List<Participant> findAllByUser(User user);
+	List<TeamParticipant> findAllByUser(User user);
 
-	List<Participant> findAllBySchedule(Schedule schedule);
 }

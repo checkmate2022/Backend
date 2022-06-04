@@ -3,6 +3,7 @@ package com.checkmate.backend.oauth.model;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import com.checkmate.backend.oauth.api.entity.Team;
 import com.checkmate.backend.oauth.api.entity.User;
 
 import lombok.AllArgsConstructor;
@@ -16,11 +17,11 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class ScheduleResponse {
+public class ScheduleGetDto {
 
 	private Long scheduleSeq;
 
-	private User user;
+	private String userId;
 
 	private int meetingId;
 
@@ -34,13 +35,10 @@ public class ScheduleResponse {
 
 	private List<String> participants;
 
-	private String team;
+	private Long teamId;
+
 
 	public void setParticipants(List<String> participants) {
 		this.participants = participants;
-	}
-
-	public void setTeam(String team) {
-		this.team = team;
 	}
 }

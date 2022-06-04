@@ -16,12 +16,15 @@ import com.checkmate.backend.common.CommonResult;
 import com.checkmate.backend.common.ListResult;
 import com.checkmate.backend.common.SingleResult;
 import com.checkmate.backend.oauth.api.entity.Schedule;
+import com.checkmate.backend.oauth.api.entity.Team;
 import com.checkmate.backend.oauth.api.entity.User;
 import com.checkmate.backend.oauth.api.repo.ScheduleRepository;
-import com.checkmate.backend.oauth.model.ScheduleGetDto;
 import com.checkmate.backend.oauth.model.ScheduleRequest;
 import com.checkmate.backend.oauth.model.ScheduleResponse;
+import com.checkmate.backend.oauth.model.TeamRequest;
+import com.checkmate.backend.oauth.model.TeamResponse;
 import com.checkmate.backend.oauth.service.ScheduleService;
+import com.checkmate.backend.oauth.service.TeamService;
 import com.checkmate.backend.oauth.service.UserService;
 import com.checkmate.backend.service.ResponseService;
 
@@ -32,75 +35,67 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
-@Tag(name = "Schdule", description = "일정 API")
-@RequestMapping(value = "/api/v1/schedule")
+@Tag(name = "Team", description = "팀 API")
+@RequestMapping(value = "/api/v1/team")
 @Slf4j
 @RequiredArgsConstructor
 @RestController
-public class ScheduleController {
+public class TeamController {
 
 	private final ScheduleService scheduleService;
+	private final TeamService teamService;
 	private final ScheduleRepository scheduleRepository;
 	private final ResponseService responseService;
 	private final UserService userService;
 
-	/*
-	@Operation(summary = "전체 일정 조회",description = "전체일정조회")
+	@Operation(summary = "전체 팀 조회",description = "전체팀조회")
 	@GetMapping
-	public ListResult<Schedule> getSchedules() {
-		return responseService.getListResult(scheduleService.findSchedules());
-	}*/
-
-	@Operation(summary = "팀별 일정 조회",description = "팀별 일정 가져오기")
-	@GetMapping("/team/{teamId}")
-	public ListResult<ScheduleGetDto> getSchedulesByTeam(@Parameter @PathVariable Long teamId) {
-		return responseService.getListResult(scheduleService.findScheduleByTeam(teamId));
+	public ListResult<Team> getTeams() {
+		return responseService.getListResult(teamService.findTeams());
 	}
 
-	@Operation(summary = "단건 일정 조회",description = "단건일정조회")
-	@GetMapping("/{scheduleId}")
-	public SingleResult<ScheduleGetDto> getSchedule(
-		@Parameter(description = "일정id", required = true) @PathVariable Long scheduleId) {
-		return responseService.getSingleResult(scheduleService.findOne(scheduleId));
+	@Operation(summary = "단건 팀 조회",description = "단건팀조회")
+	@GetMapping("/{teamId}")
+	public SingleResult<Optional<Team>> getTeam(
+		@Parameter(description = "팀id", required = true, example = "3") @PathVariable Long teamId) {
+		return responseService.getSingleResult(teamService.findOne(teamId));
 	}
 
-	/*
-	@Operation(description = "사용자별 일정 가져오기", security = {@SecurityRequirement(name = "bearer-key")})
+	@Operation(summary = "사용자별 팀 조회",description = "사용자별 팀 가져오기", security = {@SecurityRequirement(name = "bearer-key")})
 	@GetMapping("/user")
-	public ListResult<ScheduleResponse> getSchedulesByUser() {
+	public ListResult<TeamResponse> getTeamByUser() {
 		org.springframework.security.core.userdetails.User principal = (org.springframework.security.core.userdetails.User)SecurityContextHolder
 			.getContext().getAuthentication().getPrincipal();
 
 		User user = userService.getUser(principal.getUsername());
 
-		return responseService.getListResult(scheduleService.findScheduleByUser(user));
-	}*/
+		return responseService.getListResult(teamService.findTeamByUser(user));
+	}
 
 
-	@Operation(summary = "일정 등록",description = "일정등록", security = {@SecurityRequirement(name = "bearer-key")})
+	@Operation(summary = "팀 등록",description = "팀등록", security = {@SecurityRequirement(name = "bearer-key")})
 	@PostMapping
-	public SingleResult<Schedule> createSchedule(@RequestBody @Parameter ScheduleRequest scheduledto) {
+	public SingleResult<Team> createTeam(@RequestBody @Parameter TeamRequest teamdto) {
 		org.springframework.security.core.userdetails.User principal = (org.springframework.security.core.userdetails.User)SecurityContextHolder
 			.getContext().getAuthentication().getPrincipal();
 
 		User user = userService.getUser(principal.getUsername());
 
-		//Schedule result = scheduleService.make(schedule, user,participants);
-		Schedule result = scheduleService.make(scheduledto, user);
+		Team result = teamService.make(teamdto, user);
 		return responseService.getSingleResult(result);
 	}
 
-	@Operation(summary = "일정 수정",description = "일정수정")
-	@PutMapping("/{scheduleId}")
-	public SingleResult<Schedule> updateSchdule(@Parameter @PathVariable Long scheduleId,
-		@Parameter @RequestBody ScheduleRequest scheduleRequest) {
-		return responseService.getSingleResult(scheduleService.update(scheduleId, scheduleRequest));
+	@Operation(summary = "팀 수정",description = "팀수정")
+	@PutMapping("/{teamId}")
+	public SingleResult<Team> updateTeam(@Parameter @PathVariable Long teamId,
+		@Parameter @RequestBody TeamRequest teamRequest) {
+		return responseService.getSingleResult(teamService.update(teamId, teamRequest));
 	}
 
-	@Operation(summary = "일정 삭제",description = "일정삭제")
-	@DeleteMapping("/{scheduleId}")
-	public CommonResult deleteSchdule(@Parameter @PathVariable Long scheduleId) {
-		scheduleService.delete(scheduleId);
+	@Operation(summary = "팀 삭제",description = "팀삭제")
+	@DeleteMapping("/{teamId}")
+	public CommonResult deleteTeam(@Parameter @PathVariable Long teamId) {
+		teamService.delete(teamId);
 		return responseService.getSuccessResult();
 	}
 }

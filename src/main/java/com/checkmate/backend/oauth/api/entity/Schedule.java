@@ -35,7 +35,7 @@ import lombok.Setter;
 @Table(name = "SCHEDULE")
 @JsonIdentityInfo(generator = ObjectIdGenerators.IntSequenceGenerator.class)
 public class Schedule {
-
+	@JsonIgnore
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Id
 	@Column(name = "SCHEDULE_SEQ")
@@ -45,6 +45,11 @@ public class Schedule {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "USER_ID")
 	private User user;
+
+	@JsonIgnore
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "TEAM_ID")
+	private Team team;
 
 	@Column(name = "MEETING_ID")
 	private int meetingId;
@@ -90,6 +95,12 @@ public class Schedule {
 	public void setUser(User user) {
 		this.user = user;
 		user.getSchedule().add(this);
+	}
+
+	//team설정
+	public void setTeam(Team team) {
+		this.team = team;
+		team.getSchedules().add(this);
 	}
 
 	//participant 추가

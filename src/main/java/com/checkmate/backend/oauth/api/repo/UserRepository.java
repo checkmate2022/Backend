@@ -10,7 +10,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
 	User findByUserId(String userId);
 
 	User findByUsername(String username);
-  
+
 	int countByUsername(String username);
 
 	int countByUserId(String userId);
