@@ -1,6 +1,5 @@
 package com.checkmate.backend.oauth.model;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 import com.checkmate.backend.oauth.api.entity.Schedule;

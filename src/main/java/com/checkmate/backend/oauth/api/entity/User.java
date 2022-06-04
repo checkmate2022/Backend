@@ -36,19 +36,17 @@ import lombok.Setter;
 @Entity
 @Table(name = "USER")
 public class User {
-	@JsonIgnore
+
 	@Id
 	@Column(name = "USER_SEQ")
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long userSeq;
 
-	@JsonIgnore
 	@Column(name = "USER_ID", length = 64, unique = true)
 	@NotNull
 	@Size(max = 64)
 	private String userId;
 
-	@JsonIgnore
 	@Column(name = "USERNAME", length = 100)
 	@NotNull
 	@Size(max = 100)
@@ -87,7 +85,7 @@ public class User {
 
 	@JsonIgnore
 	@OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-	private List<Team> team= new ArrayList<>();
+	private List<Team> team = new ArrayList<>();
 
 	@JsonIgnore
 	@OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
@@ -115,6 +113,5 @@ public class User {
 	public void setUserImage(String imageUrl) {
 		this.userImage = imageUrl;
 	}
-
 
 }

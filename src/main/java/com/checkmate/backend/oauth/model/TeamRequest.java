@@ -1,6 +1,5 @@
 package com.checkmate.backend.oauth.model;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 import lombok.Getter;
@@ -18,7 +17,7 @@ public class TeamRequest {
 
 	private List<String> participantName;
 
-	public TeamRequest(String teamName, String teamDescription,List<String> participantName) {
+	public TeamRequest(String teamName, String teamDescription, List<String> participantName) {
 		this.teamName = teamName;
 		this.teamDescription = teamDescription;
 		this.participantName = participantName;

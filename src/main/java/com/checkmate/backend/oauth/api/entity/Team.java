@@ -1,9 +1,7 @@
 package com.checkmate.backend.oauth.api.entity;
 
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -17,11 +15,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
-import com.checkmate.backend.oauth.model.ScheduleDto;
 import com.checkmate.backend.oauth.model.TeamDto;
-import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -51,7 +46,6 @@ public class Team {
 
 	@Column(name = "TEAM_DESCRIPTION")
 	private String teamDescription;
-
 
 	@OneToMany(mappedBy = "team", cascade = CascadeType.ALL)
 	@JsonIgnore
