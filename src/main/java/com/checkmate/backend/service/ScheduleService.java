@@ -11,13 +11,13 @@ import com.checkmate.backend.entity.participant.Participant;
 import com.checkmate.backend.entity.schedule.Schedule;
 import com.checkmate.backend.entity.team.Team;
 import com.checkmate.backend.entity.user.User;
+import com.checkmate.backend.model.dto.ScheduleDto;
+import com.checkmate.backend.model.dto.ScheduleGetDto;
+import com.checkmate.backend.model.request.ScheduleRequest;
 import com.checkmate.backend.repo.ParticipantRepository;
 import com.checkmate.backend.repo.ScheduleRepository;
 import com.checkmate.backend.repo.TeamRepository;
 import com.checkmate.backend.repo.UserRepository;
-import com.checkmate.backend.model.dto.ScheduleDto;
-import com.checkmate.backend.model.dto.ScheduleGetDto;
-import com.checkmate.backend.model.request.ScheduleRequest;
 
 import lombok.RequiredArgsConstructor;
 
@@ -45,24 +45,25 @@ public class ScheduleService {
 		Schedule schedule = scheduleRepository.findById(scheduleId).orElseThrow(
 			() -> new IllegalArgumentException("해당 schedule은 존재하지 않습니다.")
 		);
-		ScheduleGetDto response=new ScheduleGetDto();
+		ScheduleGetDto response = new ScheduleGetDto();
 
 		List<String> users = new ArrayList<>();
 
 		response = ScheduleGetDto.builder().
-				scheduleSeq(schedule.getScheduleSeq())
-				.meetingId(schedule.getMeetingId())
-				.scheduleName(schedule.getScheduleName())
-				.scheduleDescription(schedule.getScheduleDescription())
-				.scheduleStartDate(schedule.getScheduleStartdate())
-				.scheduleEndDate(schedule.getScheduleEnddate())
-				.teamId(schedule.getTeam().getTeamSeq())
-				.userId(schedule.getUser().getUserId())
-				.build();
-			//참여자 정보 담아줌
+			scheduleSeq(schedule.getScheduleSeq())
+			.meetingId(schedule.getMeetingId())
+			.scheduleName(schedule.getScheduleName())
+			.scheduleDescription(schedule.getScheduleDescription())
+			.scheduleStartDate(schedule.getScheduleStartdate())
+			.scheduleEndDate(schedule.getScheduleEnddate())
+			.teamId(schedule.getTeam().getTeamSeq())
+			.userId(schedule.getUser().getUserId())
+			.build();
+		//참여자 정보 담아줌
 		for (Participant scheduleP : schedule.getParticipants()) {
-				users.add(scheduleP.getUser().getUsername()); }
-			response.setParticipants(users);
+			users.add(scheduleP.getUser().getUsername());
+		}
+		response.setParticipants(users);
 		return response;
 	}
 
@@ -73,9 +74,9 @@ public class ScheduleService {
 		//팀에 해당하는 스케쥴 찾기
 		List<Schedule> schedules = scheduleRepository.findAllByTeam(team);
 		//반환 리스트 생성
-		List<ScheduleGetDto> response= new ArrayList<>();
+		List<ScheduleGetDto> response = new ArrayList<>();
 
-		for (Schedule s: schedules) {
+		for (Schedule s : schedules) {
 
 			List<String> users = new ArrayList<>();
 

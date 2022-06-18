@@ -14,7 +14,6 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 import com.checkmate.backend.entity.user.User;
 import com.checkmate.backend.repo.UserRepository;
-import com.checkmate.backend.service.CustomUserDetailService;
 
 @ExtendWith(MockitoExtension.class)
 class CustomUserDetailServiceTest {
@@ -45,13 +44,13 @@ class CustomUserDetailServiceTest {
 
 	@Test
 	@DisplayName("user가 null인경우 UsernameNotFoundException 에러 반환")
-	public void userNullThrowUsernameNotFoundException(){
+	public void userNullThrowUsernameNotFoundException() {
 		String userId = "test";
 		User user = mock(User.class);
 
 		when(userRepository.findByUserId(userId)).thenReturn(null);
 
-		assertThrows(UsernameNotFoundException.class,() -> customUserDetailService.loadUserByUsername(userId));
+		assertThrows(UsernameNotFoundException.class, () -> customUserDetailService.loadUserByUsername(userId));
 	}
 
 }

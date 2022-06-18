@@ -5,9 +5,9 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
+import com.checkmate.backend.entity.oauth.UserPrincipal;
 import com.checkmate.backend.entity.user.User;
 import com.checkmate.backend.repo.UserRepository;
-import com.checkmate.backend.entity.oauth.UserPrincipal;
 
 import lombok.RequiredArgsConstructor;
 

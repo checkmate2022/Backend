@@ -22,10 +22,10 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.filter.CharacterEncodingFilter;
 
-import com.checkmate.backend.entity.user.User;
-import com.checkmate.backend.repo.UserRepository;
 import com.checkmate.backend.entity.oauth.ProviderType;
 import com.checkmate.backend.entity.oauth.RoleType;
+import com.checkmate.backend.entity.user.User;
+import com.checkmate.backend.repo.UserRepository;
 
 @ExtendWith(MockitoExtension.class)
 @AutoConfigureMockMvc
@@ -68,7 +68,7 @@ class AuthControllerTest {
 
 		userRepository.save(user);
 
-		MvcResult result = mvc.perform(post(url+"/login")
+		MvcResult result = mvc.perform(post(url + "/login")
 			.content("{"
 				+ "  \"id\" : \"test@gmail.com\", "
 				+ "  \"password\": \"1234\" "
