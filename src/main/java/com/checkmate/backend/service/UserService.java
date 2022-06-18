@@ -4,21 +4,24 @@ import java.time.LocalDateTime;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import com.checkmate.backend.entity.user.User;
-import com.checkmate.backend.repo.UserRepository;
 import com.checkmate.backend.entity.oauth.ProviderType;
 import com.checkmate.backend.entity.oauth.RoleType;
+import com.checkmate.backend.entity.user.User;
 import com.checkmate.backend.model.dto.UserDto;
+import com.checkmate.backend.repo.UserRepository;
 
 import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class UserService {
 	private final UserRepository userRepository;
 	private final PasswordEncoder passwordEncoder;
 
+	@Transactional(readOnly = true)
 	public User getUser(String userId) {
 		return userRepository.findByUserId(userId);
 	}
@@ -45,4 +48,19 @@ public class UserService {
 		return userRepository.countByUserId(userId);
 	}
 
+	public void deleteUser(User user) {
+		userRepository.delete(user);
+	}
+
+	public User modifyUser(User user, String username, String password) {
+		user.update(username, password);
+		return user;
+	}
+
+	public boolean checkPassword(User user, String password) {
+		if (passwordEncoder.matches(password, user.getPassword()))
+			return true;
+		else
+			return false;
+	}
 }

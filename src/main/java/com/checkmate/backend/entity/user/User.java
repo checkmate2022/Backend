@@ -18,9 +18,9 @@ import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import com.checkmate.backend.entity.avatar.Avatar;
 import com.checkmate.backend.entity.oauth.ProviderType;
 import com.checkmate.backend.entity.oauth.RoleType;
-import com.checkmate.backend.entity.avatar.Avatar;
 import com.checkmate.backend.entity.schedule.Schedule;
 import com.checkmate.backend.entity.team.Team;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -115,6 +115,11 @@ public class User {
 	//userImage 설정
 	public void setUserImage(String imageUrl) {
 		this.userImage = imageUrl;
+	}
+
+	public void update(String username, String password) {
+		this.username = username;
+		this.password = password;
 	}
 
 }
