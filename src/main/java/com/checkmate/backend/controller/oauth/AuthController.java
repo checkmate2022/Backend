@@ -18,16 +18,16 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.checkmate.backend.advice.exception.TokenValidFailedException;
 import com.checkmate.backend.common.SingleResult;
-import com.checkmate.backend.entity.user.UserRefreshToken;
-import com.checkmate.backend.repo.UserRefreshTokenRepository;
-import com.checkmate.backend.config.oauth.AppProperties;
-import com.checkmate.backend.entity.oauth.RoleType;
-import com.checkmate.backend.entity.oauth.UserPrincipal;
-import com.checkmate.backend.model.request.AuthRequest;
 import com.checkmate.backend.common.token.AuthToken;
 import com.checkmate.backend.common.token.AuthTokenProvider;
 import com.checkmate.backend.common.util.CookieUtil;
 import com.checkmate.backend.common.util.HeaderUtil;
+import com.checkmate.backend.config.oauth.AppProperties;
+import com.checkmate.backend.entity.oauth.RoleType;
+import com.checkmate.backend.entity.oauth.UserPrincipal;
+import com.checkmate.backend.entity.user.UserRefreshToken;
+import com.checkmate.backend.model.request.AuthRequest;
+import com.checkmate.backend.repo.UserRefreshTokenRepository;
 import com.checkmate.backend.service.ResponseService;
 
 import io.jsonwebtoken.Claims;

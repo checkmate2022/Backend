@@ -10,8 +10,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
-import com.checkmate.backend.entity.user.User;
 import com.checkmate.backend.entity.schedule.Schedule;
+import com.checkmate.backend.entity.user.User;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import lombok.AllArgsConstructor;

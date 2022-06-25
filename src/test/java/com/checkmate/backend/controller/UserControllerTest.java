@@ -26,10 +26,10 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.filter.CharacterEncodingFilter;
 
-import com.checkmate.backend.entity.user.User;
-import com.checkmate.backend.repo.UserRepository;
 import com.checkmate.backend.entity.oauth.ProviderType;
 import com.checkmate.backend.entity.oauth.RoleType;
+import com.checkmate.backend.entity.user.User;
+import com.checkmate.backend.repo.UserRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 @ExtendWith(MockitoExtension.class)

@@ -34,7 +34,6 @@ public class ScheduleGetDto {
 
 	private Long teamId;
 
-
 	public void setParticipants(List<String> participants) {
 		this.participants = participants;
 	}

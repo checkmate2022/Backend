@@ -12,5 +12,6 @@ import com.checkmate.backend.entity.user.User;
 public interface AvatarRepository extends JpaRepository<Avatar, Long> {
 
 	public List<Avatar> findByAvatarName(String avatarName);
+
 	List<Avatar> findAllByUser(User user);
 }

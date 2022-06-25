@@ -10,12 +10,12 @@ import org.springframework.transaction.annotation.Transactional;
 import com.checkmate.backend.entity.team.Team;
 import com.checkmate.backend.entity.team.TeamParticipant;
 import com.checkmate.backend.entity.user.User;
-import com.checkmate.backend.repo.TeamParticipantRepository;
-import com.checkmate.backend.repo.TeamRepository;
-import com.checkmate.backend.repo.UserRepository;
 import com.checkmate.backend.model.dto.TeamDto;
 import com.checkmate.backend.model.request.TeamRequest;
 import com.checkmate.backend.model.response.TeamResponse;
+import com.checkmate.backend.repo.TeamParticipantRepository;
+import com.checkmate.backend.repo.TeamRepository;
+import com.checkmate.backend.repo.UserRepository;
 
 import lombok.RequiredArgsConstructor;
 
