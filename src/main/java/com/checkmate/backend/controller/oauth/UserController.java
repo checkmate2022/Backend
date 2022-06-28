@@ -8,6 +8,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.checkmate.backend.common.ListResult;
 import com.checkmate.backend.common.SingleResult;
 import com.checkmate.backend.entity.user.User;
 import com.checkmate.backend.model.dto.UserDto;
@@ -71,4 +72,11 @@ public class UserController {
 	public SingleResult<Integer> checkId(@Parameter @RequestParam String userId) {
 		return responseService.getSingleResult(userService.checkId(userId));
 	}
+
+	@Operation(summary = "user 검색", description = "사용자 검색")
+	@GetMapping("/search")
+	public ListResult<User> search(@Parameter @RequestParam String query) {
+		return responseService.getListResult(userService.searchUsers(query));
+	}
+
 }
