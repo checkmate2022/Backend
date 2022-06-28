@@ -21,17 +21,17 @@ import org.springframework.security.web.authentication.SimpleUrlAuthenticationSu
 import org.springframework.stereotype.Component;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import com.checkmate.backend.entity.user.UserRefreshToken;
-import com.checkmate.backend.repo.OAuth2AuthorizationRequestBasedOnCookieRepository;
-import com.checkmate.backend.repo.UserRefreshTokenRepository;
-import com.checkmate.backend.config.oauth.AppProperties;
-import com.checkmate.backend.entity.oauth.ProviderType;
-import com.checkmate.backend.entity.oauth.RoleType;
 import com.checkmate.backend.common.info.OAuth2UserInfo;
 import com.checkmate.backend.common.info.OAuth2UserInfoFactory;
 import com.checkmate.backend.common.token.AuthToken;
 import com.checkmate.backend.common.token.AuthTokenProvider;
 import com.checkmate.backend.common.util.CookieUtil;
+import com.checkmate.backend.config.oauth.AppProperties;
+import com.checkmate.backend.entity.oauth.ProviderType;
+import com.checkmate.backend.entity.oauth.RoleType;
+import com.checkmate.backend.entity.user.UserRefreshToken;
+import com.checkmate.backend.repo.OAuth2AuthorizationRequestBasedOnCookieRepository;
+import com.checkmate.backend.repo.UserRefreshTokenRepository;
 
 import lombok.RequiredArgsConstructor;
 

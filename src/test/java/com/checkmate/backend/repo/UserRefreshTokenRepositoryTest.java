@@ -11,7 +11,6 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import com.checkmate.backend.entity.user.UserRefreshToken;
-import com.checkmate.backend.repo.UserRefreshTokenRepository;
 
 @ExtendWith(SpringExtension.class)
 @DataJpaTest

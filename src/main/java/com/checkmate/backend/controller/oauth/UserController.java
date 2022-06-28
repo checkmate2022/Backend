@@ -11,8 +11,8 @@ import org.springframework.web.bind.annotation.RestController;
 import com.checkmate.backend.common.SingleResult;
 import com.checkmate.backend.entity.user.User;
 import com.checkmate.backend.model.dto.UserDto;
-import com.checkmate.backend.service.UserService;
 import com.checkmate.backend.service.ResponseService;
+import com.checkmate.backend.service.UserService;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;

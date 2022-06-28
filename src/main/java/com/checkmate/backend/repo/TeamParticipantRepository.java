@@ -21,4 +21,6 @@ public interface TeamParticipantRepository extends JpaRepository<TeamParticipant
 
 	List<TeamParticipant> findAllByUser(User user);
 
+	List<TeamParticipant> findAllByTeam(Team team);
+
 }

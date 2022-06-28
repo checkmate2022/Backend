@@ -21,8 +21,8 @@ import com.checkmate.backend.entity.avatar.Avatar;
 import com.checkmate.backend.entity.user.User;
 import com.checkmate.backend.service.AvatarService;
 import com.checkmate.backend.service.FileService;
-import com.checkmate.backend.service.UserService;
 import com.checkmate.backend.service.ResponseService;
+import com.checkmate.backend.service.UserService;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;

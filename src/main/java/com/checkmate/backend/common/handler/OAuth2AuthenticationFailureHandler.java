@@ -14,8 +14,8 @@ import org.springframework.security.web.authentication.SimpleUrlAuthenticationFa
 import org.springframework.stereotype.Component;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import com.checkmate.backend.repo.OAuth2AuthorizationRequestBasedOnCookieRepository;
 import com.checkmate.backend.common.util.CookieUtil;
+import com.checkmate.backend.repo.OAuth2AuthorizationRequestBasedOnCookieRepository;
 
 import lombok.RequiredArgsConstructor;
 

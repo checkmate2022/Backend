@@ -12,10 +12,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
-import com.checkmate.backend.entity.user.User;
 import com.checkmate.backend.entity.oauth.ProviderType;
 import com.checkmate.backend.entity.oauth.RoleType;
-import com.checkmate.backend.repo.UserRepository;
+import com.checkmate.backend.entity.user.User;
 
 @ExtendWith(SpringExtension.class)
 @DataJpaTest

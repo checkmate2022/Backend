@@ -17,15 +17,15 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 import com.checkmate.backend.advice.RestAuthenticationEntryPoint;
-import com.checkmate.backend.repo.OAuth2AuthorizationRequestBasedOnCookieRepository;
-import com.checkmate.backend.repo.UserRefreshTokenRepository;
 import com.checkmate.backend.common.filter.TokenAuthenticationFilter;
 import com.checkmate.backend.common.handler.OAuth2AuthenticationFailureHandler;
 import com.checkmate.backend.common.handler.OAuth2AuthenticationSuccessHandler;
 import com.checkmate.backend.common.handler.TokenAccessDeniedHandler;
+import com.checkmate.backend.common.token.AuthTokenProvider;
+import com.checkmate.backend.repo.OAuth2AuthorizationRequestBasedOnCookieRepository;
+import com.checkmate.backend.repo.UserRefreshTokenRepository;
 import com.checkmate.backend.service.CustomOAuth2UserService;
 import com.checkmate.backend.service.CustomUserDetailService;
-import com.checkmate.backend.common.token.AuthTokenProvider;
 
 import lombok.RequiredArgsConstructor;
 
