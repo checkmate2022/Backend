@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+
+import com.checkmate.backend.common.ListResult;
 import com.checkmate.backend.advice.exception.UserNotFoundException;
 import com.checkmate.backend.common.CommonResult;
 import com.checkmate.backend.common.SingleResult;
@@ -75,6 +77,13 @@ public class UserController {
 	@PostMapping("/check/userId")
 	public SingleResult<Integer> checkId(@Parameter @RequestParam String userId) {
 		return responseService.getSingleResult(userService.checkId(userId));
+	}
+
+
+	@Operation(summary = "user 검색", description = "사용자 검색")
+	@GetMapping("/search")
+	public ListResult<User> search(@Parameter @RequestParam String query) {
+		return responseService.getListResult(userService.searchUsers(query));
 	}
 
 	@Operation(summary = "password 확인", description = "password 맞는지 아닌지 체크한다.", security = {

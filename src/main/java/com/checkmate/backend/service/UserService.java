@@ -1,6 +1,7 @@
 package com.checkmate.backend.service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -46,6 +47,10 @@ public class UserService {
 
 	public int checkId(String userId) {
 		return userRepository.countByUserId(userId);
+	}
+
+	public List<User> searchUsers(String query) {
+		return userRepository.searchUsers(query);
 	}
 
 	public void deleteUser(User user) {
