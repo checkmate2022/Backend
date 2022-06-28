@@ -117,4 +117,9 @@ public class User {
 		this.userImage = imageUrl;
 	}
 
+	public void update(String username, String password) {
+		this.username = username;
+		this.password = password;
+	}
+
 }
