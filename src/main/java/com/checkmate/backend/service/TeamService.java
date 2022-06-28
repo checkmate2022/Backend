@@ -12,6 +12,7 @@ import com.checkmate.backend.entity.team.TeamParticipant;
 import com.checkmate.backend.entity.user.User;
 import com.checkmate.backend.model.dto.TeamDto;
 import com.checkmate.backend.model.request.TeamRequest;
+import com.checkmate.backend.model.response.ParticipantResponse;
 import com.checkmate.backend.model.response.TeamResponse;
 import com.checkmate.backend.repo.TeamParticipantRepository;
 import com.checkmate.backend.repo.TeamRepository;
@@ -70,6 +71,34 @@ public class TeamService {
 		}
 
 		return teams;
+	}
+
+	// public List<ParticipantResponse> findParticipantsByTeam(long teamSeq){
+	// 	return teamRepository.findParticipantsByTeamSeq(teamSeq);
+	// }
+
+	// 사용자별 팀 조회
+	public List<ParticipantResponse> findUserByTeam(long teamId) {
+		Team team = teamRepository.findById(teamId).orElseThrow();
+		//user에 따라 participant 찾음
+		List<TeamParticipant> participants = participantRepository.findAllByTeam(team);
+
+		List<ParticipantResponse> participantResponses = new ArrayList<>();
+		//반복문
+		for (TeamParticipant p : participants) {
+			//response 객체 생성
+			Optional<User> user = userRepository.findById(p.getUser().getUserSeq());
+			ParticipantResponse response = ParticipantResponse.builder().
+				userSeq(user.get().getUserSeq())
+				.userId(user.get().getUserId())
+				.username(user.get().getUsername())
+				.build();
+
+			participantResponses.add(response);
+
+		}
+
+		return participantResponses;
 	}
 
 	// team 등록

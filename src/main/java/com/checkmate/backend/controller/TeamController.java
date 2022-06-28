@@ -18,6 +18,7 @@ import com.checkmate.backend.common.SingleResult;
 import com.checkmate.backend.entity.team.Team;
 import com.checkmate.backend.entity.user.User;
 import com.checkmate.backend.model.request.TeamRequest;
+import com.checkmate.backend.model.response.ParticipantResponse;
 import com.checkmate.backend.model.response.TeamResponse;
 import com.checkmate.backend.repo.ScheduleRepository;
 import com.checkmate.backend.service.ResponseService;
@@ -69,6 +70,14 @@ public class TeamController {
 
 		return responseService.getListResult(teamService.findTeamByUser(user));
 	}
+
+	@Operation(summary = "팀별 사용자 조회", description = "팀별 사용자 조회하기")
+	@GetMapping("/{teamId}/user")
+	public ListResult<ParticipantResponse> findUserByTeam(
+		@Parameter(description = "팀id", required = true, example = "1") @PathVariable Long teamId) {
+		return responseService.getListResult(teamService.findUserByTeam(teamId));
+	}
+
 
 	@Operation(summary = "팀 등록", description = "팀등록", security = {@SecurityRequirement(name = "bearer-key")})
 	@PostMapping
