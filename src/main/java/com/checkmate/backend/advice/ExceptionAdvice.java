@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import com.checkmate.backend.advice.exception.LoginFailedException;
 import com.checkmate.backend.advice.exception.OAuthProviderMissMatchException;
 import com.checkmate.backend.advice.exception.TokenValidFailedException;
+import com.checkmate.backend.advice.exception.UserNotFoundException;
 import com.checkmate.backend.common.CommonResult;
 import com.checkmate.backend.service.ResponseService;
 
@@ -54,4 +55,11 @@ public class ExceptionAdvice {
 		OAuthProviderMissMatchException e) {
 		return responseService.getFailResult(HttpStatus.INTERNAL_SERVER_ERROR.value(), "");
 	}
+
+	@ExceptionHandler(UserNotFoundException.class)
+	@ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+	protected CommonResult userNotFoundException(HttpServletRequest request, UserNotFoundException e) {
+		return responseService.getFailResult(HttpStatus.INTERNAL_SERVER_ERROR.value(), "사용자가 존재하지 않습니다.");
+	}
+
 }
