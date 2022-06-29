@@ -77,9 +77,10 @@ public class AvatarController {
 
 		User user = userService.getUser(principal.getUsername());
 		LocalDateTime now = LocalDateTime.now();
+		avatarName=avatarName.replace("\"","");
 
-		File OriginFile = fileService.saveOriginFile(originfile, avatarName + "_" + user.getUserId());
-		File CreatedFile = fileService.saveCreatedFile(createdfile, avatarName + "_" + user.getUserId());
+		File OriginFile = fileService.saveOriginFile(originfile, avatarName+"_"+user.getUserId());
+		File CreatedFile = fileService.saveCreatedFile(createdfile, avatarName+"_"+user.getUserId());
 		Avatar avatar = new Avatar(user, avatarName, avatarDescription, avatarStyle, avatarStyleId,
 			OriginFile.getPath(), CreatedFile.getPath(), now);
 
