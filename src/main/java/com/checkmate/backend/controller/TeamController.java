@@ -78,7 +78,6 @@ public class TeamController {
 		return responseService.getListResult(teamService.findUserByTeam(teamId));
 	}
 
-
 	@Operation(summary = "팀 등록", description = "팀등록", security = {@SecurityRequirement(name = "bearer-key")})
 	@PostMapping
 	public SingleResult<Team> createTeam(@RequestBody @Parameter TeamRequest teamdto) {

@@ -2,6 +2,8 @@ package com.checkmate.backend.entity.team;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -41,9 +43,14 @@ public class TeamParticipant {
 	@JoinColumn(name = "TEAM_SEQ")
 	private Team team;
 
-	public TeamParticipant(User user, Team team) {
+	@Column(name = "TEAM_ROLE_TYPE", length = 20)
+	@Enumerated(EnumType.STRING)
+	private TeamRoleType teamRoleType;
+
+	public TeamParticipant(User user, Team team, TeamRoleType teamRoleType) {
 		this.user = user;
 		this.team = team;
+		this.teamRoleType = teamRoleType;
 	}
 
 	public Team getTeam() {
