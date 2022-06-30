@@ -68,12 +68,12 @@ public class Channel {
 		@NotNull LocalDateTime modifiedAt
 	) {
 		this.channelName = channelName;
-		this.team=team;
+		this.team = team;
 		this.createdAt = createdAt;
 		this.modifiedAt = modifiedAt;
 	}
 
-	public void setChannelName(String channelName){
-		this.channelName=channelName;
+	public void setChannelName(String channelName) {
+		this.channelName = channelName;
 	}
 }

@@ -40,11 +40,11 @@ public class FileService {
 					originalFileExtension = ".png";
 				} else if (contentType.contains("image/gif")) {
 					originalFileExtension = ".gif";
-				}else if (contentType.contains("multipart/jpeg")) {
+				} else if (contentType.contains("multipart/jpeg")) {
 					originalFileExtension = ".jpeg";
 				} else if (contentType.contains("multipart/jpg")) {
 					originalFileExtension = ".jpg";
-				}else if (contentType.contains("multipart/png")) {
+				} else if (contentType.contains("multipart/png")) {
 					originalFileExtension = ".png";
 				}
 				sb.append(name + "_origin" + originalFileExtension);
@@ -86,11 +86,11 @@ public class FileService {
 					originalFileExtension = ".png";
 				} else if (contentType.contains("image/gif")) {
 					originalFileExtension = ".gif";
-				}else if (contentType.contains("multipart/jpeg")) {
+				} else if (contentType.contains("multipart/jpeg")) {
 					originalFileExtension = ".jpeg";
 				} else if (contentType.contains("multipart/jpg")) {
 					originalFileExtension = ".jpg";
-				}else if (contentType.contains("multipart/png")) {
+				} else if (contentType.contains("multipart/png")) {
 					originalFileExtension = ".png";
 				}
 				sb.append(name + "_created" + originalFileExtension);
@@ -143,11 +143,11 @@ public class FileService {
 					originalFileExtension = ".png";
 				} else if (contentType.contains("image/gif")) {
 					originalFileExtension = ".gif";
-				}else if (contentType.contains("multipart/jpeg")) {
+				} else if (contentType.contains("multipart/jpeg")) {
 					originalFileExtension = ".jpeg";
 				} else if (contentType.contains("multipart/jpg")) {
 					originalFileExtension = ".jpg";
-				}else if (contentType.contains("multipart/png")) {
+				} else if (contentType.contains("multipart/png")) {
 					originalFileExtension = ".png";
 				}
 				sb.append(name + "_origin" + originalFileExtension);
@@ -200,11 +200,11 @@ public class FileService {
 					originalFileExtension = ".png";
 				} else if (contentType.contains("image/gif")) {
 					originalFileExtension = ".gif";
-				}else if (contentType.contains("multipart/jpeg")) {
+				} else if (contentType.contains("multipart/jpeg")) {
 					originalFileExtension = ".jpeg";
 				} else if (contentType.contains("multipart/jpg")) {
 					originalFileExtension = ".jpg";
-				}else if (contentType.contains("multipart/png")) {
+				} else if (contentType.contains("multipart/png")) {
 					originalFileExtension = ".png";
 				}
 				sb.append(name + "_created" + originalFileExtension);
