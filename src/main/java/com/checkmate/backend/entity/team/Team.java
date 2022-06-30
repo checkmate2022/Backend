@@ -15,6 +15,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import com.checkmate.backend.entity.channel.Channel;
 import com.checkmate.backend.entity.schedule.Schedule;
 import com.checkmate.backend.entity.user.User;
 import com.checkmate.backend.model.dto.TeamDto;
@@ -52,6 +53,9 @@ public class Team {
 	@OneToMany(mappedBy = "team", cascade = CascadeType.ALL)
 	@JsonIgnore
 	private List<Schedule> schedules = new ArrayList<>();
+
+	@OneToMany(mappedBy = "team", cascade = CascadeType.ALL)
+	private List<Channel> channels = new ArrayList<>();
 
 	@OneToMany(mappedBy = "team", cascade = CascadeType.ALL)
 	@JsonIgnore
