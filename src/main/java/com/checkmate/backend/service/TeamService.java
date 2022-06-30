@@ -7,8 +7,10 @@ import java.util.Optional;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.checkmate.backend.entity.avatar.Avatar;
 import com.checkmate.backend.entity.team.Team;
 import com.checkmate.backend.entity.team.TeamParticipant;
+import com.checkmate.backend.entity.team.TeamRoleType;
 import com.checkmate.backend.entity.user.User;
 import com.checkmate.backend.model.dto.TeamDto;
 import com.checkmate.backend.model.request.TeamRequest;
@@ -73,11 +75,7 @@ public class TeamService {
 		return teams;
 	}
 
-	// public List<ParticipantResponse> findParticipantsByTeam(long teamSeq){
-	// 	return teamRepository.findParticipantsByTeamSeq(teamSeq);
-	// }
-
-	// 사용자별 팀 조회
+	// 팀별 사용자 조회
 	public List<ParticipantResponse> findUserByTeam(long teamId) {
 		Team team = teamRepository.findById(teamId).orElseThrow();
 		//user에 따라 participant 찾음
@@ -92,8 +90,14 @@ public class TeamService {
 				userSeq(user.get().getUserSeq())
 				.userId(user.get().getUserId())
 				.username(user.get().getUsername())
+				.teamRoleType(p.getTeamRoleType())
 				.build();
 
+			for (Avatar a : user.get().getAvatar()) {
+				if (a.getIsBasic()) {
+					response.setAvatar(a);
+				}
+			}
 			participantResponses.add(response);
 
 		}
@@ -116,12 +120,12 @@ public class TeamService {
 			//닉네임으로 User 찾음
 			User findUser = userRepository.findByUsername(p);
 			//participant 설정
-			TeamParticipant participant = new TeamParticipant(findUser, save);
+			TeamParticipant participant = new TeamParticipant(findUser, save, TeamRoleType.MEMBER);
 			participant = participantRepository.save(participant);
 			save.addParticipant(participant);
 		}
 		//작성자도 참여자로 넣음
-		TeamParticipant participant = new TeamParticipant(user, save);
+		TeamParticipant participant = new TeamParticipant(user, save, TeamRoleType.LEADER);
 		participant = participantRepository.save(participant);
 
 		save.addParticipant(participant);
@@ -143,12 +147,12 @@ public class TeamService {
 		List<String> participants = teamReq.getParticipantName();
 		for (var p : participants) {
 			User findUser = userRepository.findByUsername(p);
-			TeamParticipant participant = new TeamParticipant(findUser, team);
+			TeamParticipant participant = new TeamParticipant(findUser, team, TeamRoleType.MEMBER);
 			participant = participantRepository.save(participant);
 			team.addParticipant(participant);
 		}
 
-		TeamParticipant participant = new TeamParticipant(team.getUser(), team);
+		TeamParticipant participant = new TeamParticipant(team.getUser(), team, TeamRoleType.LEADER);
 		participant = participantRepository.save(participant);
 		team.addParticipant(participant);
 
