@@ -1,20 +1,27 @@
 package com.checkmate.backend.entity.board;
 
+import java.time.LocalDateTime;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+
+import com.checkmate.backend.entity.channel.Channel;
+import com.checkmate.backend.entity.user.User;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 
 @Getter
-@Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
@@ -24,6 +31,49 @@ public class Board {
 
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Id
-	@Column(name = "AVATAR_ID")
-	private Long baordSeq;
+	@Column(name = "BOARD_SEQ")
+	private Long boardSeq;
+
+	@Column(name = "TITLE")
+	private String title;
+
+	@Column(name = "CONTENT")
+	private String content;
+
+	@Column(name = "CREATED_AT")
+	private LocalDateTime createdAt;
+
+	@Column(name = "MODIFIED_AT")
+	private LocalDateTime modifiedAt;
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "USER_ID")
+	private User user;
+
+	@JsonIgnore
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "CHANNEL_ID")
+	private Channel channel;
+
+	public Board(
+		String title,
+		String content,
+		User user,
+		Channel channel,
+		LocalDateTime createdAt,
+		LocalDateTime modifiedAt
+	) {
+		this.title = title;
+		this.content = content;
+		this.user = user;
+		this.channel = channel;
+		this.createdAt = createdAt;
+		this.modifiedAt = modifiedAt;
+	}
+
+	public void update(String title, String content) {
+		this.title = title;
+		this.content = content;
+	}
+
 }
