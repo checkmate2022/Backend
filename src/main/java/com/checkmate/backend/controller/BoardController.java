@@ -38,10 +38,17 @@ public class BoardController {
 	private final UserService userService;
 
 	@Operation(summary = "채널별 게시판 조회", description = "채널별 게시판 전체 조회")
-	@GetMapping("/{channelId}")
+	@GetMapping("/channel/{channelId}")
 	public ListResult<BoardResponse> getBoardsByChannel(
 		@Parameter(description = "채널 id") @PathVariable long channelId) {
 		return responseService.getListResult(boardService.getBoards(channelId));
+	}
+
+	@Operation(summary = "팀별 게시판 조회", description = "팀별 게시판 전체 조회")
+	@GetMapping("")
+	public ListResult<BoardResponse> getBoardsByTeam(
+		@Parameter(description = "팀 id") long teamId) {
+		return responseService.getListResult(boardService.getBoardsByTeam(teamId));
 	}
 
 	@Operation(summary = "게시판 생성", description = "게시판을 생성한다(title, content, Channel)", security = {
