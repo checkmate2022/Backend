@@ -9,11 +9,13 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.checkmate.backend.entity.board.Board;
 import com.checkmate.backend.entity.channel.Channel;
+import com.checkmate.backend.entity.team.Team;
 import com.checkmate.backend.entity.user.User;
 import com.checkmate.backend.model.dto.BoardDto;
 import com.checkmate.backend.model.response.BoardResponse;
 import com.checkmate.backend.repo.BoardRepository;
 import com.checkmate.backend.repo.ChannelRepository;
+import com.checkmate.backend.repo.TeamRepository;
 
 import lombok.RequiredArgsConstructor;
 
@@ -24,6 +26,7 @@ public class BoardService {
 
 	private final BoardRepository boardRepository;
 	private final ChannelRepository channelRepository;
+	private final TeamRepository teamRepository;
 
 	//ㄱㅔ시판 생성 (채널마다)
 	public Board create(long channelId, BoardDto boardDto, User user) {
@@ -31,7 +34,7 @@ public class BoardService {
 		System.out.println("this");
 		Channel channel = channelRepository.findById(channelId).orElseThrow();
 		System.out.println("this");
-		Board board = new Board(boardDto.getTitle(), boardDto.getContent(), user, channel, now, now);
+		Board board = new Board(boardDto.getTitle(), boardDto.getContent(), user, channel,channel.getTeam(), now, now);
 		return boardRepository.save(board);
 	}
 
@@ -59,6 +62,22 @@ public class BoardService {
 	public List<BoardResponse> getBoards(long channelId) {
 		Channel channel = channelRepository.findById(channelId).orElseThrow();
 		List<Board> boards = boardRepository.findAllByChannel(channel);
+		List<BoardResponse> collect =
+			boards.stream().map(p -> BoardResponse.builder()
+				.baordSeq(p.getBoardSeq())
+				.content(p.getContent())
+				.title(p.getTitle())
+				.username(p.getUser().getUsername())
+				.userImage(p.getUser().getUserImage())
+				.createDate(p.getCreatedAt())
+				.build()).collect(Collectors.toList());
+		return collect;
+	}
+
+	//게시판 팀 별 조회
+	public List<BoardResponse> getBoardsByTeam(long teamId) {
+		Team team=teamRepository.findById(teamId).orElseThrow();
+		List<Board> boards = boardRepository.findAllByTeam(team);
 		List<BoardResponse> collect =
 			boards.stream().map(p -> BoardResponse.builder()
 				.baordSeq(p.getBoardSeq())

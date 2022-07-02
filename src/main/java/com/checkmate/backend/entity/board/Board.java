@@ -13,6 +13,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import com.checkmate.backend.entity.channel.Channel;
+import com.checkmate.backend.entity.team.Team;
 import com.checkmate.backend.entity.user.User;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -55,11 +56,17 @@ public class Board {
 	@JoinColumn(name = "CHANNEL_ID")
 	private Channel channel;
 
+	@JsonIgnore
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = "TEAM_ID")
+	private Team team;
+
 	public Board(
 		String title,
 		String content,
 		User user,
 		Channel channel,
+		Team team,
 		LocalDateTime createdAt,
 		LocalDateTime modifiedAt
 	) {
@@ -67,6 +74,7 @@ public class Board {
 		this.content = content;
 		this.user = user;
 		this.channel = channel;
+		this.team=team;
 		this.createdAt = createdAt;
 		this.modifiedAt = modifiedAt;
 	}
