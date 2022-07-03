@@ -34,7 +34,7 @@ public class BoardService {
 		System.out.println("this");
 		Channel channel = channelRepository.findById(channelId).orElseThrow();
 		System.out.println("this");
-		Board board = new Board(boardDto.getTitle(), boardDto.getContent(), user, channel,channel.getTeam(), now, now);
+		Board board = new Board(boardDto.getTitle(), boardDto.getContent(), user, channel, channel.getTeam(), now, now);
 		return boardRepository.save(board);
 	}
 
@@ -76,7 +76,7 @@ public class BoardService {
 
 	//게시판 팀 별 조회
 	public List<BoardResponse> getBoardsByTeam(long teamId) {
-		Team team=teamRepository.findById(teamId).orElseThrow();
+		Team team = teamRepository.findById(teamId).orElseThrow();
 		List<Board> boards = boardRepository.findAllByTeam(team);
 		List<BoardResponse> collect =
 			boards.stream().map(p -> BoardResponse.builder()

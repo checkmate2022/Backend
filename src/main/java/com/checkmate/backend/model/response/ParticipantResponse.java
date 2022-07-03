@@ -24,6 +24,8 @@ public class ParticipantResponse {
 
 	private String username;
 
+	private String userImg;
+
 	private TeamRoleType teamRoleType;
 
 }
