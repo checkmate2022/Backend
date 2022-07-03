@@ -90,6 +90,7 @@ public class TeamService {
 				userSeq(user.get().getUserSeq())
 				.userId(user.get().getUserId())
 				.username(user.get().getUsername())
+				.userImg(user.get().getUserImage())
 				.teamRoleType(p.getTeamRoleType())
 				.build();
 
@@ -99,9 +100,7 @@ public class TeamService {
 				}
 			}
 			participantResponses.add(response);
-
 		}
-
 		return participantResponses;
 	}
 

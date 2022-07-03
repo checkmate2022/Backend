@@ -74,7 +74,7 @@ public class Board {
 		this.content = content;
 		this.user = user;
 		this.channel = channel;
-		this.team=team;
+		this.team = team;
 		this.createdAt = createdAt;
 		this.modifiedAt = modifiedAt;
 	}
