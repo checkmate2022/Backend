@@ -1,6 +1,7 @@
 package com.checkmate.backend.controller;
 
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -9,8 +10,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.checkmate.backend.common.CommonResult;
+import com.checkmate.backend.common.ListResult;
 import com.checkmate.backend.common.SingleResult;
 import com.checkmate.backend.entity.channel.Channel;
+import com.checkmate.backend.model.dto.ScheduleGetDto;
 import com.checkmate.backend.service.ChannelService;
 import com.checkmate.backend.service.ResponseService;
 
@@ -29,6 +32,12 @@ public class ChannelController {
 
 	private final ResponseService responseService;
 	private final ChannelService channelService;
+
+	@Operation(summary = "팀별 채널 조회")
+	@GetMapping("/team/{teamId}")
+	public ListResult<Channel> getSchedulesByTeam(@Parameter @PathVariable Long teamId) {
+		return responseService.getListResult(channelService.findAllByTeam(teamId));
+	}
 
 	@Operation(summary = "채널 등록", description = "채널 등록")
 	@PostMapping
