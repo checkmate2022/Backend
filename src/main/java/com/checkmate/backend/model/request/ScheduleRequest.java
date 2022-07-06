@@ -3,6 +3,8 @@ package com.checkmate.backend.model.request;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import com.checkmate.backend.entity.schedule.ScheduleType;
+
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -15,6 +17,8 @@ public class ScheduleRequest {
 	private String scheduleName;
 
 	private String scheduleDescription;
+
+	private ScheduleType scheduleType;
 
 	private LocalDateTime scheduleStartDate;
 

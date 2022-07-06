@@ -1,6 +1,7 @@
 package com.checkmate.backend.service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,6 +20,12 @@ public class ChannelService {
 
 	private final ChannelRepository channelRepository;
 	private final TeamRepository teamRepository;
+
+	@Transactional(readOnly = true)
+	public List<Channel> findAllByTeam(long teamId){
+		Team team=teamRepository.findById(teamId).orElseThrow();
+		return channelRepository.findAllByTeam(team);
+	}
 
 	//채널 생성
 	public Channel create(long teamId, String channelName) {
