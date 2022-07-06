@@ -2,6 +2,9 @@ package com.checkmate.backend.model.dto;
 
 import java.time.LocalDateTime;
 
+import com.checkmate.backend.entity.schedule.ScheduleType;
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -14,15 +17,18 @@ public class ScheduleDto {
 	private String scheduleName;
 
 	private String scheduleDescription;
-
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
 	private LocalDateTime scheduleStartDate;
-
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
 	private LocalDateTime scheduleEndDate;
 
-	public ScheduleDto(String scheduleName, String scheduleDescription, LocalDateTime scheduleStartDate,
+	private ScheduleType scheduleType;
+
+	public ScheduleDto(String scheduleName, String scheduleDescription, ScheduleType scheduleType,LocalDateTime scheduleStartDate,
 		LocalDateTime scheduleEndDate) {
 		this.scheduleName = scheduleName;
 		this.scheduleDescription = scheduleDescription;
+		this.scheduleType=scheduleType;
 		this.scheduleStartDate = scheduleStartDate;
 		this.scheduleEndDate = scheduleEndDate;
 	}

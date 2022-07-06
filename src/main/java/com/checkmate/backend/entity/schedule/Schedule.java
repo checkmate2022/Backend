@@ -8,6 +8,8 @@ import java.util.Random;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -16,11 +18,14 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
 
+import com.checkmate.backend.entity.oauth.RoleType;
 import com.checkmate.backend.entity.participant.Participant;
 import com.checkmate.backend.entity.team.Team;
 import com.checkmate.backend.entity.user.User;
 import com.checkmate.backend.model.dto.ScheduleDto;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
@@ -63,9 +68,15 @@ public class Schedule {
 	@Column(name = "SCHEDULE_DESCRIPTION")
 	private String scheduleDescription;
 
+	@Column(name = "SCHEDULE_TYPE", length = 20)
+	@Enumerated(EnumType.STRING)
+	private ScheduleType scheduleType;
+
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
 	@Column(name = "SCHEDULE_STARTDATE")
 	private LocalDateTime scheduleStartdate;
 
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
 	@Column(name = "SCHEDULE_ENDDATE")
 	private LocalDateTime scheduleEnddate;
 
@@ -76,6 +87,7 @@ public class Schedule {
 	public Schedule(ScheduleDto scheduleDto) {
 		this.scheduleName = scheduleDto.getScheduleName();
 		this.scheduleDescription = scheduleDto.getScheduleDescription();
+		this.scheduleType=scheduleDto.getScheduleType();
 		this.scheduleStartdate = scheduleDto.getScheduleStartDate();
 		this.scheduleEnddate = scheduleDto.getScheduleEndDate();
 	}
@@ -83,6 +95,7 @@ public class Schedule {
 	public void update(ScheduleDto scheduleDto) {
 		this.scheduleName = scheduleDto.getScheduleName();
 		this.scheduleDescription = scheduleDto.getScheduleDescription();
+		this.scheduleType=scheduleDto.getScheduleType();
 		this.scheduleStartdate = scheduleDto.getScheduleStartDate();
 		this.scheduleEnddate = scheduleDto.getScheduleEndDate();
 	}

@@ -1,5 +1,7 @@
 package com.checkmate.backend.service;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -54,6 +56,7 @@ public class ScheduleService {
 			.meetingId(schedule.getMeetingId())
 			.scheduleName(schedule.getScheduleName())
 			.scheduleDescription(schedule.getScheduleDescription())
+			.scheduleType(schedule.getScheduleType())
 			.scheduleStartDate(schedule.getScheduleStartdate())
 			.scheduleEndDate(schedule.getScheduleEnddate())
 			.teamId(schedule.getTeam().getTeamSeq())
@@ -85,6 +88,7 @@ public class ScheduleService {
 				.meetingId(s.getMeetingId())
 				.scheduleName(s.getScheduleName())
 				.scheduleDescription(s.getScheduleDescription())
+				.scheduleType(s.getScheduleType())
 				.scheduleStartDate(s.getScheduleStartdate())
 				.scheduleEndDate(s.getScheduleEnddate())
 				.teamId(s.getTeam().getTeamSeq())
@@ -105,8 +109,10 @@ public class ScheduleService {
 
 	// 일정 등록
 	public Schedule make(ScheduleRequest scheduleReq, User user) {
+		LocalDateTime start=scheduleReq.getScheduleStartDate();
 
-		ScheduleDto scheduleDto = new ScheduleDto(scheduleReq.getScheduleName(), scheduleReq.getScheduleDescription()
+
+		ScheduleDto scheduleDto = new ScheduleDto(scheduleReq.getScheduleName(), scheduleReq.getScheduleDescription(),scheduleReq.getScheduleType()
 			, scheduleReq.getScheduleStartDate(), scheduleReq.getScheduleEndDate());
 
 		Schedule schedule = new Schedule(scheduleDto);
@@ -141,7 +147,7 @@ public class ScheduleService {
 	public Schedule update(Long scheduleId, ScheduleRequest scheduleReq) {
 
 		ScheduleDto scheduleDto = new ScheduleDto(scheduleReq.getScheduleName(), scheduleReq.getScheduleDescription()
-			, scheduleReq.getScheduleStartDate(), scheduleReq.getScheduleEndDate());
+			, scheduleReq.getScheduleType(), scheduleReq.getScheduleStartDate(), scheduleReq.getScheduleEndDate());
 		Schedule schedule = scheduleRepository.findById(scheduleId).orElseThrow(
 			() -> new IllegalArgumentException("해당 일정은 존재하지 않습니다.")
 		);
