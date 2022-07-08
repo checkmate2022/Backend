@@ -4,6 +4,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import com.checkmate.backend.entity.schedule.ScheduleType;
+import com.fasterxml.jackson.annotation.JsonFormat;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -19,9 +20,9 @@ public class ScheduleRequest {
 	private String scheduleDescription;
 
 	private ScheduleType scheduleType;
-
+	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
 	private LocalDateTime scheduleStartDate;
-
+	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
 	private LocalDateTime scheduleEndDate;
 
 	private List<String> participantName;

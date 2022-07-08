@@ -22,8 +22,8 @@ public class ChannelService {
 	private final TeamRepository teamRepository;
 
 	@Transactional(readOnly = true)
-	public List<Channel> findAllByTeam(long teamId){
-		Team team=teamRepository.findById(teamId).orElseThrow();
+	public List<Channel> findAllByTeam(long teamId) {
+		Team team = teamRepository.findById(teamId).orElseThrow();
 		return channelRepository.findAllByTeam(team);
 	}
 

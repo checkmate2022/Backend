@@ -18,9 +18,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-import javax.validation.constraints.NotNull;
 
-import com.checkmate.backend.entity.oauth.RoleType;
 import com.checkmate.backend.entity.participant.Participant;
 import com.checkmate.backend.entity.team.Team;
 import com.checkmate.backend.entity.user.User;
@@ -43,7 +41,7 @@ import lombok.Setter;
 @Table(name = "SCHEDULE")
 @JsonIdentityInfo(generator = ObjectIdGenerators.IntSequenceGenerator.class)
 public class Schedule {
-	@JsonIgnore
+
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Id
 	@Column(name = "SCHEDULE_SEQ")
@@ -87,7 +85,7 @@ public class Schedule {
 	public Schedule(ScheduleDto scheduleDto) {
 		this.scheduleName = scheduleDto.getScheduleName();
 		this.scheduleDescription = scheduleDto.getScheduleDescription();
-		this.scheduleType=scheduleDto.getScheduleType();
+		this.scheduleType = scheduleDto.getScheduleType();
 		this.scheduleStartdate = scheduleDto.getScheduleStartDate();
 		this.scheduleEnddate = scheduleDto.getScheduleEndDate();
 	}
@@ -95,7 +93,7 @@ public class Schedule {
 	public void update(ScheduleDto scheduleDto) {
 		this.scheduleName = scheduleDto.getScheduleName();
 		this.scheduleDescription = scheduleDto.getScheduleDescription();
-		this.scheduleType=scheduleDto.getScheduleType();
+		this.scheduleType = scheduleDto.getScheduleType();
 		this.scheduleStartdate = scheduleDto.getScheduleStartDate();
 		this.scheduleEnddate = scheduleDto.getScheduleEndDate();
 	}
