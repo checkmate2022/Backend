@@ -24,11 +24,12 @@ public class ScheduleDto {
 
 	private ScheduleType scheduleType;
 
-	public ScheduleDto(String scheduleName, String scheduleDescription, ScheduleType scheduleType,LocalDateTime scheduleStartDate,
+	public ScheduleDto(String scheduleName, String scheduleDescription, ScheduleType scheduleType,
+		LocalDateTime scheduleStartDate,
 		LocalDateTime scheduleEndDate) {
 		this.scheduleName = scheduleName;
 		this.scheduleDescription = scheduleDescription;
-		this.scheduleType=scheduleType;
+		this.scheduleType = scheduleType;
 		this.scheduleStartDate = scheduleStartDate;
 		this.scheduleEndDate = scheduleEndDate;
 	}

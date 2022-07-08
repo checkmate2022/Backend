@@ -1,9 +1,5 @@
 package com.checkmate.backend.entity.schedule;
 
-import java.util.Arrays;
-
-import com.checkmate.backend.entity.oauth.RoleType;
-
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 

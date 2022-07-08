@@ -13,7 +13,6 @@ import com.checkmate.backend.common.CommonResult;
 import com.checkmate.backend.common.ListResult;
 import com.checkmate.backend.common.SingleResult;
 import com.checkmate.backend.entity.channel.Channel;
-import com.checkmate.backend.model.dto.ScheduleGetDto;
 import com.checkmate.backend.service.ChannelService;
 import com.checkmate.backend.service.ResponseService;
 

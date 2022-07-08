@@ -1,7 +1,6 @@
 package com.checkmate.backend.service;
 
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -109,10 +108,10 @@ public class ScheduleService {
 
 	// 일정 등록
 	public Schedule make(ScheduleRequest scheduleReq, User user) {
-		LocalDateTime start=scheduleReq.getScheduleStartDate();
+		LocalDateTime start = scheduleReq.getScheduleStartDate();
 
-
-		ScheduleDto scheduleDto = new ScheduleDto(scheduleReq.getScheduleName(), scheduleReq.getScheduleDescription(),scheduleReq.getScheduleType()
+		ScheduleDto scheduleDto = new ScheduleDto(scheduleReq.getScheduleName(), scheduleReq.getScheduleDescription(),
+			scheduleReq.getScheduleType()
 			, scheduleReq.getScheduleStartDate(), scheduleReq.getScheduleEndDate());
 
 		Schedule schedule = new Schedule(scheduleDto);
