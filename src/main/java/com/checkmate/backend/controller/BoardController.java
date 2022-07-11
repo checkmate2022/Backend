@@ -37,6 +37,13 @@ public class BoardController {
 	private final BoardService boardService;
 	private final UserService userService;
 
+	@Operation(summary = "게시판 단건 조회")
+	@GetMapping("/board/{boardId}")
+	public SingleResult<BoardResponse> findById(
+		@Parameter(description = "게시글 id") @PathVariable long boardId) {
+		return responseService.getSingleResult(boardService.findById(boardId));
+	}
+
 	@Operation(summary = "채널별 게시판 조회", description = "채널별 게시판 전체 조회")
 	@GetMapping("/channel/{channelId}")
 	public ListResult<BoardResponse> getBoardsByChannel(
