@@ -20,9 +20,9 @@ public class ScheduleRequest {
 	private String scheduleDescription;
 
 	private ScheduleType scheduleType;
-	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+
 	private LocalDateTime scheduleStartDate;
-	@JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
+
 	private LocalDateTime scheduleEndDate;
 
 	private List<String> participantName;

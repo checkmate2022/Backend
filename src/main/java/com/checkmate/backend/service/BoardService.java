@@ -89,4 +89,19 @@ public class BoardService {
 				.build()).collect(Collectors.toList());
 		return collect;
 	}
+
+	public BoardResponse findById(long boardId){
+		Board board=boardRepository.findById(boardId).orElseThrow();
+		BoardResponse boardResponse=BoardResponse.builder()
+			.baordSeq(board.getBoardSeq())
+			.content(board.getContent())
+			.title(board.getTitle())
+			.username(board.getUser().getUsername())
+			.userImage(board.getUser().getUserImage())
+			.createDate(board.getCreatedAt())
+			.build();
+		return boardResponse;
+	}
 }
+
+
