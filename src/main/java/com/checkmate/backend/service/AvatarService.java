@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.checkmate.backend.entity.avatar.Avatar;
+import com.checkmate.backend.entity.avatar.AvatarType;
 import com.checkmate.backend.entity.user.User;
 import com.checkmate.backend.repo.AvatarRepository;
 
@@ -30,8 +31,8 @@ public class AvatarService {
 	}
 
 	// 단건 캐릭터 조회
-	public Optional<Avatar> findOne(Long avatarId) {
-		Optional<Avatar> avatar = avatarRepository.findById(avatarId);
+	public Avatar findOne(Long avatarId) {
+		Avatar avatar = avatarRepository.findById(avatarId).orElseThrow();
 		return avatar;
 	}
 
@@ -49,7 +50,7 @@ public class AvatarService {
 	}
 
 	//  캐릭터 수정
-	public Avatar update(Long avatarId, String avatarName, String avatarDescription, String style, Long styleId,
+	public Avatar update(Long avatarId, String avatarName, String avatarDescription, AvatarType style, Long styleId,
 		String OriginFileUrl, String CreatedFileUrl, LocalDateTime dateTime) {
 		Avatar avatar = avatarRepository.findById(avatarId).orElseThrow(
 			() -> new IllegalArgumentException("해당 캐릭터는 존재하지 않습니다.")

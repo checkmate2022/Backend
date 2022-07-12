@@ -18,6 +18,7 @@ import com.checkmate.backend.common.CommonResult;
 import com.checkmate.backend.common.ListResult;
 import com.checkmate.backend.common.SingleResult;
 import com.checkmate.backend.entity.avatar.Avatar;
+import com.checkmate.backend.entity.avatar.AvatarType;
 import com.checkmate.backend.entity.user.User;
 import com.checkmate.backend.service.AvatarService;
 import com.checkmate.backend.service.FileService;
@@ -49,7 +50,7 @@ public class AvatarController {
 
 	@Operation(summary = "단건 캐릭터 조회", description = "단건캐릭터조회")
 	@GetMapping("/{avatarId}")
-	public SingleResult<Optional<Avatar>> getAvatar(
+	public SingleResult<Avatar> getAvatar(
 		@Parameter(description = "캐릭터id") @PathVariable Long avatarId) {
 		return responseService.getSingleResult(avatarService.findOne(avatarId));
 	}
@@ -71,7 +72,7 @@ public class AvatarController {
 		@SecurityRequirement(name = "bearer-key")})
 	@PostMapping
 	public SingleResult<Avatar> createAvatar(MultipartFile originfile, MultipartFile createdfile, String avatarName,
-		String avatarDescription, String avatarStyle, Long avatarStyleId) {
+		String avatarDescription, AvatarType avatarStyle, Long avatarStyleId) {
 		org.springframework.security.core.userdetails.User principal = (org.springframework.security.core.userdetails.User)SecurityContextHolder
 			.getContext().getAuthentication().getPrincipal();
 
@@ -92,7 +93,7 @@ public class AvatarController {
 		@SecurityRequirement(name = "bearer-key")})
 	@PutMapping("/{avatarId}")
 	public SingleResult<Avatar> updateAvatar(@PathVariable Long avatarId, MultipartFile originfile,
-		MultipartFile createdfile, String avatarName, String avatarDescription, String avatarStyle,
+		MultipartFile createdfile, String avatarName, String avatarDescription, AvatarType avatarStyle,
 		Long avatarStyleId) {
 
 		org.springframework.security.core.userdetails.User principal = (org.springframework.security.core.userdetails.User)SecurityContextHolder
@@ -101,13 +102,13 @@ public class AvatarController {
 		User user = userService.getUser(principal.getUsername());
 		LocalDateTime now = LocalDateTime.now();
 
-		Optional<Avatar> findAvtar = avatarService.findOne(avatarId);
+		Avatar findAvtar = avatarService.findOne(avatarId);
 
 		File OriginFile = fileService.updateOriginFile(originfile,
-			findAvtar.get().getAvatarName() + "_" + user.getUserId(),
+			findAvtar.getAvatarName() + "_" + user.getUserId(),
 			avatarName + "_" + user.getUserId());
 		File CreatedFile = fileService.updateCreatedFile(createdfile,
-			findAvtar.get().getAvatarName() + "_" + user.getUserId(),
+			findAvtar.getAvatarName() + "_" + user.getUserId(),
 			avatarName + "_" + user.getUserId());
 
 		Avatar result = avatarService.update(avatarId, avatarName, avatarDescription,
