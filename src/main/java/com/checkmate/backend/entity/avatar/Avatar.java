@@ -4,6 +4,8 @@ import java.time.LocalDateTime;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -63,8 +65,8 @@ public class Avatar {
 	private String avatarCreatedUrl;
 
 	@Column(name = "AVATAR_STYLE", length = 100)
-	@JsonIgnore
-	private String avatarStyle;
+	@Enumerated(EnumType.STRING)
+	private AvatarType avatarStyle;
 
 	@Column(name = "AVATAR_STYLE_ID", length = 100)
 	private Long avatarStyleId;
@@ -76,7 +78,7 @@ public class Avatar {
 	@Column(name = "AVATAR_BASIC", length = 100)
 	private Boolean isBasic = false;
 
-	public Avatar(User user, String avatarName, String avatarDescription, String avatarStyle, Long avatarStyleId,
+	public Avatar(User user, String avatarName, String avatarDescription, AvatarType avatarStyle, Long avatarStyleId,
 		String originFileUrl, String createdFileUrl, LocalDateTime dateTime) {
 		this.user = user;
 		this.avatarName = avatarName;
@@ -88,7 +90,7 @@ public class Avatar {
 		this.avatarDate = dateTime;
 	}
 
-	public void update(String avatarName, String avatarDescription, String avatarStyle, Long avatarStyleId,
+	public void update(String avatarName, String avatarDescription, AvatarType avatarStyle, Long avatarStyleId,
 		String originFileUrl, String createdFileUrl, LocalDateTime dateTime) {
 		this.avatarName = avatarName;
 		this.avatarDescription = avatarDescription;
