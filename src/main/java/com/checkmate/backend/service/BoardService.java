@@ -90,9 +90,9 @@ public class BoardService {
 		return collect;
 	}
 
-	public BoardResponse findById(long boardId){
-		Board board=boardRepository.findById(boardId).orElseThrow();
-		BoardResponse boardResponse=BoardResponse.builder()
+	public BoardResponse findById(long boardId) {
+		Board board = boardRepository.findById(boardId).orElseThrow();
+		BoardResponse boardResponse = BoardResponse.builder()
 			.baordSeq(board.getBoardSeq())
 			.content(board.getContent())
 			.title(board.getTitle())

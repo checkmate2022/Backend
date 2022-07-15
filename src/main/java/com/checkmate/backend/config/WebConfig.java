@@ -12,7 +12,7 @@ import com.checkmate.backend.config.Filter.CORSFilter;
 public class WebConfig implements WebMvcConfigurer {
 
 	@Bean
-	public FilterRegistrationBean getFilterRegistrationBean(){
+	public FilterRegistrationBean getFilterRegistrationBean() {
 		FilterRegistrationBean registrationBean = new FilterRegistrationBean(new CORSFilter());
 		registrationBean.addUrlPatterns("/**");
 		return registrationBean;

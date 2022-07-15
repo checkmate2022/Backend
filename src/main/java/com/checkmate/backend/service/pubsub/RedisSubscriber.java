@@ -15,7 +15,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @RequiredArgsConstructor
 @Service
-public class RedisSubscriber implements MessageListener{
+public class RedisSubscriber implements MessageListener {
 	private final ObjectMapper objectMapper;
 	private final RedisTemplate redisTemplate;
 	private final SimpMessageSendingOperations messagingTemplate;
@@ -27,7 +27,7 @@ public class RedisSubscriber implements MessageListener{
 	public void onMessage(Message message, byte[] pattern) {
 		try {
 			// redis에서 발행된 데이터를 받아 deserialize
-			String publishMessage = (String) redisTemplate.getStringSerializer().deserialize(message.getBody());
+			String publishMessage = (String)redisTemplate.getStringSerializer().deserialize(message.getBody());
 			// ChatMessage 객채로 맵핑
 			ChatMessage roomMessage = objectMapper.readValue(publishMessage, ChatMessage.class);
 			// Websocket 구독자에게 채팅 메시지 Send

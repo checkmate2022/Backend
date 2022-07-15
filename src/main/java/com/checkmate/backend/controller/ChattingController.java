@@ -4,7 +4,6 @@ import org.springframework.data.redis.listener.ChannelTopic;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.checkmate.backend.entity.chat.ChatMessage;
@@ -36,14 +35,14 @@ public class ChattingController {
 			chatService.enterChatRoom(message.getRoomId());
 			message.setSender("[알림]");
 			message.setMessage(message.getSender() + "님이 입장하셨습니다.");
-		}else if(ChatMessage.MessageType.QUIT.equals(message.getType())){
+		} else if (ChatMessage.MessageType.QUIT.equals(message.getType())) {
 			message.setSender("[알림]");
 			message.setMessage(message.getSender() + "님이 퇴장하셨습니다.");
 			chatService.deleteById(message.getRoomId());
 		}
 		chatService.save(message);
 		// Websocket에 발행된 메시지를 redis로 발행(publish)
-		ChannelTopic topic=chatService.getTopic(message.getRoomId());
+		ChannelTopic topic = chatService.getTopic(message.getRoomId());
 		redisPublisher.publish(topic, message);
 	}
 

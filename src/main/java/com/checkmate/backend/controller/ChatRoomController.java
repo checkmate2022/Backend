@@ -6,8 +6,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -33,7 +31,8 @@ public class ChatRoomController {
 	private final ResponseService responseService;
 	private final UserService userService;
 
-	@Operation(summary = "room 전체 조회", description = "채팅 룸 전체를 조회한다.", security = {@SecurityRequirement(name = "bearer-key")})
+	@Operation(summary = "room 전체 조회", description = "채팅 룸 전체를 조회한다.", security = {
+		@SecurityRequirement(name = "bearer-key")})
 	@GetMapping("/rooms")
 	public ListResult<ChatRoom> rooms() {
 		return responseService.getListResult(chatService.findAllRoom());
@@ -63,12 +62,12 @@ public class ChatRoomController {
 
 	@Operation(summary = "사용자 별 방 조회", security = {@SecurityRequirement(name = "bearer-key")})
 	@GetMapping("/user/room")
-	public ListResult<ChatRoom> getRoomsByCustomer(){
+	public ListResult<ChatRoom> getRoomsByCustomer() {
 		org.springframework.security.core.userdetails.User principal = (org.springframework.security.core.userdetails.User)SecurityContextHolder
 			.getContext().getAuthentication().getPrincipal();
 
 		User user = userService.getUser(principal.getUsername());
-		if(user==null){
+		if (user == null) {
 			return responseService.getListResult(new ArrayList<>());
 		}
 		return responseService.getListResult(chatService.getUserEnterRooms(user));

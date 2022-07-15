@@ -25,8 +25,8 @@ public class ChatMessage {
 	private String message; // 메시지
 	private String roomId;
 
-	public static ChatMessage createChatMessage(String roomId, String sender, String message,MessageType type) {
-		ChatMessage chatMessage= ChatMessage.builder()
+	public static ChatMessage createChatMessage(String roomId, String sender, String message, MessageType type) {
+		ChatMessage chatMessage = ChatMessage.builder()
 			.roomId(roomId)
 			.sender(sender)
 			.message(message)
@@ -35,12 +35,12 @@ public class ChatMessage {
 		return chatMessage;
 	}
 
-	public void setSender(String sender){
-		this.sender=sender;
+	public void setSender(String sender) {
+		this.sender = sender;
 	}
 
-	public void setMessage(String message){
-		this.message=message;
+	public void setMessage(String message) {
+		this.message = message;
 	}
 
 	// 메시지 타입 : 입장, 퇴장, 채팅
