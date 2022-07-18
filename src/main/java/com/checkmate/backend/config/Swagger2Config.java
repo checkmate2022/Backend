@@ -29,7 +29,7 @@ public class Swagger2Config {
 	public GroupedOpenApi publicApi() {
 		return GroupedOpenApi.builder()
 			.group("v1")
-			.pathsToMatch("/api/**")
+			.pathsToMatch("/**")
 			.build();
 	}
 

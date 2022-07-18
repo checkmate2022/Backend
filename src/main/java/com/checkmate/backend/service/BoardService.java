@@ -43,7 +43,7 @@ public class BoardService {
 		Board board = boardRepository.findById(boardSeq).orElseThrow();
 		board.update(boardDto.getTitle(), boardDto.getContent());
 		BoardResponse boardResponse = BoardResponse.builder()
-			.baordSeq(boardSeq)
+			.boardSeq(boardSeq)
 			.content(board.getContent())
 			.title(board.getTitle())
 			.username(board.getUser().getUsername())
@@ -64,7 +64,7 @@ public class BoardService {
 		List<Board> boards = boardRepository.findAllByChannel(channel);
 		List<BoardResponse> collect =
 			boards.stream().map(p -> BoardResponse.builder()
-				.baordSeq(p.getBoardSeq())
+				.boardSeq(p.getBoardSeq())
 				.content(p.getContent())
 				.title(p.getTitle())
 				.username(p.getUser().getUsername())
@@ -80,7 +80,7 @@ public class BoardService {
 		List<Board> boards = boardRepository.findAllByTeam(team);
 		List<BoardResponse> collect =
 			boards.stream().map(p -> BoardResponse.builder()
-				.baordSeq(p.getBoardSeq())
+				.boardSeq(p.getBoardSeq())
 				.content(p.getContent())
 				.title(p.getTitle())
 				.username(p.getUser().getUsername())
@@ -90,10 +90,10 @@ public class BoardService {
 		return collect;
 	}
 
-	public BoardResponse findById(long boardId){
-		Board board=boardRepository.findById(boardId).orElseThrow();
-		BoardResponse boardResponse=BoardResponse.builder()
-			.baordSeq(board.getBoardSeq())
+	public BoardResponse findById(long boardId) {
+		Board board = boardRepository.findById(boardId).orElseThrow();
+		BoardResponse boardResponse = BoardResponse.builder()
+			.boardSeq(board.getBoardSeq())
 			.content(board.getContent())
 			.title(board.getTitle())
 			.username(board.getUser().getUsername())

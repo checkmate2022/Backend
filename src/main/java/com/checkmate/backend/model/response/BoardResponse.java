@@ -15,7 +15,7 @@ import lombok.Setter;
 @Builder
 public class BoardResponse {
 
-	private Long baordSeq;
+	private Long boardSeq;
 
 	private String title;
 
