@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.checkmate.backend.advice.exception.UserNotFoundException;
 import com.checkmate.backend.entity.board.Board;
 import com.checkmate.backend.entity.comment.Comment;
 import com.checkmate.backend.entity.user.User;
@@ -46,7 +47,9 @@ public class CommentService {
 
 	//댓글 생성
 	public CommentResponse create(String content, long boardSeq, User user) {
-		Board board = boardRepository.findById(boardSeq).orElseThrow();
+		Board board = boardRepository.findById(boardSeq).orElseThrow(
+			() -> new IllegalArgumentException("게시글이 존재하지 않습니다.")
+		);
 		Comment comment = new Comment(content, board, user);
 
 		commentRepository.save(comment);
@@ -63,8 +66,14 @@ public class CommentService {
 	}
 
 	//댓글 수정
-	public CommentResponse update(String content, long commentSeq) {
-		Comment comment = commentRepository.findById(commentSeq).orElseThrow();
+	public CommentResponse update(String content, long commentSeq, User user) {
+		Comment comment = commentRepository.findById(commentSeq).orElseThrow(
+			() -> new IllegalArgumentException("댓글이 존재하지 않습니다.")
+		);
+
+		if (!comment.getUser().equals(user)) {
+			throw new UserNotFoundException("댓글 작성자가 아닙니다.");
+		}
 
 		comment.update(content);
 
@@ -80,10 +89,16 @@ public class CommentService {
 	}
 
 	//댓글 삭제
-	public void delete(long commentSeq) {
-		Comment comment = commentRepository.findById(commentSeq).orElseThrow();
+	public void delete(long commentSeq, User user) {
+		Comment comment = commentRepository.findById(commentSeq).orElseThrow(
+			() -> new IllegalArgumentException("댓글이 존재하지 않습니다.")
+		);
 
-		comment.delete();
+		if (!comment.getUser().equals(user)) {
+			throw new UserNotFoundException("댓글 작성자가 아닙니다.");
+		}
+
+		commentRepository.delete(comment);
 	}
 
 }

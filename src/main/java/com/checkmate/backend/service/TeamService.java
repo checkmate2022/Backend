@@ -7,6 +7,7 @@ import java.util.Optional;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.checkmate.backend.advice.exception.UserNotFoundException;
 import com.checkmate.backend.entity.avatar.Avatar;
 import com.checkmate.backend.entity.team.Team;
 import com.checkmate.backend.entity.team.TeamParticipant;
@@ -41,8 +42,10 @@ public class TeamService {
 
 	// 단건 팀 조회
 	@Transactional(readOnly = true)
-	public Optional<Team> findOne(Long teamId) {
-		Optional<Team> team = teamRepository.findById(teamId);
+	public Team findOne(Long teamId) {
+		Team team = teamRepository.findById(teamId).orElseThrow(
+			() -> new IllegalArgumentException("팀이 존재하지 않습니다.")
+		);
 		return team;
 	}
 
@@ -77,7 +80,9 @@ public class TeamService {
 
 	// 팀별 사용자 조회
 	public List<ParticipantResponse> findUserByTeam(long teamId) {
-		Team team = teamRepository.findById(teamId).orElseThrow();
+		Team team = teamRepository.findById(teamId).orElseThrow(
+			() -> new IllegalArgumentException("해당 team은 존재하지 않습니다.")
+		);
 		//user에 따라 participant 찾음
 		List<TeamParticipant> participants = participantRepository.findAllByTeam(team);
 
@@ -132,12 +137,15 @@ public class TeamService {
 	}
 
 	// team 수정
-	public Team update(Long teamId, TeamRequest teamReq) {
+	public Team update(Long teamId, TeamRequest teamReq, User user) {
 
 		TeamDto teamDto = new TeamDto(teamReq.getTeamName(), teamReq.getTeamDescription());
 		Team team = teamRepository.findById(teamId).orElseThrow(
 			() -> new IllegalArgumentException("해당 team은 존재하지 않습니다.")
 		);
+		if (!team.getUser().equals(user)) {
+			throw new UserNotFoundException("팀 리더가 아니면 팀 수정이 불가능합니다.");
+		}
 		//기존 participants 삭제
 		participantRepository.deleteAllByTeam(team);
 		team.deleteAllParticipants();
@@ -163,7 +171,13 @@ public class TeamService {
 	}
 
 	//team 삭제
-	public void delete(Long teamId) {
+	public void delete(Long teamId, User user) {
+		Team team = teamRepository.findById(teamId).orElseThrow(
+			() -> new IllegalArgumentException("해당 team은 존재하지 않습니다.")
+		);
+		if (!team.getUser().equals(user)) {
+			throw new UserNotFoundException("팀 리더가 아닙니다.");
+		}
 		teamRepository.deleteById(teamId);
 	}
 

@@ -1,7 +1,5 @@
 package com.checkmate.backend.controller;
 
-import java.util.Optional;
-
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -54,7 +52,7 @@ public class TeamController {
 
 	@Operation(summary = "단건 팀 조회", description = "단건팀조회")
 	@GetMapping("/{teamId}")
-	public SingleResult<Optional<Team>> getTeam(
+	public SingleResult<Team> getTeam(
 		@Parameter(description = "팀id", required = true, example = "3") @PathVariable Long teamId) {
 		return responseService.getSingleResult(teamService.findOne(teamId));
 	}
@@ -90,17 +88,25 @@ public class TeamController {
 		return responseService.getSingleResult(result);
 	}
 
-	@Operation(summary = "팀 수정", description = "팀수정")
+	@Operation(summary = "팀 수정", description = "팀수정", security = {@SecurityRequirement(name = "bearer-key")})
 	@PutMapping("/{teamId}")
 	public SingleResult<Team> updateTeam(@Parameter @PathVariable Long teamId,
 		@Parameter @RequestBody TeamRequest teamRequest) {
-		return responseService.getSingleResult(teamService.update(teamId, teamRequest));
+		org.springframework.security.core.userdetails.User principal = (org.springframework.security.core.userdetails.User)SecurityContextHolder
+			.getContext().getAuthentication().getPrincipal();
+
+		User user = userService.getUser(principal.getUsername());
+		return responseService.getSingleResult(teamService.update(teamId, teamRequest, user));
 	}
 
-	@Operation(summary = "팀 삭제", description = "팀삭제")
+	@Operation(summary = "팀 삭제", description = "팀삭제", security = {@SecurityRequirement(name = "bearer-key")})
 	@DeleteMapping("/{teamId}")
 	public CommonResult deleteTeam(@Parameter @PathVariable Long teamId) {
-		teamService.delete(teamId);
+		org.springframework.security.core.userdetails.User principal = (org.springframework.security.core.userdetails.User)SecurityContextHolder
+			.getContext().getAuthentication().getPrincipal();
+
+		User user = userService.getUser(principal.getUsername());
+		teamService.delete(teamId, user);
 		return responseService.getSuccessResult();
 	}
 }

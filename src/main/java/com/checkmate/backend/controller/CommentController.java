@@ -57,14 +57,18 @@ public class CommentController {
 
 		User user = userService.getUser(principal.getUsername());
 
-		return responseService.getSingleResult(commentService.update(content, commentSeq));
+		return responseService.getSingleResult(commentService.update(content, commentSeq, user));
 	}
 
 	@Operation(summary = "댓글 삭제", security = {
 		@SecurityRequirement(name = "bearer-key")})
 	@DeleteMapping("")
 	public CommonResult modify(long commentSeq) {
-		commentService.delete(commentSeq);
+		org.springframework.security.core.userdetails.User principal = (org.springframework.security.core.userdetails.User)SecurityContextHolder
+			.getContext().getAuthentication().getPrincipal();
+
+		User user = userService.getUser(principal.getUsername());
+		commentService.delete(commentSeq, user);
 		return responseService.getSuccessResult();
 	}
 

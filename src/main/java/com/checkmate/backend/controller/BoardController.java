@@ -74,14 +74,23 @@ public class BoardController {
 		@SecurityRequirement(name = "bearer-key")})
 	@PutMapping("/{boardId}")
 	public SingleResult<BoardResponse> modify(@PathVariable long boardId, @RequestBody BoardDto boardDto) {
-		return responseService.getSingleResult(boardService.modify(boardId, boardDto));
+		org.springframework.security.core.userdetails.User principal = (org.springframework.security.core.userdetails.User)SecurityContextHolder
+			.getContext().getAuthentication().getPrincipal();
+
+		User user = userService.getUser(principal.getUsername());
+
+		return responseService.getSingleResult(boardService.modify(boardId, boardDto, user));
 	}
 
 	@Operation(summary = "게시판 삭제", description = "게시판을 삭제한다.", security = {
 		@SecurityRequirement(name = "bearer-key")})
 	@DeleteMapping("/{boardId}")
 	public CommonResult modify(@PathVariable long boardId) {
-		boardService.delete(boardId);
+		org.springframework.security.core.userdetails.User principal = (org.springframework.security.core.userdetails.User)SecurityContextHolder
+			.getContext().getAuthentication().getPrincipal();
+
+		User user = userService.getUser(principal.getUsername());
+		boardService.delete(boardId, user);
 		return responseService.getSuccessResult();
 	}
 
