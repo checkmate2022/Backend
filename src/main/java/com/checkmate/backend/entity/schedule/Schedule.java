@@ -58,7 +58,7 @@ public class Schedule {
 	private Team team;
 
 	@Column(name = "MEETING_ID")
-	private int meetingId;
+	private String meetingId;
 
 	@Column(name = "SCHEDULE_NAME")
 	private String scheduleName;
@@ -102,7 +102,7 @@ public class Schedule {
 	public void makeMeetingId() {
 		Random random = new Random();
 		int meetingId = random.nextInt(888888) + 111111;
-		this.meetingId = meetingId;
+		this.meetingId = String.valueOf(meetingId);
 	}
 
 	//user설정

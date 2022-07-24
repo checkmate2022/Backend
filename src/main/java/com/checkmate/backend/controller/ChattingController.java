@@ -33,10 +33,10 @@ public class ChattingController {
 		log.info("채팅 메시지");
 		if (ChatMessage.MessageType.ENTER.equals(message.getType())) {
 			chatService.enterChatRoom(message.getRoomId());
-			message.setSender("[알림] + "+ message.getSender());
+			message.setSender("[알림] " + message.getSender());
 			message.setMessage(message.getSender() + "님이 입장하셨습니다.");
 		} else if (ChatMessage.MessageType.QUIT.equals(message.getType())) {
-			message.setSender("[알림] + "+ message.getSender());
+			message.setSender("[알림] " + message.getSender());
 			message.setMessage(message.getSender() + "님이 퇴장하셨습니다.");
 			chatService.deleteById(message.getRoomId());
 		}
