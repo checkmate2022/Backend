@@ -129,21 +129,24 @@ public class ScheduleService {
 		Schedule save = scheduleRepository.save(schedule);
 		//작성자 설정
 		save.setUser(user);
-		//회의면 회의 생성
-		if (save.getScheduleType() == ScheduleType.CONFERENCE) {
-			save.makeMeetingId();
-			meeting = new Meeting(save.getMeetingId(), MeetingType.PLAN, save.getUser());
-			meetingRepository.save(meeting);
-			MeetingParticipant meetingParticipant = new MeetingParticipant(save.getUser(), meeting,
-				MeetingParticipantType.HOST);
-			meeting.addParticipant(meetingParticipantRepository.save(meetingParticipant));
-		}
 
 		//team 설정
 		Team team = teamRepository.findById(scheduleReq.getTeamId()).orElseThrow(
 			() -> new IllegalArgumentException("해당 team은 존재하지 않습니다.")
 		);
 		save.setTeam(team);
+
+		//회의면 회의 생성
+		if (save.getScheduleType() == ScheduleType.CONFERENCE) {
+			save.makeMeetingId();
+			meeting = new Meeting(save.getMeetingId(), MeetingType.PLAN, save.getUser(), save.getTeam(),
+				save.getScheduleStartdate());
+			meetingRepository.save(meeting);
+			MeetingParticipant meetingParticipant = new MeetingParticipant(save.getUser(), meeting,
+				MeetingParticipantType.HOST);
+			meetingParticipantRepository.save(meetingParticipant);
+		}
+
 		//participant 닉네임으로 담음
 		for (String p : participants) {
 			//닉네임으로 User 찾음
@@ -153,7 +156,7 @@ public class ScheduleService {
 			if (save.getScheduleType() == ScheduleType.CONFERENCE) {
 				MeetingParticipant meetingParticipant = new MeetingParticipant(findUser, meeting,
 					MeetingParticipantType.PARTICIPANT);
-				meeting.addParticipant(meetingParticipantRepository.save(meetingParticipant));
+				meetingParticipantRepository.save(meetingParticipant);
 			}
 			participant = participantRepository.save(participant);
 			save.addParticipant(participant);

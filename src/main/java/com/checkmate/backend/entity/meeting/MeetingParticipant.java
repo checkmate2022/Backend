@@ -25,13 +25,12 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Table(name = "MEETING_PATICIPANT")
 public class MeetingParticipant {
-	@JsonIgnore
+
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Id
 	@Column(name = "PARTICIPANT_ID")
 	private Long participantSeq;
 
-	@JsonIgnore
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "USER_SEQ")
 	private User user;

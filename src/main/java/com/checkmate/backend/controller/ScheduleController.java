@@ -73,6 +73,7 @@ public class ScheduleController {
 		return responseService.getListResult(scheduleService.findScheduleByUser(user));
 	}*/
 
+	//팀인지 확인하는 로직 필요할듯
 	@Operation(summary = "일정 등록", description = "일정등록", security = {@SecurityRequirement(name = "bearer-key")})
 	@PostMapping
 	public SingleResult<Schedule> createSchedule(@RequestBody @Parameter ScheduleRequest scheduledto) {
