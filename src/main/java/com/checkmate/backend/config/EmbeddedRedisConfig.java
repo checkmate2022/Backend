@@ -27,7 +27,9 @@ public class EmbeddedRedisConfig {
 			.port(redisPort)
 			.setting("maxmemory 128M")
 			.build();
-		redisServer.start();
+		try{
+			redisServer.start();
+		} catch (Exception e){}
 	}
 
 	@PreDestroy
