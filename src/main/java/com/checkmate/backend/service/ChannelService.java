@@ -23,13 +23,17 @@ public class ChannelService {
 
 	@Transactional(readOnly = true)
 	public List<Channel> findAllByTeam(long teamId) {
-		Team team = teamRepository.findById(teamId).orElseThrow();
+		Team team = teamRepository.findById(teamId).orElseThrow(
+			() -> new IllegalArgumentException("팀이 존재하지 않습니다.")
+		);
 		return channelRepository.findAllByTeam(team);
 	}
 
 	//채널 생성
 	public Channel create(long teamId, String channelName) {
-		Team team = teamRepository.findById(teamId).orElseThrow();
+		Team team = teamRepository.findById(teamId).orElseThrow(
+			() -> new IllegalArgumentException("팀이 존재하지 않습니다.")
+		);
 		LocalDateTime now = LocalDateTime.now();
 		Channel channel = new Channel(channelName, team, now, now);
 		return channelRepository.save(channel);
@@ -42,7 +46,9 @@ public class ChannelService {
 
 	//채널 수정
 	public Channel modify(long channelSeq, String newName) {
-		Channel modifiedChannel = channelRepository.findById(channelSeq).orElseThrow();
+		Channel modifiedChannel = channelRepository.findById(channelSeq).orElseThrow(
+			() -> new IllegalArgumentException("팀이 존재하지 않습니다.")
+		);
 		modifiedChannel.setChannelName(newName);
 		return modifiedChannel;
 	}

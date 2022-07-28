@@ -60,7 +60,7 @@ public class ExceptionAdvice {
 	@ExceptionHandler(UserNotFoundException.class)
 	@ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
 	protected CommonResult userNotFoundException(HttpServletRequest request, UserNotFoundException e) {
-		return responseService.getFailResult(HttpStatus.INTERNAL_SERVER_ERROR.value(), "사용자가 존재하지 않습니다.");
+		return responseService.getFailResult(HttpStatus.INTERNAL_SERVER_ERROR.value(), e.getMessage());
 	}
 
 	@ExceptionHandler(ResourceNotExistException.class)

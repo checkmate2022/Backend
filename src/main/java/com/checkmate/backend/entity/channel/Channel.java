@@ -45,10 +45,6 @@ public class Channel {
 	@NotNull
 	private LocalDateTime modifiedAt;
 
-	// @OneToMany(mappedBy = "channel", cascade = CascadeType.ALL)
-	// @JsonIgnore
-	// private List<Board> boards = new ArrayList<>();
-
 	@JsonIgnore
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "TEAM_ID")

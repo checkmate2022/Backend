@@ -43,6 +43,9 @@ public class AvatarService {
 
 	//  캐릭터 등록
 	public Avatar make(Avatar avatar, User user) {
+		if (user.getAvatar().size() > 3) {
+			throw new IllegalArgumentException("아바타 개수 초과");
+		}
 		avatar.setUser(user);
 		Avatar save = avatarRepository.save(avatar);
 		return save;

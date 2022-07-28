@@ -1,7 +1,6 @@
 package com.checkmate.backend.model.response;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -14,11 +13,9 @@ import lombok.Setter;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class BoardResponse {
+public class CommentResponse {
 
-	private Long boardSeq;
-
-	private String title;
+	private Long commentSeq;
 
 	private String content;
 
@@ -26,8 +23,6 @@ public class BoardResponse {
 
 	private String userImage;
 
-	private List<CommentResponse> comments;
-
-	private LocalDateTime createDate;
+	private LocalDateTime modifiedDate;
 
 }
