@@ -98,3 +98,7 @@ logging:
 openvidu:
   url: https://localhost:4443/
   secret: MY_SECRET
+
+#firebase
+firebase-sdk-path:
+  resources/fcm-checkmate-firebase-adminsdk-x38ww-489686dc75.json
