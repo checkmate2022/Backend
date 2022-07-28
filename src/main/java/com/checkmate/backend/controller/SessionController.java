@@ -6,7 +6,6 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -32,13 +31,11 @@ import io.openvidu.java.client.TokenOptions;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 @Tag(name = "Session", description = "회의 API")
 @RequestMapping(value = "/api/v1/session")
 @Slf4j
-@RequiredArgsConstructor
 @RestController
 public class SessionController {
 
@@ -56,29 +53,25 @@ public class SessionController {
 	private Map<String, Session> meetingIdSession = new ConcurrentHashMap<>();
 	private Map<String, Map<Long, String>> sessionIdUserIdToken = new ConcurrentHashMap<>();
 
-	private String OPENVIDU_URL;
-	private String SECRET;
+	private String OPENVIDU_URL = "https://localhost:4443/";
+	private String SECRET = "MY_SECRET";
 
-	public SessionController(@Value("${openvidu.secret}") String secret, @Value("${openvidu.url}") String openviduUrl) {
-		this.SECRET = secret;
-		this.OPENVIDU_URL = openviduUrl;
+	public SessionController() {
+		this.SECRET = "MY_SECRET";
+		this.OPENVIDU_URL = "https://localhost:4443/";
 		this.openVidu = new OpenVidu(OPENVIDU_URL, SECRET);
 	}
 
-	@Operation(summary = "회의 만들기", security = {@SecurityRequirement(name = "bearer-key")})
+	@Operation(summary = "회의 만들기")
 	@RequestMapping(value = "/create-session", method = RequestMethod.POST)
 	public ResponseEntity<JSONObject> createSession(@RequestParam("meetingId") String meetingId) {
-		org.springframework.security.core.userdetails.User principal = (org.springframework.security.core.userdetails.User)SecurityContextHolder
-			.getContext().getAuthentication().getPrincipal();
-
-		User user = userService.getUser(principal.getUsername());
 
 		// if (!user.hasRoleTeacher()) {
 		// 	return new ResponseEntity<>(HttpStatus.FORBIDDEN);
 		// }
-
-		Meeting c = meetingRepository.findById(meetingId).get();
-
+		Meeting c = meetingRepository.findById(meetingId).orElseThrow(
+			() -> new IllegalArgumentException("회의가 없습니다")
+		);
 		// if (!checkAuthorization(c, c.getHost())) {
 		// 	return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
 		// }
@@ -90,10 +83,8 @@ public class SessionController {
 		} else {
 			try {
 				Session session = this.openVidu.createSession();
-
 				this.meetingIdSession.put(meetingId, session);
 				this.sessionIdUserIdToken.put(session.getSessionId(), new HashMap<>());
-
 				showMap();
 
 				return new ResponseEntity<>(HttpStatus.OK);
@@ -111,9 +102,13 @@ public class SessionController {
 
 		User user = userService.getUser(principal.getUsername());
 
-		MeetingParticipant meetingParticipant = meetingParticipantRepository.findMeetingParticipantByUser(user);
-
-		Meeting c = meetingRepository.findById(meetingId).get();
+		Meeting c = meetingRepository.findById(meetingId).orElseThrow(
+			() -> new IllegalArgumentException("회의가 없습니다")
+		);
+		MeetingParticipant meetingParticipant = meetingParticipantRepository.findMeetingParticipantsByMeetingandUser(c,
+			user).orElseThrow(
+			() -> new IllegalArgumentException("참여자가 아닙니다.")
+		);
 
 		// if (!checkAuthorizationUsers(c, c.getParticipants())) {
 		// 	System.out.println("Not authorized");
@@ -126,18 +121,25 @@ public class SessionController {
 		// }
 
 		Session session = this.meetingIdSession.get(meetingId);
+
 		OpenViduRole role =
 			meetingParticipant.getMeetingParticipantType() == MeetingParticipantType.HOST ? OpenViduRole.PUBLISHER :
 				OpenViduRole.SUBSCRIBER;
 
 		JSONObject responseJson = new JSONObject();
+
 		TokenOptions tokenOpts = new TokenOptions.Builder().role(role)
 			.data("SERVER=" + user.getUsername()).build();
+		System.out.println(tokenOpts.toString());
 		try {
+
+			System.out.println(this.meetingIdSession.get(meetingId).getSessionId());
 			String token = this.meetingIdSession.get(meetingId).generateToken(tokenOpts);
 
 			this.sessionIdUserIdToken.get(session.getSessionId()).put(user.getUserSeq(), token);
+
 			responseJson.put(0, token);
+
 			showMap();
 
 			return new ResponseEntity<>(responseJson, HttpStatus.OK);
@@ -149,8 +151,11 @@ public class SessionController {
 				// Invalid sessionId (user left unexpectedly). Session object is not valid
 				// anymore. Must clean invalid session and create a new one
 				try {
+
 					this.sessionIdUserIdToken.remove(session.getSessionId());
+
 					session = this.openVidu.createSession();
+
 					this.meetingIdSession.put(meetingId, session);
 					this.sessionIdUserIdToken.put(session.getSessionId(), new HashMap<>());
 					String token = session.generateToken(tokenOpts);
