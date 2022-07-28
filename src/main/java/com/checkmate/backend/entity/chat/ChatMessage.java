@@ -22,7 +22,7 @@ public class ChatMessage {
 	private Long id;
 	private MessageType type; // 메시지 타입
 	private String sender; // 메시지 보낸사람
-	private String receiver;
+	private String receiver;//받는 사람
 	private String message; // 메시지
 	private String roomId;
 	private String fileUrl;
