@@ -23,7 +23,7 @@ public class ScheduleGetDto {
 
 	private String userId;
 
-	private int meetingId;
+	private String meetingId;
 
 	private String scheduleName;
 

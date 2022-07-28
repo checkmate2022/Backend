@@ -80,9 +80,13 @@ dependencies {
     //redis
     implementation 'org.springframework.boot:spring-boot-starter-data-redis'
     //embedded-redis
-    implementation group: 'it.ozimov', name: 'embedded-redis', version: '0.7.2'
+    implementation ('it.ozimov:embedded-redis:0.7.2') { exclude group: "org.slf4j", module: "slf4j-simple" }
 //    //gson
 //    implementation group: 'com.google.code.gson', name: 'gson', version: '2.7'
+    //openvidu
+    implementation 'io.openvidu:openvidu-java-client:2.20.0'
+// https://mvnrepository.com/artifact/com.googlecode.json-simple/json-simple
+    implementation group: 'com.googlecode.json-simple', name: 'json-simple', version: '1.1.1'
 
 
 }

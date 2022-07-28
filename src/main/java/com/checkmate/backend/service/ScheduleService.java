@@ -8,13 +8,20 @@ import java.util.Optional;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.checkmate.backend.entity.meeting.Meeting;
+import com.checkmate.backend.entity.meeting.MeetingParticipant;
+import com.checkmate.backend.entity.meeting.MeetingParticipantType;
+import com.checkmate.backend.entity.meeting.MeetingType;
 import com.checkmate.backend.entity.participant.Participant;
 import com.checkmate.backend.entity.schedule.Schedule;
+import com.checkmate.backend.entity.schedule.ScheduleType;
 import com.checkmate.backend.entity.team.Team;
 import com.checkmate.backend.entity.user.User;
 import com.checkmate.backend.model.dto.ScheduleDto;
 import com.checkmate.backend.model.dto.ScheduleGetDto;
 import com.checkmate.backend.model.request.ScheduleRequest;
+import com.checkmate.backend.repo.MeetingParticipantRepository;
+import com.checkmate.backend.repo.MeetingRepository;
 import com.checkmate.backend.repo.ParticipantRepository;
 import com.checkmate.backend.repo.ScheduleRepository;
 import com.checkmate.backend.repo.TeamRepository;
@@ -31,6 +38,8 @@ public class ScheduleService {
 	private final UserRepository userRepository;
 	private final ParticipantRepository participantRepository;
 	private final TeamRepository teamRepository;
+	private final MeetingRepository meetingRepository;
+	private final MeetingParticipantRepository meetingParticipantRepository;
 
 	/*
 	// 전체 일정 조회
@@ -116,20 +125,39 @@ public class ScheduleService {
 
 		Schedule schedule = new Schedule(scheduleDto);
 		List<String> participants = scheduleReq.getParticipantName();
+		Meeting meeting = null;
 		Schedule save = scheduleRepository.save(schedule);
 		//작성자 설정
 		save.setUser(user);
+
 		//team 설정
 		Team team = teamRepository.findById(scheduleReq.getTeamId()).orElseThrow(
 			() -> new IllegalArgumentException("해당 team은 존재하지 않습니다.")
 		);
 		save.setTeam(team);
+
+		//회의면 회의 생성
+		if (save.getScheduleType() == ScheduleType.CONFERENCE) {
+			save.makeMeetingId();
+			meeting = new Meeting(save.getMeetingId(), MeetingType.PLAN, save.getUser(), save.getTeam(),
+				save.getScheduleStartdate());
+			meetingRepository.save(meeting);
+			MeetingParticipant meetingParticipant = new MeetingParticipant(save.getUser(), meeting,
+				MeetingParticipantType.HOST);
+			meetingParticipantRepository.save(meetingParticipant);
+		}
+
 		//participant 닉네임으로 담음
 		for (String p : participants) {
 			//닉네임으로 User 찾음
 			User findUser = userRepository.findByUsername(p);
 			//participant 설정
 			Participant participant = new Participant(findUser, save);
+			if (save.getScheduleType() == ScheduleType.CONFERENCE) {
+				MeetingParticipant meetingParticipant = new MeetingParticipant(findUser, meeting,
+					MeetingParticipantType.PARTICIPANT);
+				meetingParticipantRepository.save(meetingParticipant);
+			}
 			participant = participantRepository.save(participant);
 			save.addParticipant(participant);
 		}
@@ -138,7 +166,7 @@ public class ScheduleService {
 		participant = participantRepository.save(participant);
 
 		save.addParticipant(participant);
-		save.makeMeetingId();
+
 		return save;
 	}
 
