@@ -11,11 +11,14 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.checkmate.backend.common.CommonResult;
+import com.checkmate.backend.entity.user.User;
 import com.checkmate.backend.model.dto.FcmDto;
 import com.checkmate.backend.service.FCMService;
 import com.checkmate.backend.service.ResponseService;
+import com.checkmate.backend.service.UserService;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -28,15 +31,18 @@ import lombok.extern.slf4j.Slf4j;
 public class FCMController {
 
 	private final FCMService fcmService;
+	private final UserService userService;
 	private final ResponseService responseService;
 
-	@Operation(summary = "디바이스 토큰 등록")
+	@Operation(summary = "디바이스 토큰 등록", security = {@SecurityRequirement(name = "bearer-key")})
 	@PostMapping("/register")
 	public CommonResult postDeviceTokenInfo(@RequestParam String deviceToken) throws Throwable {
-		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-		String email = authentication.getName();
+		org.springframework.security.core.userdetails.User principal = (org.springframework.security.core.userdetails.User)SecurityContextHolder
+			.getContext().getAuthentication().getPrincipal();
 
-		fcmService.registerDeviceToken(deviceToken, email);
+		User user = userService.getUser(principal.getUsername());
+
+		fcmService.registerDeviceToken(deviceToken, user.getUserId());
 
 		return responseService.getSuccessResult();
 	}
