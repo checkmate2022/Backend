@@ -90,6 +90,8 @@ dependencies {
     implementation 'com.google.firebase:firebase-admin:7.1.1'
 // https://mvnrepository.com/artifact/com.squareup.okhttp3/okhttp
     implementation group: 'com.squareup.okhttp3', name: 'okhttp', version: '4.9.3'
+    //mariaDB
+    runtimeOnly 'org.mariadb.jdbc:mariadb-java-client:2.7.4'
 }
 
 tasks.named('test') {
