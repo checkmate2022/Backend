@@ -61,6 +61,20 @@ class UserControllerTest {
 
 	@Test
 	void getUser() throws Exception {
+		String token = getToken();
+
+		ResultActions actions = mvc.perform(
+			get(url)
+				.header("Authorization", "Bearer " + token))
+			.andDo(print());
+
+		// actions
+		// 	.andExpect(status().is2xxSuccessful())
+		// 	.andExpect(jsonPath("$.data.userId").value("test@gmail.com"));
+
+	}
+
+	private String getToken() throws Exception {
 		LocalDateTime now = LocalDateTime.now();
 
 		User user = User.builder()
@@ -89,16 +103,7 @@ class UserControllerTest {
 		String resultTostring = result.getResponse().getContentAsString();
 		JacksonJsonParser jsonParser = new JacksonJsonParser();
 		String token = jsonParser.parseMap(resultTostring).get("data").toString();
-
-		ResultActions actions = mvc.perform(
-			get(url)
-				.header("Authorization", "Bearer " + token))
-			.andDo(print());
-
-		// actions
-		// 	.andExpect(status().is2xxSuccessful())
-		// 	.andExpect(jsonPath("$.data.userId").value("test@gmail.com"));
-
+		return token;
 	}
 
 	@Test
@@ -153,5 +158,25 @@ class UserControllerTest {
 
 		actions.andExpect(status().is2xxSuccessful())
 			.andExpect(jsonPath("$.data").value(0));
+	}
+
+	@Test
+	void checkPassword() throws Exception {
+		String password = "test";
+		MultiValueMap<String, String> info = new LinkedMultiValueMap<>();
+		info.add("password", password);
+
+		String token = getToken();
+
+		ResultActions actions = mvc.perform(
+			post(url + "/check/password")
+				.header("Authorization", "Bearer " + token)
+				.contentType(MediaType.APPLICATION_JSON)
+				.accept(MediaType.APPLICATION_JSON)
+				.characterEncoding("UFT-8")
+				.params(info));
+
+		actions.andExpect(status().is2xxSuccessful())
+			.andExpect(jsonPath("$.data").value(false));
 	}
 }
