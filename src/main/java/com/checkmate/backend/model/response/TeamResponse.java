@@ -20,13 +20,9 @@ public class TeamResponse {
 
 	private Long teamSeq;
 
-	private User user;
-
 	private String teamName;
 
 	private String teamDescription;
-
-	private List<Schedule> schedules;
 
 	private List<String> participants;
 
@@ -34,7 +30,4 @@ public class TeamResponse {
 		this.participants = participants;
 	}
 
-	public void setSchedules(List<Schedule> schedules) {
-		this.schedules = schedules;
-	}
 }
