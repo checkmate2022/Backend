@@ -36,7 +36,6 @@ public class TeamService {
 	@Transactional(readOnly = true)
 	public List<Team> findTeams() {
 		List<Team> teams = teamRepository.findAll();
-
 		return teams;
 	}
 
@@ -64,7 +63,6 @@ public class TeamService {
 				teamSeq(team.get().getTeamSeq())
 				.teamName(team.get().getTeamName())
 				.teamDescription(team.get().getTeamDescription())
-				.user(team.get().getUser())
 				.build();
 			//참여자 정보 담아줌
 			for (TeamParticipant teamP : team.get().getParticipants()) {

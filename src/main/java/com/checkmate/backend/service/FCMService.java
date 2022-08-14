@@ -6,6 +6,7 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Arrays;
+import java.util.Optional;
 import java.util.Scanner;
 
 import org.springframework.core.io.ClassPathResource;
@@ -131,28 +132,37 @@ public class FCMService {
 
 	public void registerDeviceToken(String token, String userId) throws Throwable {
 		User user = (User)userRepository.findByUserId(userId);
+		Optional<UserDeviceToken> userDeviceToken = userDeviceTokenRepository.findUserDeviceTokenByUser(user);
+		UserDeviceToken newUserDeviceToken;
+		if (userDeviceToken.isEmpty()) {
+			newUserDeviceToken = UserDeviceToken.builder()
+				.token(token)
+				.user(user)
+				.build();
+		} else {
+			newUserDeviceToken = userDeviceToken.get();
+			newUserDeviceToken.update(token);
+		}
+		userDeviceTokenRepository.save(newUserDeviceToken);
 
-		UserDeviceToken userDeviceToken = UserDeviceToken.builder()
-			.token(token)
-			.user(user)
-			.build();
-
-		userDeviceTokenRepository.save(userDeviceToken);
 	}
 
-	public String getToken(String userId) {
-		User user = (User)userRepository.findByUserId(userId);
-		UserDeviceToken userDeviceToken = userDeviceTokenRepository.findUserDeviceTokenByUser(user);
+	public String getToken(String userName) {
+		User user = (User)userRepository.findByUsername(userName);
+		UserDeviceToken userDeviceToken = userDeviceTokenRepository.findUserDeviceTokenByUser(user).orElseThrow(
+			() -> new IllegalArgumentException("토큰이 존재하지 않습니다.")
+		);
 		return userDeviceToken.getToken();
 	}
 
-	public void sendMessageTo(String userId, String title, String body) throws IOException {
+	public void sendMessageTo(String userName, String title, String body) throws IOException {
+		System.out.println("getToken 문제");
 
-		String message = makeMessage(getToken(userId), title, body);
-
+		String message = makeMessage(getToken(userName), title, body);
+		System.out.println("1");
 		OkHttpClient client = new OkHttpClient();
 		RequestBody requestBody = RequestBody.create(message, MediaType.get("application/json; charset=utf-8"));
-
+		System.out.println("연결 문제");
 		Request request = new Request.Builder()
 			.url(BASE_URL + FCM_SEND_ENDPOINT)
 			.post(requestBody)
@@ -167,6 +177,7 @@ public class FCMService {
 
 	private String makeMessage(String targetToken, String title, String body) throws JsonParseException,
 		JsonProcessingException {
+		System.out.println("makeMessage");
 		FcmMessage fcmMessage = FcmMessage.builder()
 			.message(FcmMessage.Message.builder()
 				.token(targetToken)

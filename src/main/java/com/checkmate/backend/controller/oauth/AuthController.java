@@ -115,10 +115,6 @@ public class AuthController {
 
 		// expired access token 인지 확인
 		Claims claims = authToken.getExpiredTokenClaims();
-		if (claims == null) {
-			throw new TokenValidFailedException("유효한 access token.");
-		}
-
 		String userId = claims.getSubject();
 		RoleType roleType = RoleType.of(claims.get("role", String.class));
 

@@ -3,6 +3,7 @@ package com.checkmate.backend.repo;
 import static org.junit.jupiter.api.Assertions.*;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -73,5 +74,19 @@ class UserRepositoryTest {
 
 		//then
 		assertEquals(userCnt, 1);
+	}
+
+	@Test
+	@DisplayName("사용자 검색")
+	void searchUsers() {
+		//given
+		String query = "repo";
+
+		//when
+		List<User> users = userRepository.searchUsers(query);
+
+		//then
+		assertEquals(users.size(), 1);
+		assertEquals(users.get(0).getUsername(), "repo");
 	}
 }

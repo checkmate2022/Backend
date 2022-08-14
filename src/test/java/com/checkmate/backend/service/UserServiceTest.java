@@ -4,6 +4,8 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.BDDMockito.*;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -91,4 +93,41 @@ class UserServiceTest {
 		int cnt = userService.checkId(userId);
 		assertEquals(1, cnt);
 	}
+
+	@Test
+	@DisplayName("비밀번호 중복 확인")
+	void checkPassword() {
+		User mockUser = User.builder()
+			.userId("repo1")
+			.password(passwordEncoder.encode("repo1"))
+			.build();
+		boolean isTrue = userService.checkPassword(mockUser, "repo1");
+		boolean isFalse = userService.checkPassword(mockUser, "repo");
+		assertEquals(true, isTrue);
+		assertEquals(false, isFalse);
+	}
+
+	@Test
+	@DisplayName("회원 검색")
+	void searchUsers() {
+		String userId = "repo1";
+		User mockUser = User.builder().userId("repo1").build();
+		List<User> mockUsers = new ArrayList<>();
+		mockUsers.add(mockUser);
+		given(userRepository.searchUsers(userId)).willReturn(mockUsers);
+		List<User> users = userService.searchUsers(userId);
+		assertEquals(mockUsers, users);
+	}
+
+	@Test
+	@DisplayName("사용자 정보 수정")
+	void modifyUser() {
+		User mockUser = User.builder()
+			.userId("repo1")
+			.password(passwordEncoder.encode("repo1"))
+			.build();
+		User modifiedUser = userService.modifyUser(mockUser, "repo", "repo");
+		assertEquals("repo", modifiedUser.getUsername());
+	}
+
 }
