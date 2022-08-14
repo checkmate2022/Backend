@@ -34,4 +34,8 @@ public class UserDeviceToken {
 	@JoinColumn(name = "USER_ID")
 	private User user;
 
+	public void update(String token) {
+		this.token = token;
+	}
+
 }

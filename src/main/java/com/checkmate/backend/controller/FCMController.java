@@ -50,11 +50,11 @@ public class FCMController {
 	@Operation(summary = "알림보내기(token)")
 	@PostMapping
 	public CommonResult pushMessage(@RequestBody FcmDto requestDTO) throws IOException {
-		System.out.println(requestDTO.getUserId() + " "
+		System.out.println(requestDTO.getUserName() + " "
 			+ requestDTO.getTitle() + " " + requestDTO.getBody());
 
 		fcmService.sendMessageTo(
-			requestDTO.getUserId(),
+			requestDTO.getUserName(),
 			requestDTO.getTitle(),
 			requestDTO.getBody());
 
