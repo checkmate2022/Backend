@@ -134,17 +134,16 @@ public class FCMService {
 		User user = (User)userRepository.findByUserId(userId);
 		Optional<UserDeviceToken> userDeviceToken = userDeviceTokenRepository.findUserDeviceTokenByUser(user);
 		UserDeviceToken newUserDeviceToken;
-		if(userDeviceToken.isEmpty()){
+		if (userDeviceToken.isEmpty()) {
 			newUserDeviceToken = UserDeviceToken.builder()
 				.token(token)
 				.user(user)
 				.build();
-		}else{
-			newUserDeviceToken=userDeviceToken.get();
+		} else {
+			newUserDeviceToken = userDeviceToken.get();
 			newUserDeviceToken.update(token);
 		}
 		userDeviceTokenRepository.save(newUserDeviceToken);
-
 
 	}
 
