@@ -7,12 +7,15 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.checkmate.backend.advice.exception.TokenValidFailedException;
+import com.checkmate.backend.advice.exception.UserNotFoundException;
 import com.checkmate.backend.entity.oauth.ProviderType;
 import com.checkmate.backend.entity.oauth.RoleType;
 import com.checkmate.backend.entity.user.User;
 import com.checkmate.backend.model.dto.UserDto;
 import com.checkmate.backend.repo.UserRepository;
 
+import antlr.Token;
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -24,7 +27,9 @@ public class UserService {
 
 	@Transactional(readOnly = true)
 	public User getUser(String userId) {
-		return userRepository.findByUserId(userId);
+		return userRepository.findUserByUserId(userId).orElseThrow(
+			() -> new UserNotFoundException("사용자를 찾지 못했습니다.(토큰 확인)")
+		);
 	}
 
 	public User signUpUser(UserDto user) {

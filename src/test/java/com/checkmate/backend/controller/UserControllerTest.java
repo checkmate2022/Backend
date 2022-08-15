@@ -6,6 +6,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import java.time.LocalDateTime;
 
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -26,6 +27,7 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.filter.CharacterEncodingFilter;
 
+import com.checkmate.backend.config.EmbeddedRedisConfig;
 import com.checkmate.backend.entity.oauth.ProviderType;
 import com.checkmate.backend.entity.oauth.RoleType;
 import com.checkmate.backend.entity.user.User;
@@ -49,28 +51,30 @@ class UserControllerTest {
 	private UserRepository userRepository;
 	@Autowired
 	private PasswordEncoder passwordEncoder;
+	String token;
 
 	@BeforeEach
-	void setUp() {
+	void setUp() throws Exception {
 		mvc = MockMvcBuilders
 			.webAppContextSetup(ctx)
 			.addFilters(new CharacterEncodingFilter("UTF-8", true))
 			.alwaysDo(print())
 			.build();
+
+		token = getToken();
 	}
 
 	@Test
 	void getUser() throws Exception {
-		String token = getToken();
+
 
 		ResultActions actions = mvc.perform(
 			get(url)
 				.header("Authorization", "Bearer " + token))
 			.andDo(print());
-
-		// actions
-		// 	.andExpect(status().is2xxSuccessful())
-		// 	.andExpect(jsonPath("$.data.userId").value("test@gmail.com"));
+		actions
+			.andExpect(status().is2xxSuccessful())
+			.andExpect(jsonPath("$.data.userId").value("test@gmail.com"));
 
 	}
 
@@ -127,8 +131,9 @@ class UserControllerTest {
 	}
 
 	@Test
+	@DisplayName("닉네임 중복 확인")
 	void checkName() throws Exception {
-		String username = "test";
+		String username = "repo1";
 		MultiValueMap<String, String> info = new LinkedMultiValueMap<>();
 		info.add("username", username);
 
@@ -140,12 +145,13 @@ class UserControllerTest {
 				.params(info));
 
 		actions.andExpect(status().is2xxSuccessful())
-			.andExpect(jsonPath("$.data").value(0));
+			.andExpect(jsonPath("$.data").value(1));
 	}
 
 	@Test
+	@DisplayName("아이디 중복 확인")
 	void checkId() throws Exception {
-		String userId = "test";
+		String userId = "test@gmail.com";
 		MultiValueMap<String, String> info = new LinkedMultiValueMap<>();
 		info.add("userId", userId);
 
@@ -157,26 +163,67 @@ class UserControllerTest {
 				.params(info));
 
 		actions.andExpect(status().is2xxSuccessful())
-			.andExpect(jsonPath("$.data").value(0));
+			.andExpect(jsonPath("$.data").value(1));
 	}
 
 	@Test
+	@DisplayName("비밀번호 확인")
 	void checkPassword() throws Exception {
-		String password = "test";
+		String password = "1234";
 		MultiValueMap<String, String> info = new LinkedMultiValueMap<>();
 		info.add("password", password);
 
-		String token = getToken();
+		ResultActions actions =mvc.perform(
+			post(url + "/check/password")
+				.param("password","1234")
+				.header("Authorization", "Bearer " + token));
+
+		actions.andExpect(status().is2xxSuccessful())
+			.andExpect(jsonPath("$.data").value(true));
+	}
+
+	@Test
+	@DisplayName("user 검색")
+	void search() throws Exception {
+		String userId = "repo";
+		MultiValueMap<String, String> info = new LinkedMultiValueMap<>();
+		info.add("query", userId);
 
 		ResultActions actions = mvc.perform(
-			post(url + "/check/password")
-				.header("Authorization", "Bearer " + token)
+			get(url + "/search")
 				.contentType(MediaType.APPLICATION_JSON)
 				.accept(MediaType.APPLICATION_JSON)
 				.characterEncoding("UFT-8")
 				.params(info));
 
 		actions.andExpect(status().is2xxSuccessful())
-			.andExpect(jsonPath("$.data").value(false));
+			.andExpect(jsonPath("$.list[0].username").value("repo1"));
+	}
+
+	@Test
+	@DisplayName("사용자 수정")
+	void modifyUser() throws Exception {
+		MultiValueMap<String, String> info = new LinkedMultiValueMap<>();
+		info.add("username", "repo");
+		info.add("password", "password");
+
+		ResultActions actions = mvc.perform(
+			put(url)
+				.header("Authorization", "Bearer " + token)
+				.params(info));
+
+		actions.andExpect(status().is2xxSuccessful())
+			.andExpect(jsonPath("$.data.username").value("repo"));
+	}
+
+	@AfterEach
+	@DisplayName("사용자 탈퇴")
+	void deleteUser() throws Exception {
+
+		ResultActions actions = mvc.perform(
+			delete(url)
+				.header("Authorization", "Bearer " + token));
+
+		actions.andExpect(status().is2xxSuccessful());
 	}
 }

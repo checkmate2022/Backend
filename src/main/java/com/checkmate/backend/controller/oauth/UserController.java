@@ -1,5 +1,6 @@
 package com.checkmate.backend.controller.oauth;
 
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -10,7 +11,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.checkmate.backend.advice.exception.UserNotFoundException;
 import com.checkmate.backend.common.CommonResult;
 import com.checkmate.backend.common.ListResult;
 import com.checkmate.backend.common.SingleResult;
@@ -49,12 +49,9 @@ public class UserController {
 		@SecurityRequirement(name = "bearer-key")})
 	@GetMapping
 	public SingleResult<User> getUser() {
-		org.springframework.security.core.userdetails.User principal = (org.springframework.security.core.userdetails.User)SecurityContextHolder
-			.getContext().getAuthentication().getPrincipal();
-
-		User user = userService.getUser(principal.getUsername());
-		if (user == null)
-			throw new UserNotFoundException();
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		String name = authentication.getName();
+		User user = userService.getUser(name);
 		return responseService.getSingleResult(user);
 	}
 
@@ -88,10 +85,9 @@ public class UserController {
 		@SecurityRequirement(name = "bearer-key")})
 	@PostMapping("/check/password")
 	public SingleResult<Boolean> checkPassword(@Parameter @RequestParam String password) {
-		org.springframework.security.core.userdetails.User principal = (org.springframework.security.core.userdetails.User)SecurityContextHolder
-			.getContext().getAuthentication().getPrincipal();
-
-		User user = userService.getUser(principal.getUsername());
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		String name = authentication.getName();
+		User user = userService.getUser(name);
 		return responseService.getSingleResult(userService.checkPassword(user, password));
 	}
 
@@ -99,10 +95,9 @@ public class UserController {
 		@SecurityRequirement(name = "bearer-key")})
 	@DeleteMapping
 	public CommonResult deleteUser() {
-		org.springframework.security.core.userdetails.User principal = (org.springframework.security.core.userdetails.User)SecurityContextHolder
-			.getContext().getAuthentication().getPrincipal();
-
-		User user = userService.getUser(principal.getUsername());
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		String name = authentication.getName();
+		User user = userService.getUser(name);
 		userService.deleteUser(user);
 		return responseService.getSuccessResult();
 	}
@@ -111,11 +106,9 @@ public class UserController {
 		@SecurityRequirement(name = "bearer-key")})
 	@PutMapping
 	public SingleResult<User> modifyUser(@Parameter @RequestParam String username, String password) {
-		org.springframework.security.core.userdetails.User principal = (org.springframework.security.core.userdetails.User)SecurityContextHolder
-			.getContext().getAuthentication().getPrincipal();
-
-		User user = userService.getUser(principal.getUsername());
-
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		String name = authentication.getName();
+		User user = userService.getUser(name);
 		return responseService.getSingleResult(userService.modifyUser(user, username, password));
 	}
 }

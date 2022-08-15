@@ -47,7 +47,7 @@ public class ExceptionAdvice {
 	@ExceptionHandler(TokenValidFailedException.class)
 	@ResponseStatus(HttpStatus.NOT_ACCEPTABLE)
 	protected CommonResult tokenValidFailedException(HttpServletRequest request, TokenValidFailedException e) {
-		return responseService.getFailResult(HttpStatus.NOT_ACCEPTABLE.value(), "토큰 만들기 실패.");
+		return responseService.getFailResult(HttpStatus.NOT_ACCEPTABLE.value(), e.getMessage());
 	}
 
 	@ExceptionHandler(OAuthProviderMissMatchException.class)

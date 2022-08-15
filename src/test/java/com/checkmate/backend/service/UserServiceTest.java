@@ -69,7 +69,7 @@ class UserServiceTest {
 	void getUser() {
 		String userId = "repo1";
 		User mockUser = User.builder().userId("repo1").build();
-		given(userRepository.findByUserId(userId)).willReturn(mockUser);
+		given(userRepository.findUserByUserId(userId)).willReturn(java.util.Optional.ofNullable(mockUser));
 
 		User getUser = userService.getUser(userId);
 
