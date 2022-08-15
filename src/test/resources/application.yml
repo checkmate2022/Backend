@@ -1,5 +1,5 @@
 spring:
-  profiles.active: local
+  profiles.active: test
   # h2 설정
   h2:
     console:
@@ -8,6 +8,8 @@ spring:
         web-allow-others: true
       path: /h2-console
   datasource:
+    #    driver-class-name: org.mariadb.jdbc.Driver
+    #    url: jdbc:mariadb://localhost:3306/checkmate
     driver-class-name: org.h2.Driver
     url: jdbc:h2:~/test
     username: sa
@@ -18,6 +20,15 @@ spring:
     hibernate:
       ddl-auto: create
     show-sql: true
+  #파일 설정
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 10MB
+  #redis
+  redis:
+    host: 127.0.0.1
+    port: 6379
   # Security OAuth
   security:
     oauth2.client:
@@ -84,3 +95,12 @@ app:
 logging:
   level:
     org.springframework.security: TRACE
+
+# openvidu
+openvidu:
+  url: https://localhost:4443/
+  secret: MY_SECRET
+
+#firebase
+firebase-sdk-path:
+  fcm-checkmate-firebase-adminsdk-x38ww-489686dc75.json
