@@ -1,5 +1,7 @@
 package com.checkmate.backend.advice;
 
+import java.io.FileNotFoundException;
+
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.http.HttpStatus;
@@ -7,7 +9,9 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import com.checkmate.backend.advice.exception.DuplicateException;
 import com.checkmate.backend.advice.exception.LoginFailedException;
+import com.checkmate.backend.advice.exception.MaximumException;
 import com.checkmate.backend.advice.exception.OAuthProviderMissMatchException;
 import com.checkmate.backend.advice.exception.ResourceNotExistException;
 import com.checkmate.backend.advice.exception.TokenValidFailedException;
@@ -39,9 +43,9 @@ public class ExceptionAdvice {
 	}
 
 	@ExceptionHandler(LoginFailedException.class)
-	@ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+	@ResponseStatus(HttpStatus.BAD_REQUEST)
 	protected CommonResult loginFailedException(HttpServletRequest request, LoginFailedException e) {
-		return responseService.getFailResult(HttpStatus.INTERNAL_SERVER_ERROR.value(), "로그인 실패했습니다.");
+		return responseService.getFailResult(HttpStatus.BAD_REQUEST.value(), "로그인 실패했습니다.");
 	}
 
 	@ExceptionHandler(TokenValidFailedException.class)
@@ -58,15 +62,33 @@ public class ExceptionAdvice {
 	}
 
 	@ExceptionHandler(UserNotFoundException.class)
-	@ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+	@ResponseStatus(HttpStatus.BAD_REQUEST)
 	protected CommonResult userNotFoundException(HttpServletRequest request, UserNotFoundException e) {
-		return responseService.getFailResult(HttpStatus.INTERNAL_SERVER_ERROR.value(), e.getMessage());
+		return responseService.getFailResult(HttpStatus.BAD_REQUEST.value(), e.getMessage());
 	}
 
 	@ExceptionHandler(ResourceNotExistException.class)
-	@ResponseStatus(HttpStatus.NOT_FOUND)
+	@ResponseStatus(HttpStatus.BAD_REQUEST)
 	protected CommonResult resourceNotExistException(HttpServletRequest request, ResourceNotExistException e) {
-		return responseService.getFailResult(HttpStatus.NOT_FOUND.value(), "요청한 자원이 존재 하지 않습니다.");
+		return responseService.getFailResult(HttpStatus.BAD_REQUEST.value(), e.getMessage());
+	}
+
+	@ExceptionHandler(DuplicateException.class)
+	@ResponseStatus(HttpStatus.BAD_REQUEST)
+	protected CommonResult duplicateException(HttpServletRequest request, DuplicateException e) {
+		return responseService.getFailResult(HttpStatus.BAD_REQUEST.value(), e.getMessage());
+	}
+
+	@ExceptionHandler(MaximumException.class)
+	@ResponseStatus(HttpStatus.BAD_REQUEST)
+	protected CommonResult maximumException(HttpServletRequest request, MaximumException e) {
+		return responseService.getFailResult(HttpStatus.BAD_REQUEST.value(), e.getMessage());
+	}
+
+	@ExceptionHandler(FileNotFoundException.class)
+	@ResponseStatus(HttpStatus.BAD_REQUEST)
+	protected CommonResult fileNotFoundException(HttpServletRequest request, FileNotFoundException e) {
+		return responseService.getFailResult(HttpStatus.BAD_REQUEST.value(), e.getMessage());
 	}
 
 }

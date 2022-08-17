@@ -66,13 +66,13 @@ public class UserController {
 	@Operation(summary = "name 중복 확인", description = "닉네임 증복 확인")
 	@PostMapping("/check/name")
 	public SingleResult<Integer> checkName(@Parameter @RequestParam String username) {
-		return responseService.getSingleResult(userService.checkUsername(username));
+		return responseService.getSingleResult(userService.validateUserNameDuplicate(username));
 	}
 
 	@Operation(summary = "ID 중복 확인", description = "닉네임 증복 확인")
 	@PostMapping("/check/userId")
 	public SingleResult<Integer> checkId(@Parameter @RequestParam String userId) {
-		return responseService.getSingleResult(userService.checkId(userId));
+		return responseService.getSingleResult(userService.validateUserIdDuplicate(userId));
 	}
 
 	@Operation(summary = "user 검색", description = "사용자 검색")
