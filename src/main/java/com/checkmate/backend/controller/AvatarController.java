@@ -3,7 +3,9 @@ package com.checkmate.backend.controller;
 import java.io.File;
 import java.time.LocalDateTime;
 
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -70,17 +72,20 @@ public class AvatarController {
 	@Operation(summary = "캐릭터 등록: postman 사용", description = "캐릭터등록", security = {
 		@SecurityRequirement(name = "bearer-key")})
 	@PostMapping
+	@Transactional
 	public SingleResult<Avatar> createAvatar(MultipartFile originfile, MultipartFile createdfile, String avatarName,
 		String avatarDescription, AvatarType avatarStyle, Long avatarStyleId) {
-		org.springframework.security.core.userdetails.User principal = (org.springframework.security.core.userdetails.User)SecurityContextHolder
-			.getContext().getAuthentication().getPrincipal();
-
-		User user = userService.getUser(principal.getUsername());
+		System.out.println(11);
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		String name = authentication.getName();
+		System.out.println(22);
+		User user = userService.getUser(name);
+		System.out.println(333);
 		LocalDateTime now = LocalDateTime.now();
 		avatarName = avatarName.replace("\"", "");
 
-		File OriginFile = fileService.saveOriginFile(originfile, avatarName + "_" + user.getUserId());
-		File CreatedFile = fileService.saveCreatedFile(createdfile, avatarName + "_" + user.getUserId());
+		File OriginFile = fileService.saveFile(originfile, avatarName + "_" + user.getUserId() + "_origin");
+		File CreatedFile = fileService.saveFile(createdfile, avatarName + "_" + user.getUserId() + "_created");
 		Avatar avatar = new Avatar(user, avatarName, avatarDescription, avatarStyle, avatarStyleId,
 			OriginFile.getPath(), CreatedFile.getPath(), now);
 
@@ -91,6 +96,7 @@ public class AvatarController {
 	@Operation(summary = "캐릭터 수정: postman 사용", description = "캐릭터수정", security = {
 		@SecurityRequirement(name = "bearer-key")})
 	@PutMapping("/{avatarId}")
+	@Transactional
 	public SingleResult<Avatar> updateAvatar(@PathVariable Long avatarId, MultipartFile originfile,
 		MultipartFile createdfile, String avatarName, String avatarDescription, AvatarType avatarStyle,
 		Long avatarStyleId) {
@@ -103,12 +109,12 @@ public class AvatarController {
 
 		Avatar findAvtar = avatarService.findOne(avatarId);
 
-		File OriginFile = fileService.updateOriginFile(originfile,
-			findAvtar.getAvatarName() + "_" + user.getUserId(),
-			avatarName + "_" + user.getUserId());
-		File CreatedFile = fileService.updateCreatedFile(createdfile,
-			findAvtar.getAvatarName() + "_" + user.getUserId(),
-			avatarName + "_" + user.getUserId());
+		File OriginFile = fileService.updateFile(originfile,
+			findAvtar.getAvatarOriginUrl(),
+			avatarName + "_" + user.getUserId() + "_origin");
+		File CreatedFile = fileService.updateFile(createdfile,
+			findAvtar.getAvatarCreatedUrl(),
+			avatarName + "_" + user.getUserId() + "_created");
 
 		Avatar result = avatarService.update(avatarId, avatarName, avatarDescription,
 			avatarStyle, avatarStyleId, OriginFile.getPath(), CreatedFile.getPath(), now);
@@ -137,7 +143,7 @@ public class AvatarController {
 	@Operation(summary = "캐릭터이름 중복조회", description = "캐릭터이름 중복조회")
 	@GetMapping("/checkName/{avatarName}")
 	public CommonResult getAvatarByName(@PathVariable String avatarName) {
-		avatarService.validatenameDuplicateException(avatarName);
+		avatarService.validateNameDuplicateException(avatarName);
 		return responseService.getSuccessResult();
 	}
 }

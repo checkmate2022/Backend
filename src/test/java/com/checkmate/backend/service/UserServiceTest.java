@@ -81,7 +81,7 @@ class UserServiceTest {
 	void checkUsername() {
 		String username = "repo1";
 		given(userRepository.countByUsername(username)).willReturn(1);
-		int cnt = userService.checkUsername(username);
+		int cnt = userService.validateUserNameDuplicate(username);
 		assertEquals(1, cnt);
 	}
 
@@ -90,7 +90,7 @@ class UserServiceTest {
 	void checkId() {
 		String userId = "repo1";
 		given(userRepository.countByUserId(userId)).willReturn(1);
-		int cnt = userService.checkId(userId);
+		int cnt = userService.validateUserIdDuplicate(userId);
 		assertEquals(1, cnt);
 	}
 

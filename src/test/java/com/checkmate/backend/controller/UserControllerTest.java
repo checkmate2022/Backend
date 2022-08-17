@@ -27,7 +27,6 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.filter.CharacterEncodingFilter;
 
-import com.checkmate.backend.config.EmbeddedRedisConfig;
 import com.checkmate.backend.entity.oauth.ProviderType;
 import com.checkmate.backend.entity.oauth.RoleType;
 import com.checkmate.backend.entity.user.User;
@@ -43,6 +42,7 @@ class UserControllerTest {
 	@Autowired
 	MockMvc mvc;
 	String url = "http://localhost:8080/api/v1/users";
+	String token;
 	@Autowired
 	private WebApplicationContext ctx;
 	@Autowired
@@ -51,7 +51,6 @@ class UserControllerTest {
 	private UserRepository userRepository;
 	@Autowired
 	private PasswordEncoder passwordEncoder;
-	String token;
 
 	@BeforeEach
 	void setUp() throws Exception {
@@ -66,7 +65,6 @@ class UserControllerTest {
 
 	@Test
 	void getUser() throws Exception {
-
 
 		ResultActions actions = mvc.perform(
 			get(url)
@@ -173,9 +171,9 @@ class UserControllerTest {
 		MultiValueMap<String, String> info = new LinkedMultiValueMap<>();
 		info.add("password", password);
 
-		ResultActions actions =mvc.perform(
+		ResultActions actions = mvc.perform(
 			post(url + "/check/password")
-				.param("password","1234")
+				.param("password", "1234")
 				.header("Authorization", "Bearer " + token));
 
 		actions.andExpect(status().is2xxSuccessful())
