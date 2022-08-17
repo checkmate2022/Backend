@@ -104,6 +104,7 @@ public class TeamService {
 			}
 			participantResponses.add(response);
 		}
+
 		return participantResponses;
 	}
 
