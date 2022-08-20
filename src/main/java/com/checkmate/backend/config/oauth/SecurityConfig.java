@@ -183,6 +183,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 		corsConfig.addAllowedOrigin("http://localhost:8080/h2-console");
 		corsConfig.addAllowedOrigin("http://localhost:8080/h2-console/**");
 		corsConfig.addAllowedOrigin("http://localhost:3000");
+		corsConfig.addAllowedOrigin("http://localhost:3000/**");
+		corsConfig.addAllowedOrigin("http://localhost:8080/**");
 
 		corsConfig.setAllowCredentials(true);
 		corsConfig.setMaxAge(corsConfig.getMaxAge());
