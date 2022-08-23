@@ -7,7 +7,8 @@ import java.util.Optional;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.checkmate.backend.advice.exception.UserNotFoundException;
+import com.checkmate.backend.advice.exception.MisMatchException;
+import com.checkmate.backend.advice.exception.ResourceNotExistException;
 import com.checkmate.backend.entity.avatar.Avatar;
 import com.checkmate.backend.entity.team.Team;
 import com.checkmate.backend.entity.team.TeamParticipant;
@@ -43,7 +44,7 @@ public class TeamService {
 	@Transactional(readOnly = true)
 	public Team findOne(Long teamId) {
 		Team team = teamRepository.findById(teamId).orElseThrow(
-			() -> new IllegalArgumentException("팀이 존재하지 않습니다.")
+			() -> new ResourceNotExistException("팀이 존재하지 않습니다.")
 		);
 		return team;
 	}
@@ -54,6 +55,12 @@ public class TeamService {
 		List<TeamParticipant> participants = participantRepository.findAllByUser(user);
 
 		List<TeamResponse> teams = new ArrayList<>();
+		switchTeamToResponse(participants, teams);
+
+		return teams;
+	}
+
+	private void switchTeamToResponse(List<TeamParticipant> participants, List<TeamResponse> teams) {
 		//반복문
 		for (TeamParticipant p : participants) {
 			List<String> users = new ArrayList<>();
@@ -72,19 +79,24 @@ public class TeamService {
 			//List 담기
 			teams.add(response);
 		}
-
-		return teams;
 	}
 
 	// 팀별 사용자 조회
 	public List<ParticipantResponse> findUserByTeam(long teamId) {
 		Team team = teamRepository.findById(teamId).orElseThrow(
-			() -> new IllegalArgumentException("해당 team은 존재하지 않습니다.")
+			() -> new ResourceNotExistException("해당 team은 존재하지 않습니다.")
 		);
 		//user에 따라 participant 찾음
 		List<TeamParticipant> participants = participantRepository.findAllByTeam(team);
 
 		List<ParticipantResponse> participantResponses = new ArrayList<>();
+		switchTeamParticipantToResponse(participants, participantResponses);
+
+		return participantResponses;
+	}
+
+	private void switchTeamParticipantToResponse(List<TeamParticipant> participants,
+		List<ParticipantResponse> participantResponses) {
 		//반복문
 		for (TeamParticipant p : participants) {
 			//response 객체 생성
@@ -104,8 +116,6 @@ public class TeamService {
 			}
 			participantResponses.add(response);
 		}
-
-		return participantResponses;
 	}
 
 	// team 등록
@@ -119,19 +129,10 @@ public class TeamService {
 		//작성자 설정
 		save.setUser(user);
 		//participant 닉네임으로 담음
-		for (String p : participants) {
-			//닉네임으로 User 찾음
-			User findUser = userRepository.findByUsername(p);
-			//participant 설정
-			TeamParticipant participant = new TeamParticipant(findUser, save, TeamRoleType.MEMBER);
-			participant = participantRepository.save(participant);
-			save.addParticipant(participant);
-		}
+		addParticipants(save, participants);
 		//작성자도 참여자로 넣음
-		TeamParticipant participant = new TeamParticipant(user, save, TeamRoleType.LEADER);
-		participant = participantRepository.save(participant);
+		addLeader(user, save);
 
-		save.addParticipant(participant);
 		return save;
 	}
 
@@ -140,10 +141,10 @@ public class TeamService {
 
 		TeamDto teamDto = new TeamDto(teamReq.getTeamName(), teamReq.getTeamDescription());
 		Team team = teamRepository.findById(teamId).orElseThrow(
-			() -> new IllegalArgumentException("해당 team은 존재하지 않습니다.")
+			() -> new ResourceNotExistException("해당 team은 존재하지 않습니다.")
 		);
 		if (!team.getUser().equals(user)) {
-			throw new UserNotFoundException("팀 리더가 아니면 팀 수정이 불가능합니다.");
+			throw new MisMatchException("팀 리더가 아니면 팀 수정이 불가능합니다.");
 		}
 		//기존 participants 삭제
 		participantRepository.deleteAllByTeam(team);
@@ -151,17 +152,10 @@ public class TeamService {
 
 		//새롭게 participants 추가
 		List<String> participants = teamReq.getParticipantName();
-		for (var p : participants) {
-			User findUser = userRepository.findByUsername(p);
-			TeamParticipant participant = new TeamParticipant(findUser, team, TeamRoleType.MEMBER);
-			participant = participantRepository.save(participant);
-			team.addParticipant(participant);
-		}
-
-		TeamParticipant participant = new TeamParticipant(team.getUser(), team, TeamRoleType.LEADER);
-		participant = participantRepository.save(participant);
-		team.addParticipant(participant);
-
+		addParticipants(team, participants);
+		//leader 설정
+		addLeader(user, team);
+		//팀 정보 수정
 		team.update(teamDto);
 
 		team = teamRepository.save(team);
@@ -169,13 +163,30 @@ public class TeamService {
 		return team;
 	}
 
+	//팀 작성자를 리더로 설정
+	private void addLeader(User user, Team team) {
+		TeamParticipant participant = new TeamParticipant(user, team, TeamRoleType.LEADER);
+		participant = participantRepository.save(participant);
+		team.addParticipant(participant);
+	}
+
+	//팀 참여자 설정
+	private void addParticipants(Team team, List<String> participants) {
+		for (String p : participants) {
+			User findUser = userRepository.findByUsername(p);
+			TeamParticipant participant = new TeamParticipant(findUser, team, TeamRoleType.MEMBER);
+			participant = participantRepository.save(participant);
+			team.addParticipant(participant);
+		}
+	}
+
 	//team 삭제
 	public void delete(Long teamId, User user) {
 		Team team = teamRepository.findById(teamId).orElseThrow(
-			() -> new IllegalArgumentException("해당 team은 존재하지 않습니다.")
+			() -> new ResourceNotExistException("해당 team은 존재하지 않습니다.")
 		);
 		if (!team.getUser().equals(user)) {
-			throw new UserNotFoundException("팀 리더가 아닙니다.");
+			throw new MisMatchException("팀 리더가 아닙니다.");
 		}
 		teamRepository.deleteById(teamId);
 	}

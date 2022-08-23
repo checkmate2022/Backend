@@ -2,13 +2,17 @@ package com.checkmate.backend.model.request;
 
 import java.util.List;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Getter
 @Setter
+@Builder
 @NoArgsConstructor
+@AllArgsConstructor
 public class TeamRequest {
 
 	private String teamName;
@@ -17,9 +21,4 @@ public class TeamRequest {
 
 	private List<String> participantName;
 
-	public TeamRequest(String teamName, String teamDescription, List<String> participantName) {
-		this.teamName = teamName;
-		this.teamDescription = teamDescription;
-		this.participantName = participantName;
-	}
 }
