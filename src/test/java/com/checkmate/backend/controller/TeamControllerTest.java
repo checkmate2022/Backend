@@ -7,6 +7,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -29,9 +30,12 @@ import com.checkmate.backend.entity.oauth.ProviderType;
 import com.checkmate.backend.entity.oauth.RoleType;
 import com.checkmate.backend.entity.user.User;
 import com.checkmate.backend.model.request.TeamRequest;
+import com.checkmate.backend.repo.TeamParticipantRepository;
+import com.checkmate.backend.repo.TeamRepository;
 import com.checkmate.backend.repo.UserRepository;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.jayway.jsonpath.JsonPath;
 
 @ExtendWith(MockitoExtension.class)
 @AutoConfigureMockMvc
@@ -43,6 +47,7 @@ class TeamControllerTest {
 	MockMvc mvc;
 	String url = "http://localhost:8080/api/v1/team";
 	String token;
+	Integer teamId;
 	@Autowired
 	private WebApplicationContext ctx;
 	@Autowired
@@ -51,6 +56,10 @@ class TeamControllerTest {
 	private UserRepository userRepository;
 	@Autowired
 	private PasswordEncoder passwordEncoder;
+	@Autowired
+	private TeamRepository teamRepository;
+	@Autowired
+	private TeamParticipantRepository teamParticipantRepository;
 
 	@BeforeEach
 	void setUp() throws Exception {
@@ -68,12 +77,22 @@ class TeamControllerTest {
 			.participantName(new ArrayList<>())
 			.build();
 
-		ResultActions actions = mvc.perform(
+		MvcResult result = mvc.perform(
 			post(url)
 				.content(toJson(teamRequest))
 				.contentType(MediaType.APPLICATION_JSON)
-				.header("Authorization", "Bearer " + token));
+				.header("Authorization", "Bearer " + token)).andReturn();
 
+		String resultTostring = result.getResponse().getContentAsString();
+		teamId = JsonPath.parse(resultTostring).read("$.data.teamSeq");
+
+	}
+
+	@AfterEach
+	void deleteAll() {
+		userRepository.deleteAll();
+		teamRepository.deleteAll();
+		teamParticipantRepository.deleteAll();
 	}
 
 	private String getToken() throws Exception {
@@ -127,7 +146,7 @@ class TeamControllerTest {
 	void getTeam() throws Exception {
 
 		ResultActions actions = mvc.perform(
-			get(url + "/{teamId}", 1L)
+			get(url + "/{teamId}", teamId)
 				.contentType(MediaType.APPLICATION_JSON)
 				.accept(MediaType.APPLICATION_JSON)
 				.characterEncoding("UFT-8"));
@@ -151,7 +170,7 @@ class TeamControllerTest {
 	@DisplayName("팀별 사용자 조회")
 	void findUserByTeam() throws Exception {
 		ResultActions actions = mvc.perform(
-			get(url + "/{teamId}/user", 1L)
+			get(url + "/{teamId}/user", teamId)
 				.contentType(MediaType.APPLICATION_JSON)
 				.accept(MediaType.APPLICATION_JSON)
 				.characterEncoding("UFT-8"));
@@ -205,7 +224,7 @@ class TeamControllerTest {
 	@Test
 	void deleteTeam() throws Exception {
 		ResultActions actions = mvc.perform(
-			delete(url + "/{teamId}", 1L)
+			delete(url + "/{teamId}", teamId)
 				.header("Authorization", "Bearer " + token));
 
 		actions.andExpect(status().is2xxSuccessful());

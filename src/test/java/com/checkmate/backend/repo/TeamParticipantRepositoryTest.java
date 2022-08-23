@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -35,7 +36,6 @@ class TeamParticipantRepositoryTest {
 	@Autowired
 	private UserRepository userRepository;
 
-	@Test
 	@BeforeEach
 	@DisplayName("팀 참가자 저장")
 	void Save() {
@@ -49,10 +49,17 @@ class TeamParticipantRepositoryTest {
 		save = teamRepository.save(team);
 		save.setUser(savedUser);
 
-		TeamParticipant participant = new TeamParticipant(savedUser, team, TeamRoleType.MEMBER);
+		TeamParticipant participant = new TeamParticipant(savedUser, save, TeamRoleType.MEMBER);
 		savedParticipant = teamParticipantRepository.save(participant);
 
 		assertEquals(savedParticipant.getUser(), participant.getUser());
+	}
+
+	@AfterEach
+	void delete() {
+		userRepository.deleteAll();
+		teamRepository.deleteAll();
+		teamParticipantRepository.deleteAll();
 	}
 
 	@Test
