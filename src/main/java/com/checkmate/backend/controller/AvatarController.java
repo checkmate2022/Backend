@@ -60,10 +60,9 @@ public class AvatarController {
 		@SecurityRequirement(name = "bearer-key")})
 	@GetMapping("/user")
 	public ListResult<Avatar> getAvatarByUser() {
-		org.springframework.security.core.userdetails.User principal = (org.springframework.security.core.userdetails.User)SecurityContextHolder
-			.getContext().getAuthentication().getPrincipal();
-
-		User user = userService.getUser(principal.getUsername());
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		String name = authentication.getName();
+		User user = userService.getUser(name);
 
 		return responseService.getListResult(avatarService.findAvatarByUser(user));
 	}
@@ -101,10 +100,9 @@ public class AvatarController {
 		MultipartFile createdfile, String avatarName, String avatarDescription, AvatarType avatarStyle,
 		Long avatarStyleId) {
 
-		org.springframework.security.core.userdetails.User principal = (org.springframework.security.core.userdetails.User)SecurityContextHolder
-			.getContext().getAuthentication().getPrincipal();
-
-		User user = userService.getUser(principal.getUsername());
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		String name = authentication.getName();
+		User user = userService.getUser(name);
 		LocalDateTime now = LocalDateTime.now();
 
 		Avatar findAvtar = avatarService.findOne(avatarId);
@@ -131,10 +129,9 @@ public class AvatarController {
 	@Operation(summary = "캐릭터 기본설정", description = "캐릭터기본설정")
 	@PostMapping("/isBasic/{avatarId}")
 	public CommonResult setBasic(@Parameter @PathVariable Long avatarId) {
-		org.springframework.security.core.userdetails.User principal = (org.springframework.security.core.userdetails.User)SecurityContextHolder
-			.getContext().getAuthentication().getPrincipal();
-
-		User user = userService.getUser(principal.getUsername());
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		String name = authentication.getName();
+		User user = userService.getUser(name);
 		avatarService.setIsBasic(avatarId, user);
 
 		return responseService.getSuccessResult();

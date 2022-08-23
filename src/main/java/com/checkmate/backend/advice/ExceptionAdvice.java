@@ -12,6 +12,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import com.checkmate.backend.advice.exception.DuplicateException;
 import com.checkmate.backend.advice.exception.LoginFailedException;
 import com.checkmate.backend.advice.exception.MaximumException;
+import com.checkmate.backend.advice.exception.MisMatchException;
 import com.checkmate.backend.advice.exception.OAuthProviderMissMatchException;
 import com.checkmate.backend.advice.exception.ResourceNotExistException;
 import com.checkmate.backend.advice.exception.TokenValidFailedException;
@@ -88,6 +89,12 @@ public class ExceptionAdvice {
 	@ExceptionHandler(FileNotFoundException.class)
 	@ResponseStatus(HttpStatus.BAD_REQUEST)
 	protected CommonResult fileNotFoundException(HttpServletRequest request, FileNotFoundException e) {
+		return responseService.getFailResult(HttpStatus.BAD_REQUEST.value(), e.getMessage());
+	}
+
+	@ExceptionHandler(MisMatchException.class)
+	@ResponseStatus(HttpStatus.BAD_REQUEST)
+	protected CommonResult misMatchException(HttpServletRequest request, MisMatchException e) {
 		return responseService.getFailResult(HttpStatus.BAD_REQUEST.value(), e.getMessage());
 	}
 

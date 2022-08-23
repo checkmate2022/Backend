@@ -1,5 +1,6 @@
 package com.checkmate.backend.controller;
 
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -61,10 +62,9 @@ public class TeamController {
 		@SecurityRequirement(name = "bearer-key")})
 	@GetMapping("/user")
 	public ListResult<TeamResponse> getTeamByUser() {
-		org.springframework.security.core.userdetails.User principal = (org.springframework.security.core.userdetails.User)SecurityContextHolder
-			.getContext().getAuthentication().getPrincipal();
-
-		User user = userService.getUser(principal.getUsername());
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		String name = authentication.getName();
+		User user = userService.getUser(name);
 
 		return responseService.getListResult(teamService.findTeamByUser(user));
 	}
@@ -78,11 +78,10 @@ public class TeamController {
 
 	@Operation(summary = "팀 등록", description = "팀등록", security = {@SecurityRequirement(name = "bearer-key")})
 	@PostMapping
-	public SingleResult<Team> createTeam(@RequestBody @Parameter TeamRequest teamdto) {
-		org.springframework.security.core.userdetails.User principal = (org.springframework.security.core.userdetails.User)SecurityContextHolder
-			.getContext().getAuthentication().getPrincipal();
-
-		User user = userService.getUser(principal.getUsername());
+	public SingleResult<Team> createTeam(@RequestBody TeamRequest teamdto) {
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		String name = authentication.getName();
+		User user = userService.getUser(name);
 
 		Team result = teamService.make(teamdto, user);
 		return responseService.getSingleResult(result);
@@ -92,20 +91,18 @@ public class TeamController {
 	@PutMapping("/{teamId}")
 	public SingleResult<Team> updateTeam(@Parameter @PathVariable Long teamId,
 		@Parameter @RequestBody TeamRequest teamRequest) {
-		org.springframework.security.core.userdetails.User principal = (org.springframework.security.core.userdetails.User)SecurityContextHolder
-			.getContext().getAuthentication().getPrincipal();
-
-		User user = userService.getUser(principal.getUsername());
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		String name = authentication.getName();
+		User user = userService.getUser(name);
 		return responseService.getSingleResult(teamService.update(teamId, teamRequest, user));
 	}
 
 	@Operation(summary = "팀 삭제", description = "팀삭제", security = {@SecurityRequirement(name = "bearer-key")})
 	@DeleteMapping("/{teamId}")
 	public CommonResult deleteTeam(@Parameter @PathVariable Long teamId) {
-		org.springframework.security.core.userdetails.User principal = (org.springframework.security.core.userdetails.User)SecurityContextHolder
-			.getContext().getAuthentication().getPrincipal();
-
-		User user = userService.getUser(principal.getUsername());
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		String name = authentication.getName();
+		User user = userService.getUser(name);
 		teamService.delete(teamId, user);
 		return responseService.getSuccessResult();
 	}
