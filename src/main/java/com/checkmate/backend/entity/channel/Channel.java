@@ -52,14 +52,12 @@ public class Channel {
 
 	public Channel(
 		@NotNull String channelName,
-		@NotNull Team team,
-		@NotNull LocalDateTime createdAt,
-		@NotNull LocalDateTime modifiedAt
+		@NotNull Team team
 	) {
 		this.channelName = channelName;
 		this.team = team;
-		this.createdAt = createdAt;
-		this.modifiedAt = modifiedAt;
+		this.createdAt = LocalDateTime.now();
+		this.modifiedAt = LocalDateTime.now();
 	}
 
 	public void setChannelName(String channelName) {

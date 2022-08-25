@@ -23,6 +23,8 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.filter.CharacterEncodingFilter;
 
@@ -30,7 +32,7 @@ import com.checkmate.backend.entity.oauth.ProviderType;
 import com.checkmate.backend.entity.oauth.RoleType;
 import com.checkmate.backend.entity.user.User;
 import com.checkmate.backend.model.request.TeamRequest;
-import com.checkmate.backend.repo.TeamParticipantRepository;
+import com.checkmate.backend.repo.ChannelRepository;
 import com.checkmate.backend.repo.TeamRepository;
 import com.checkmate.backend.repo.UserRepository;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -40,26 +42,26 @@ import com.jayway.jsonpath.JsonPath;
 @ExtendWith(MockitoExtension.class)
 @AutoConfigureMockMvc
 @SpringBootTest
-@DisplayName("TeamControllerTest 테스트")
-class TeamControllerTest {
-
+@DisplayName("ChannelControllerTest 테스트")
+class ChannelControllerTest {
 	@Autowired
 	MockMvc mvc;
-	String url = "http://localhost:8080/api/v1/team";
 	String token;
+	String url = "http://localhost:8080/api/v1/channel";
 	Integer teamId;
+	Integer channelId;
 	@Autowired
 	private WebApplicationContext ctx;
 	@Autowired
 	private ObjectMapper objectMapper;
 	@Autowired
-	private UserRepository userRepository;
+	private TeamRepository teamRepository;
+	@Autowired
+	private ChannelRepository channelRepository;
 	@Autowired
 	private PasswordEncoder passwordEncoder;
 	@Autowired
-	private TeamRepository teamRepository;
-	@Autowired
-	private TeamParticipantRepository teamParticipantRepository;
+	private UserRepository userRepository;
 
 	@BeforeEach
 	void setUp() throws Exception {
@@ -78,7 +80,7 @@ class TeamControllerTest {
 			.build();
 
 		MvcResult result = mvc.perform(
-			post(url)
+			post("http://localhost:8080/api/v1/team")
 				.content(toJson(teamRequest))
 				.contentType(MediaType.APPLICATION_JSON)
 				.header("Authorization", "Bearer " + token)).andReturn();
@@ -86,13 +88,25 @@ class TeamControllerTest {
 		String resultTostring = result.getResponse().getContentAsString();
 		teamId = JsonPath.parse(resultTostring).read("$.data.teamSeq");
 
+		MultiValueMap<String, String> info = new LinkedMultiValueMap<>();
+		info.add("teamId", String.valueOf(teamId));
+		info.add("channelName", "channel");
+		MvcResult actions = mvc.perform(
+			post(url)
+				.contentType(MediaType.APPLICATION_JSON)
+				.header("Authorization", "Bearer " + token)
+				.param("teamId", String.valueOf(teamId))
+				.param("channelName", "channel")).andReturn();
+
+		String channelTostring = actions.getResponse().getContentAsString();
+		channelId = JsonPath.parse(channelTostring).read("$.data.channelSeq");
+
 	}
 
 	@AfterEach
 	void deleteAll() {
-		userRepository.deleteAll();
-		teamRepository.deleteAll();
-		teamParticipantRepository.deleteAll();
+		channelRepository.deleteAll();
+		teamRepository.deleteById(Long.valueOf(teamId));
 	}
 
 	private String getToken() throws Exception {
@@ -128,105 +142,52 @@ class TeamControllerTest {
 	}
 
 	@Test
-	@DisplayName("전체 팀 조회")
-	void getTeams() throws Exception {
-
+	void getChannelsByTeam() throws Exception {
 		ResultActions actions = mvc.perform(
-			get(url)
+			get(url + "/team/{teamId}", teamId)
 				.contentType(MediaType.APPLICATION_JSON)
 				.accept(MediaType.APPLICATION_JSON)
 				.characterEncoding("UFT-8"));
 
 		actions.andExpect(status().is2xxSuccessful())
-			.andExpect(jsonPath("$.list[0].teamName").value("team"));
+			.andExpect(jsonPath("$.list[0].channelName").value("channel"));
 	}
 
 	@Test
-	@DisplayName("단건 팀 조회")
-	void getTeam() throws Exception {
-
-		ResultActions actions = mvc.perform(
-			get(url + "/{teamId}", teamId)
-				.contentType(MediaType.APPLICATION_JSON)
-				.accept(MediaType.APPLICATION_JSON)
-				.characterEncoding("UFT-8"));
-
-		actions.andExpect(status().is2xxSuccessful())
-			.andExpect(jsonPath("$.data.teamName").value("team"));
-	}
-
-	@Test
-	@DisplayName("사용자별 팀 조회")
-	void getTeamByUser() throws Exception {
-		ResultActions actions = mvc.perform(
-			get(url)
-				.header("Authorization", "Bearer " + token));
-
-		actions.andExpect(status().is2xxSuccessful())
-			.andExpect(jsonPath("$.list[0].teamName").value("team"));
-	}
-
-	@Test
-	@DisplayName("팀별 사용자 조회")
-	void findUserByTeam() throws Exception {
-		ResultActions actions = mvc.perform(
-			get(url + "/{teamId}/user", teamId)
-				.contentType(MediaType.APPLICATION_JSON)
-				.accept(MediaType.APPLICATION_JSON)
-				.characterEncoding("UFT-8"));
-
-		actions.andExpect(status().is2xxSuccessful())
-			.andExpect(jsonPath("$.list[0].userId").value("test@gmail.com"));
-
-	}
-
-	@Test
-	void createTeam() throws Exception {
-		TeamRequest teamRequest = TeamRequest.builder()
-			.teamName("team")
-			.teamDescription("team")
-			.participantName(new ArrayList<>())
-			.build();
-
+	void create() throws Exception {
 		ResultActions actions = mvc.perform(
 			post(url)
-				.content(toJson(teamRequest))
 				.contentType(MediaType.APPLICATION_JSON)
-				.header("Authorization", "Bearer " + token));
+				.header("Authorization", "Bearer " + token)
+				.param("teamId", String.valueOf(teamId))
+				.param("channelName", "channel1"));
 
 		actions.andExpect(status().is2xxSuccessful())
-			.andExpect(jsonPath("$.data.teamName").value("team"));
-
+			.andExpect(jsonPath("$.data.channelName").value("channel1"));
 	}
 
 	@Test
-	void updateTeam() throws Exception {
-		TeamRequest teamRequest = TeamRequest.builder()
-			.teamName("team")
-			.teamDescription("team1")
-			.participantName(new ArrayList<>())
-			.build();
-
+	void deleteChannel() throws Exception {
 		ResultActions actions = mvc.perform(
-			put(url + "/{teamId}", teamId)
-				.content(toJson(teamRequest))
+			delete(url + "/{channelId}", channelId));
+
+		actions.andExpect(status().is2xxSuccessful());
+	}
+
+	@Test
+	void updateChannel() throws Exception {
+		ResultActions actions = mvc.perform(
+			put(url + "/{channelId}", channelId)
 				.contentType(MediaType.APPLICATION_JSON)
+				.param("channelName", "channel1")
 				.header("Authorization", "Bearer " + token));
 
 		actions.andExpect(status().is2xxSuccessful())
-			.andExpect(jsonPath("$.data.teamDescription").value("team1"));
+			.andExpect(jsonPath("$.data.channelName").value("channel1"));
+
 	}
 
 	private <T> String toJson(T data) throws JsonProcessingException {
 		return objectMapper.writeValueAsString(data);
-	}
-
-	@Test
-	void deleteTeam() throws Exception {
-		ResultActions actions = mvc.perform(
-			delete(url + "/{teamId}", teamId)
-				.header("Authorization", "Bearer " + token));
-
-		actions.andExpect(status().is2xxSuccessful());
 	}
 }

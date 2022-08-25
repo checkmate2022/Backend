@@ -57,9 +57,9 @@ class TeamParticipantRepositoryTest {
 
 	@AfterEach
 	void delete() {
-		userRepository.deleteAll();
-		teamRepository.deleteAll();
-		teamParticipantRepository.deleteAll();
+		userRepository.delete(savedUser);
+		teamRepository.delete(save);
+		teamParticipantRepository.delete(savedParticipant);
 	}
 
 	@Test

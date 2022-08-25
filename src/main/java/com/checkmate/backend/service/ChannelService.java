@@ -1,6 +1,5 @@
 package com.checkmate.backend.service;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
@@ -34,8 +33,7 @@ public class ChannelService {
 		Team team = teamRepository.findById(teamId).orElseThrow(
 			() -> new IllegalArgumentException("팀이 존재하지 않습니다.")
 		);
-		LocalDateTime now = LocalDateTime.now();
-		Channel channel = new Channel(channelName, team, now, now);
+		Channel channel = new Channel(channelName, team);
 		return channelRepository.save(channel);
 	}
 
