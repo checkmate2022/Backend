@@ -90,6 +90,11 @@ dependencies {
     implementation 'com.google.firebase:firebase-admin:7.1.1'
 // https://mvnrepository.com/artifact/com.squareup.okhttp3/okhttp
     implementation group: 'com.squareup.okhttp3', name: 'okhttp', version: '4.9.3'
+
+    //google DialogFlow
+    implementation platform('com.google.cloud:libraries-bom:26.1.0')
+    implementation group: 'com.google.cloud', name: 'google-cloud-dialogflow', version: '4.8.0'
+    implementation 'com.google.apis:google-api-services-dialogflow:v2beta1-rev98-1.25.0'
     //mariaDB
     runtimeOnly 'org.mariadb.jdbc:mariadb-java-client:2.7.4'
 }

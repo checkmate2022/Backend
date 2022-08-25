@@ -34,7 +34,7 @@ public class ChannelController {
 
 	@Operation(summary = "팀별 채널 조회")
 	@GetMapping("/team/{teamId}")
-	public ListResult<Channel> getSchedulesByTeam(@Parameter @PathVariable Long teamId) {
+	public ListResult<Channel> getChannelsByTeam(@Parameter @PathVariable Long teamId) {
 		return responseService.getListResult(channelService.findAllByTeam(teamId));
 	}
 
