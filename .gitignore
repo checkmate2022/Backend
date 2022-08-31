@@ -36,5 +36,3 @@ out/
 
 ### VS Code ###
 .vscode/
-
-src/main/resources/firebase/fcm-checkmate-firebase-adminsdk-x38ww-489686dc75.json
