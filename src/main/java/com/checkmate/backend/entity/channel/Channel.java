@@ -1,7 +1,10 @@
 package com.checkmate.backend.entity.channel;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -10,9 +13,11 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
+import com.checkmate.backend.entity.board.Board;
 import com.checkmate.backend.entity.team.Team;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -49,6 +54,10 @@ public class Channel {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "TEAM_ID")
 	private Team team;
+
+	@OneToMany(mappedBy = "channel", cascade = CascadeType.ALL)
+	@JsonIgnore
+	private List<Board> boards = new ArrayList<>();
 
 	public Channel(
 		@NotNull String channelName,
