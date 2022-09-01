@@ -43,11 +43,11 @@ public class FCMService {
 				.token(token)
 				.user(user)
 				.build();
+			userDeviceTokenRepository.save(newUserDeviceToken);
 		} else {
 			newUserDeviceToken = userDeviceToken.get();
 			newUserDeviceToken.update(token);
 		}
-		userDeviceTokenRepository.save(newUserDeviceToken);
 	}
 
 	public void sendMessageTo(String targetToken, String title, String body) throws IOException {

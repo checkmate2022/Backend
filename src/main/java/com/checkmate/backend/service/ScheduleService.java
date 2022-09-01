@@ -20,6 +20,7 @@ import com.checkmate.backend.entity.user.User;
 import com.checkmate.backend.model.dto.ScheduleDto;
 import com.checkmate.backend.model.dto.ScheduleGetDto;
 import com.checkmate.backend.model.request.ScheduleRequest;
+import com.checkmate.backend.model.response.ScheduleChatbotResponse;
 import com.checkmate.backend.repo.MeetingParticipantRepository;
 import com.checkmate.backend.repo.MeetingRepository;
 import com.checkmate.backend.repo.ParticipantRepository;
@@ -48,6 +49,39 @@ public class ScheduleService {
 		List<Schedule> schedules = scheduleRepository.findAll();
 		return schedules;
 	}*/
+
+	//챗봇 일정 조회(날짜 받으면 일정 조회)
+	public List<ScheduleChatbotResponse> getSchedulesForChatbot(LocalDateTime time,User user){
+		List<Schedule> schedules = scheduleRepository.findSchedulesByScheduleStartdateBetweenAndScheduleEnddate(time,user);
+		//반환 리스트 생성
+		List<ScheduleChatbotResponse> response = new ArrayList<>();
+
+		for (Schedule s : schedules) {
+
+			List<String> users = new ArrayList<>();
+
+
+			ScheduleChatbotResponse scheduleChatbotResponse = ScheduleChatbotResponse.builder()
+				.scheduleName(s.getScheduleName())
+				.scheduleDescription(s.getScheduleDescription())
+				.scheduleType(s.getScheduleType())
+				.scheduleStartDate(s.getScheduleStartdate())
+				.scheduleEndDate(s.getScheduleEnddate())
+				.teamName(s.getTeam().getTeamName())
+				.userId(s.getUser().getUserId())
+				.build();
+
+			//참여자 정보 담아줌
+			for (Participant scheduleP : s.getParticipants()) {
+				users.add(scheduleP.getUser().getUsername());
+			}
+			scheduleChatbotResponse.setParticipants(users);
+
+			//List 담기
+			response.add(scheduleChatbotResponse);
+		}
+		return response;
+	}
 
 	// 일정 단건 조회
 	@Transactional(readOnly = true)
