@@ -103,4 +103,4 @@ openvidu:
 
 #firebase
 firebase-sdk-path:
-  fcm-checkmate-firebase-adminsdk-x38ww-489686dc75.json
+  fcm-checkmate-firebase-adminsdk-x38ww-489686dc75.json  firebase/fcm-checkmate-firebase-adminsdk-x38ww-489686dc75.json
