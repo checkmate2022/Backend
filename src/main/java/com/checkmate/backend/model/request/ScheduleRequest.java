@@ -28,6 +28,8 @@ public class ScheduleRequest {
 
 	private Long teamId;
 
+	private int notificationTime;
+
 	public ScheduleRequest(String scheduleName, String scheduleDescription, LocalDateTime scheduleStartDate,
 		LocalDateTime scheduleEndDate, List<String> participantName, Long teamId) {
 		this.scheduleName = scheduleName;

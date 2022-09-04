@@ -1,13 +1,27 @@
 package com.checkmate.backend.service;
 
 import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
+import org.quartz.JobBuilder;
+import org.quartz.JobDataMap;
+import org.quartz.JobDetail;
+import org.quartz.Scheduler;
+import org.quartz.SchedulerException;
+import org.quartz.SimpleScheduleBuilder;
+import org.quartz.Trigger;
+import org.quartz.TriggerBuilder;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.checkmate.backend.common.job.NoticeJob;
 import com.checkmate.backend.entity.meeting.Meeting;
 import com.checkmate.backend.entity.meeting.MeetingParticipant;
 import com.checkmate.backend.entity.meeting.MeetingParticipantType;
@@ -23,6 +37,7 @@ import com.checkmate.backend.model.request.ScheduleRequest;
 import com.checkmate.backend.model.response.ScheduleChatbotResponse;
 import com.checkmate.backend.repo.MeetingParticipantRepository;
 import com.checkmate.backend.repo.MeetingRepository;
+import com.checkmate.backend.repo.NotificationRepository;
 import com.checkmate.backend.repo.ParticipantRepository;
 import com.checkmate.backend.repo.ScheduleRepository;
 import com.checkmate.backend.repo.TeamRepository;
@@ -41,7 +56,9 @@ public class ScheduleService {
 	private final TeamRepository teamRepository;
 	private final MeetingRepository meetingRepository;
 	private final MeetingParticipantRepository meetingParticipantRepository;
-
+	private final NotificationRepository notificationRepository;
+	@Autowired
+	private Scheduler scheduler;
 	/*
 	// 전체 일정 조회
 	@Transactional(readOnly = true)
@@ -51,15 +68,15 @@ public class ScheduleService {
 	}*/
 
 	//챗봇 일정 조회(날짜 받으면 일정 조회)
-	public List<ScheduleChatbotResponse> getSchedulesForChatbot(LocalDateTime time,User user){
-		List<Schedule> schedules = scheduleRepository.findSchedulesByScheduleStartdateBetweenAndScheduleEnddate(time,user);
+	public List<ScheduleChatbotResponse> getSchedulesForChatbot(LocalDateTime time, User user) {
+		List<Schedule> schedules = scheduleRepository.findSchedulesByScheduleStartdateBetweenAndScheduleEnddate(time,
+			user);
 		//반환 리스트 생성
 		List<ScheduleChatbotResponse> response = new ArrayList<>();
 
 		for (Schedule s : schedules) {
 
 			List<String> users = new ArrayList<>();
-
 
 			ScheduleChatbotResponse scheduleChatbotResponse = ScheduleChatbotResponse.builder()
 				.scheduleName(s.getScheduleName())
@@ -71,11 +88,11 @@ public class ScheduleService {
 				.userId(s.getUser().getUserId())
 				.build();
 
-			//참여자 정보 담아줌
-			for (Participant scheduleP : s.getParticipants()) {
-				users.add(scheduleP.getUser().getUsername());
-			}
-			scheduleChatbotResponse.setParticipants(users);
+			// //참여자 정보 담아줌
+			// for (Participant scheduleP : s.getParticipants()) {
+			// 	users.add(scheduleP.getUser().getUsername());
+			// }
+			// scheduleChatbotResponse.setParticipants(users);
 
 			//List 담기
 			response.add(scheduleChatbotResponse);
@@ -201,9 +218,59 @@ public class ScheduleService {
 
 		save.addParticipant(participant);
 
+		try {
+			ZonedDateTime dateTime = ZonedDateTime.of(scheduleReq.getScheduleStartDate().minusMinutes(scheduleReq.getNotificationTime()), ZoneId.of("Asia/Seoul"));
+
+			JobDetail jobDetail = buildJobDetail(scheduleReq,user);
+			Trigger trigger = buildJobTrigger(jobDetail, dateTime);
+			scheduler.scheduleJob(jobDetail, trigger);
+
+		} catch (SchedulerException ex) {
+			System.out.println("알림 예약 ㅣ실");
+		}
+		// //알림
+		// Notification notification=new Notification(save.getScheduleName(), save.getScheduleDescription(),user, save.getScheduleStartdate().minusMinutes(scheduleReq.getNotificationTime()),false);
+		// notificationRepository.save(notification);
+
 		return save;
 	}
+	//
+	// public void setNotification(ScheduleRequest scheduleReq){
+	// 	try {
+	// 		ZonedDateTime dateTime = ZonedDateTime.of(scheduleReq.getScheduleStartDate().minusMinutes(scheduleReq.getNotificationTime()), ZoneId.of("Asia/Seoul"));
+	//
+	// 		JobDetail jobDetail = buildJobDetail(scheduleReq);
+	// 		Trigger trigger = buildJobTrigger(jobDetail, dateTime);
+	// 		scheduler.scheduleJob(jobDetail, trigger);
+	//
+	// 	} catch (SchedulerException ex) {
+	// 		System.out.println("알림 예약 ㅣ실");
+	// 	}
+	// }
+	private JobDetail buildJobDetail(ScheduleRequest scheduleRequest,User user) {
+		JobDataMap jobDataMap = new JobDataMap();
 
+		jobDataMap.put("title", scheduleRequest.getScheduleName());
+		jobDataMap.put("doby", scheduleRequest.getScheduleDescription());
+		jobDataMap.put("userId", user.getUserId());
+
+		return JobBuilder.newJob(NoticeJob.class)
+			.withIdentity(UUID.randomUUID().toString(), "notice-jobs")
+			.withDescription("Send notification Job")
+			.usingJobData(jobDataMap)
+			.storeDurably()
+			.build();
+	}
+
+	private Trigger buildJobTrigger(JobDetail jobDetail, ZonedDateTime startAt) {
+		return TriggerBuilder.newTrigger()
+			.forJob(jobDetail)
+			.withIdentity(jobDetail.getKey().getName(), "notice-triggers")
+			.withDescription("Send Email Trigger")
+			.startAt(Date.from(startAt.toInstant()))
+			.withSchedule(SimpleScheduleBuilder.simpleSchedule().withMisfireHandlingInstructionFireNow())
+			.build();
+	}
 	// 일정 수정
 	public Schedule update(Long scheduleId, ScheduleRequest scheduleReq) {
 

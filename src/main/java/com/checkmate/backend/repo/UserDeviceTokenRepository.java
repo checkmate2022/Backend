@@ -10,4 +10,6 @@ import com.checkmate.backend.entity.user.UserDeviceToken;
 public interface UserDeviceTokenRepository extends JpaRepository<UserDeviceToken, Long> {
 
 	Optional<UserDeviceToken> findUserDeviceTokenByUser(User user);
+
+	String findTokenByUser(User user);
 }
