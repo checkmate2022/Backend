@@ -1,6 +1,7 @@
 package com.checkmate.backend.service;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -8,9 +9,11 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Component;
 
+import com.checkmate.backend.entity.schedule.Notification;
 import com.checkmate.backend.entity.user.User;
 import com.checkmate.backend.entity.user.UserDeviceToken;
 import com.checkmate.backend.model.FcmMessage;
+import com.checkmate.backend.repo.NotificationRepository;
 import com.checkmate.backend.repo.UserDeviceTokenRepository;
 import com.checkmate.backend.repo.UserRepository;
 import com.fasterxml.jackson.core.JsonParseException;
@@ -33,6 +36,7 @@ public class FCMService {
 	private final ObjectMapper objectMapper;
 	private final UserRepository userRepository;
 	private final UserDeviceTokenRepository userDeviceTokenRepository;
+	private final NotificationRepository notificationRepository;
 
 	public void registerDeviceToken(String token, String userId) throws Throwable {
 		User user = (User)userRepository.findByUserId(userId);
@@ -50,8 +54,10 @@ public class FCMService {
 		}
 	}
 
-	public void sendMessageTo(String targetToken, String title, String body) throws IOException {
-		String message = makeMessage(targetToken, title, body);
+	public void sendMessageTo(String userId, String title, String body) throws IOException {
+		User user = (User)userRepository.findByUserId(userId);
+		Optional<UserDeviceToken> targetToken = userDeviceTokenRepository.findUserDeviceTokenByUser(user);
+		String message = makeMessage(targetToken.get().getToken(), title, body);
 
 		OkHttpClient client = new OkHttpClient();
 		RequestBody requestBody = RequestBody.create(message,
@@ -64,6 +70,7 @@ public class FCMService {
 			.build();
 
 		Response response = client.newCall(request).execute();
+
 
 		System.out.println(response.body().string());
 	}

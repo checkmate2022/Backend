@@ -3,8 +3,6 @@ package com.checkmate.backend.controller;
 import java.io.IOException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
@@ -42,44 +40,40 @@ public class ChatBotController {
 	@RequestMapping(method = RequestMethod.POST, value = "/dialogFlowWebHook")
 	public ResponseEntity<?> dialogFlowWebHook(@RequestBody String requestStr, HttpServletRequest servletRequest) throws
 		IOException {
-		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-		String username = authentication.getName();
-		User user = userService.getUser(username);
+
 		try {
 			GoogleCloudDialogflowV2WebhookResponse response = new GoogleCloudDialogflowV2WebhookResponse(); // response 객체
 			GoogleCloudDialogflowV2WebhookRequest request = jacksonFactory.createJsonParser(requestStr)
 				.parse(GoogleCloudDialogflowV2WebhookRequest.class); // request 객체에서 파싱
-			GoogleCloudDialogflowV2Intent intent=request.getQueryResult().getIntent();
-			String name=intent.getDisplayName();
+			GoogleCloudDialogflowV2Intent intent = request.getQueryResult().getIntent();
+			String name = intent.getDisplayName();
 
-			System.out.println(name);
-
-			String query=request.getQueryResult().getQueryText();
-			System.out.println(query);
-			String action=request.getQueryResult().getAction();
-			System.out.println(action);
+			String userId= (String)request.getOriginalDetectIntentRequest().getPayload().get("userId");
+			User user = userService.getUser(userId);
+			String query = request.getQueryResult().getQueryText();
+			String action = request.getQueryResult().getAction();
 
 			Map<String, Object> params = request.getQueryResult().getParameters(); // 파라미터 받아서 map에다 저장
-			StringBuilder sb=new StringBuilder();
+			StringBuilder sb = new StringBuilder();
 
-			System.out.println(params.get("date-time"));
-			switch(name){
+			switch (name) {
 				//날짜 일정 조회
 				case "detail schedule":
-					String time= (String)params.get("date-time");
+					String time = (String)params.get("date-time");
 					// DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 					// LocalDateTime dateTime = LocalDateTime.parse(time, formatter);
-					StringTokenizer st=new StringTokenizer(time,"T");
-					LocalDate date=LocalDate.parse(st.nextToken());
+					StringTokenizer st = new StringTokenizer(time, "T");
+					LocalDate date = LocalDate.parse(st.nextToken());
 					LocalDateTime localTime = date.atStartOfDay();
-					List<ScheduleChatbotResponse> chatbotResponses= scheduleService.getSchedulesForChatbot(localTime, user);
-					sb.append(date.toString()+"일정은"+" ");
-					for(int i=0;i<chatbotResponses.size();i++){
-						sb.append(chatbotResponses.get(i).getScheduleName()+"  ");
+					List<ScheduleChatbotResponse> chatbotResponses = scheduleService.getSchedulesForChatbot(localTime, user);
+					sb.append(date.toString() + "일정은" + " ");
+					if(chatbotResponses.size()==0) sb.append("없습니다.");
+					for (int i = 0; i < chatbotResponses.size(); i++) {
+						sb.append(chatbotResponses.get(i).getScheduleName() + "  ");
 					}
 					sb.append("입니다.");
-					response.setFulfillmentText(sb.toString());
 			}
+			response.setFulfillmentText(sb.toString());
 			//
 			// if (params.size() > 0) {
 			// 	System.out.println(params);
@@ -93,7 +87,6 @@ public class ChatBotController {
 			return new ResponseEntity<Object>(ex.getMessage(), HttpStatus.BAD_REQUEST); // 에러 발생 시 bad request 보내줌
 		}
 	}
-
 
 }
 

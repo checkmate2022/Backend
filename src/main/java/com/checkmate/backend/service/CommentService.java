@@ -1,5 +1,6 @@
 package com.checkmate.backend.service;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -22,7 +23,7 @@ import lombok.RequiredArgsConstructor;
 public class CommentService {
 
 	private final CommentRepository commentRepository;
-
+	private final FCMService fcmService;
 	private final BoardRepository boardRepository;
 
 	//게시글 별 댓글 조회
@@ -46,7 +47,7 @@ public class CommentService {
 	}
 
 	//댓글 생성
-	public CommentResponse create(String content, long boardSeq, User user) {
+	public CommentResponse create(String content, long boardSeq, User user) throws IOException {
 		Board board = boardRepository.findById(boardSeq).orElseThrow(
 			() -> new IllegalArgumentException("게시글이 존재하지 않습니다.")
 		);
@@ -61,6 +62,11 @@ public class CommentService {
 			.userImage(comment.getUser().getUserImage())
 			.username(comment.getUser().getUsername())
 			.build();
+
+		fcmService.sendMessageTo(
+			board.getUser().getUserId(),
+			user.getUserId()+"이 댓글을 달았습니다.",
+			comment.getContent());
 
 		return commentResponse;
 	}
