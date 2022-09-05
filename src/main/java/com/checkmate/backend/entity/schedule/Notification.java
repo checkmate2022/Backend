@@ -58,5 +58,19 @@ public class Notification {
 		this.isNotice=isNotice;
 	}
 
+	public void update(){
+		this.isNotice=true;
+	}
 
+	@Override
+	public String toString() {
+		return "Notification{" +
+			"notificationSeq=" + notificationSeq +
+			", body='" + body + '\'' +
+			", title='" + title + '\'' +
+			", notificationDate=" + notificationDate +
+			", isNotice=" + isNotice +
+			", user=" + user +
+			'}';
+	}
 }

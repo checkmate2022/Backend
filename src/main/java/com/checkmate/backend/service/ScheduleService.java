@@ -27,6 +27,7 @@ import com.checkmate.backend.entity.meeting.MeetingParticipant;
 import com.checkmate.backend.entity.meeting.MeetingParticipantType;
 import com.checkmate.backend.entity.meeting.MeetingType;
 import com.checkmate.backend.entity.participant.Participant;
+import com.checkmate.backend.entity.schedule.Notification;
 import com.checkmate.backend.entity.schedule.Schedule;
 import com.checkmate.backend.entity.schedule.ScheduleType;
 import com.checkmate.backend.entity.team.Team;
@@ -218,19 +219,9 @@ public class ScheduleService {
 
 		save.addParticipant(participant);
 
-		try {
-			ZonedDateTime dateTime = ZonedDateTime.of(scheduleReq.getScheduleStartDate().minusMinutes(scheduleReq.getNotificationTime()), ZoneId.of("Asia/Seoul"));
-
-			JobDetail jobDetail = buildJobDetail(scheduleReq,user);
-			Trigger trigger = buildJobTrigger(jobDetail, dateTime);
-			scheduler.scheduleJob(jobDetail, trigger);
-
-		} catch (SchedulerException ex) {
-			System.out.println("알림 예약 ㅣ실");
-		}
 		// //알림
-		// Notification notification=new Notification(save.getScheduleName(), save.getScheduleDescription(),user, save.getScheduleStartdate().minusMinutes(scheduleReq.getNotificationTime()),false);
-		// notificationRepository.save(notification);
+		Notification notification=new Notification(save.getScheduleName(), save.getScheduleDescription(),user, save.getScheduleStartdate().minusMinutes(scheduleReq.getNotificationTime()),false);
+		notificationRepository.save(notification);
 
 		return save;
 	}
