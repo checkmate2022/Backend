@@ -48,10 +48,15 @@ public class ChattingController {
 		// Websocket에 발행된 메시지를 redis로 발행(publish)
 		ChannelTopic topic = chatService.getTopic(message.getRoomId());
 		redisPublisher.publish(topic, message);
-		fcmService.sendMessageTo(
-			message.getReceiver(),
-			message.getSender() + " 답장이 왔습니다.",
-			message.getMessage());
+		try {
+			fcmService.sendMessageTo(
+				message.getReceiver(),
+				message.getSender() + " 답장이 왔습니다.",
+				message.getMessage());
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
 	}
 
 }
