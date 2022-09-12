@@ -219,9 +219,11 @@ public class ScheduleService {
 
 		save.addParticipant(participant);
 
-		// //알림
-		Notification notification=new Notification(save.getScheduleName(), save.getScheduleDescription(),user, save.getScheduleStartdate().minusMinutes(scheduleReq.getNotificationTime()),false);
-		notificationRepository.save(notification);
+		if(scheduleReq.getNotificationTime()!=0){
+			// //알림
+			Notification notification=new Notification(save.getScheduleName(), save.getScheduleDescription(),user.getUserId(), save.getScheduleStartdate().minusMinutes(scheduleReq.getNotificationTime()),false);
+			notificationRepository.save(notification);
+		}
 
 		return save;
 	}
@@ -238,30 +240,30 @@ public class ScheduleService {
 	// 		System.out.println("알림 예약 ㅣ실");
 	// 	}
 	// }
-	private JobDetail buildJobDetail(ScheduleRequest scheduleRequest,User user) {
-		JobDataMap jobDataMap = new JobDataMap();
-
-		jobDataMap.put("title", scheduleRequest.getScheduleName());
-		jobDataMap.put("doby", scheduleRequest.getScheduleDescription());
-		jobDataMap.put("userId", user.getUserId());
-
-		return JobBuilder.newJob(NoticeJob.class)
-			.withIdentity(UUID.randomUUID().toString(), "notice-jobs")
-			.withDescription("Send notification Job")
-			.usingJobData(jobDataMap)
-			.storeDurably()
-			.build();
-	}
-
-	private Trigger buildJobTrigger(JobDetail jobDetail, ZonedDateTime startAt) {
-		return TriggerBuilder.newTrigger()
-			.forJob(jobDetail)
-			.withIdentity(jobDetail.getKey().getName(), "notice-triggers")
-			.withDescription("Send Email Trigger")
-			.startAt(Date.from(startAt.toInstant()))
-			.withSchedule(SimpleScheduleBuilder.simpleSchedule().withMisfireHandlingInstructionFireNow())
-			.build();
-	}
+	// private JobDetail buildJobDetail(ScheduleRequest scheduleRequest,User user) {
+	// 	JobDataMap jobDataMap = new JobDataMap();
+	//
+	// 	jobDataMap.put("title", scheduleRequest.getScheduleName());
+	// 	jobDataMap.put("doby", scheduleRequest.getScheduleDescription());
+	// 	jobDataMap.put("userId", user.getUserId());
+	//
+	// 	return JobBuilder.newJob(NoticeJob.class)
+	// 		.withIdentity(UUID.randomUUID().toString(), "notice-jobs")
+	// 		.withDescription("Send notification Job")
+	// 		.usingJobData(jobDataMap)
+	// 		.storeDurably()
+	// 		.build();
+	// }
+	//
+	// private Trigger buildJobTrigger(JobDetail jobDetail, ZonedDateTime startAt) {
+	// 	return TriggerBuilder.newTrigger()
+	// 		.forJob(jobDetail)
+	// 		.withIdentity(jobDetail.getKey().getName(), "notice-triggers")
+	// 		.withDescription("Send Email Trigger")
+	// 		.startAt(Date.from(startAt.toInstant()))
+	// 		.withSchedule(SimpleScheduleBuilder.simpleSchedule().withMisfireHandlingInstructionFireNow())
+	// 		.build();
+	// }
 	// 일정 수정
 	public Schedule update(Long scheduleId, ScheduleRequest scheduleReq) {
 

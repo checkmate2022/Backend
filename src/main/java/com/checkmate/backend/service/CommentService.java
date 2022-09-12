@@ -62,11 +62,15 @@ public class CommentService {
 			.userImage(comment.getUser().getUserImage())
 			.username(comment.getUser().getUsername())
 			.build();
+		try {
+			fcmService.sendMessageTo(
+				board.getUser().getUserId(),
+				user.getUserId()+"이 댓글을 달았습니다.",
+				comment.getContent());
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 
-		fcmService.sendMessageTo(
-			board.getUser().getUserId(),
-			user.getUserId()+"이 댓글을 달았습니다.",
-			comment.getContent());
 
 		return commentResponse;
 	}

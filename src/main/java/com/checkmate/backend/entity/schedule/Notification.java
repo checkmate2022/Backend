@@ -45,21 +45,15 @@ public class Notification {
 	@Column(name="ISNOTICE")
 	boolean isNotice;
 
-	@JsonIgnore
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "USER_ID")
-	private User user;
+	@Column(name="NOTIFICATION_USERID")
+	private String userId;
 
-	public Notification(String title, String body, User user, LocalDateTime notificationDate,boolean isNotice){
+	public Notification(String title, String body, String userId, LocalDateTime notificationDate,boolean isNotice){
 		this.title=title;
 		this.body=body;
-		this.user=user;
+		this.userId=userId;
 		this.notificationDate=notificationDate;
 		this.isNotice=isNotice;
-	}
-
-	public void update(){
-		this.isNotice=true;
 	}
 
 	@Override
@@ -70,7 +64,6 @@ public class Notification {
 			", title='" + title + '\'' +
 			", notificationDate=" + notificationDate +
 			", isNotice=" + isNotice +
-			", user=" + user +
 			'}';
 	}
 }
