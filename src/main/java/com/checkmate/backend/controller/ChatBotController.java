@@ -18,9 +18,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.checkmate.backend.entity.schedule.Schedule;
+import com.checkmate.backend.entity.schedule.ScheduleType;
 import com.checkmate.backend.entity.user.User;
+import com.checkmate.backend.model.request.ScheduleRequest;
 import com.checkmate.backend.model.response.ScheduleChatbotResponse;
 import com.checkmate.backend.service.ScheduleService;
+import com.checkmate.backend.service.TeamService;
 import com.checkmate.backend.service.UserService;
 import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.api.services.dialogflow.v2beta1.model.GoogleCloudDialogflowV2Intent;
@@ -36,6 +40,7 @@ public class ChatBotController {
 	private static JacksonFactory jacksonFactory = JacksonFactory.getDefaultInstance();
 	private final ScheduleService scheduleService;
 	private final UserService userService;
+	private final TeamService teamService;
 
 	@RequestMapping(method = RequestMethod.POST, value = "/dialogFlowWebHook")
 	public ResponseEntity<?> dialogFlowWebHook(@RequestBody String requestStr, HttpServletRequest servletRequest) throws
@@ -47,7 +52,6 @@ public class ChatBotController {
 				.parse(GoogleCloudDialogflowV2WebhookRequest.class); // request 객체에서 파싱
 			GoogleCloudDialogflowV2Intent intent = request.getQueryResult().getIntent();
 			String name = intent.getDisplayName();
-
 			String userId= (String)request.getOriginalDetectIntentRequest().getPayload().get("userId");
 			User user = userService.getUser(userId);
 			String query = request.getQueryResult().getQueryText();
@@ -55,7 +59,14 @@ public class ChatBotController {
 
 			Map<String, Object> params = request.getQueryResult().getParameters(); // 파라미터 받아서 map에다 저장
 			StringBuilder sb = new StringBuilder();
-
+			System.out.println((String)request.getOriginalDetectIntentRequest().getPayload().get("scheduleType"));
+			System.out.println((String)request.getOriginalDetectIntentRequest().getPayload().get("teamSeq"));
+			System.out.println((String)request.getOriginalDetectIntentRequest().getPayload().get("userId"));
+			System.out.println((String)request.getOriginalDetectIntentRequest().getPayload().get("scheduleTitle"));
+			System.out.println((String)request.getOriginalDetectIntentRequest().getPayload().get("scheduleStartDate"));
+			System.out.println((String)request.getOriginalDetectIntentRequest().getPayload().get("scheduleEndDate"));
+			System.out.println(name);
+			System.out.println(name=="register_schedule_scheduleDateTime");
 			switch (name) {
 				//날짜 일정 조회
 				case "detail schedule":
@@ -72,6 +83,22 @@ public class ChatBotController {
 						sb.append(chatbotResponses.get(i).getScheduleName() + "  ");
 					}
 					sb.append("입니다.");
+					break;
+				case "register_schedule_scheduleDateTime":
+					String scheduleTypeName=(String)request.getOriginalDetectIntentRequest().getPayload().get("scheduleType");
+					System.out.println(scheduleTypeName);
+					ScheduleType scheduleType=ScheduleType.valueOf(scheduleTypeName);
+					System.out.println(scheduleType.getDisplayName());
+					Long teamId= (Long)request.getOriginalDetectIntentRequest().getPayload().get("teamSeq");
+					String scheduleTitle=(String)request.getOriginalDetectIntentRequest().getPayload().get("scheduleTitle");
+					LocalDateTime startTime= (LocalDateTime)request.getOriginalDetectIntentRequest().getPayload().get("scheduleStartDate");
+					LocalDateTime endTime= (LocalDateTime)request.getOriginalDetectIntentRequest().getPayload().get("scheduleEndDate");
+
+					List<String> participantsName=teamService.findParticipantsByTeam(teamId,userId);
+
+					ScheduleRequest scheduleRequest=new ScheduleRequest(scheduleTitle,scheduleTitle,startTime,endTime,participantsName,teamId);
+					Schedule schedule= scheduleService.make(scheduleRequest,user);
+					sb.append("일정 "+schedule.getScheduleName()+"( "+schedule.getScheduleType().getDisplayName()+" )"+"시작 시간 "+schedule.getScheduleStartdate()+" 등록 하였습니다.");
 			}
 			response.setFulfillmentText(sb.toString());
 			//
