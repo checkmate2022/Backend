@@ -95,6 +95,24 @@ public class TeamService {
 		return participantResponses;
 	}
 
+	// 팀별 팀원 이름(챗봇 전용)
+	public List<String> findParticipantsByTeam(long teamId,String userId) {
+		Team team = teamRepository.findById(teamId).orElseThrow(
+			() -> new ResourceNotExistException("해당 team은 존재하지 않습니다.")
+		);
+		//user에 따라 participant 찾음
+		List<TeamParticipant> participants = participantRepository.findAllByTeam(team);
+
+		List<String> participantResponses = new ArrayList<>();
+		for (TeamParticipant p : participants) {
+			if(p.getUser().getUsername()!=userId) {
+				participantResponses.add(p.getUser().getUsername());
+			}
+		}
+
+		return participantResponses;
+	}
+
 	private void switchTeamParticipantToResponse(List<TeamParticipant> participants,
 		List<ParticipantResponse> participantResponses) {
 		//반복문

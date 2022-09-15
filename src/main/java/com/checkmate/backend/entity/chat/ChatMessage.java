@@ -26,7 +26,6 @@ public class ChatMessage {
 	private String message; // 메시지
 	private String roomId;
 	private String fileUrl;
-	private String fileDate;
 
 	public static ChatMessage createChatMessage(String roomId, String sender, String message, MessageType type,
 		String fileUrl) {
@@ -35,7 +34,7 @@ public class ChatMessage {
 			.sender(sender)
 			.message(message)
 			.type(type)
-			.fileDate(fileUrl)
+			.fileUrl(fileUrl)
 			.build();
 		return chatMessage;
 	}
