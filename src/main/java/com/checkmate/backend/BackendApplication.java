@@ -15,6 +15,9 @@ import com.checkmate.backend.config.oauth.CorsProperties;
 	AppProperties.class
 })
 public class BackendApplication {
+	static {
+		System.setProperty("com.amazonaws.sdk.disableEc2Metadata", "true");
+	}
 
 	public static void main(String[] args) {
 		SpringApplication.run(BackendApplication.class, args);

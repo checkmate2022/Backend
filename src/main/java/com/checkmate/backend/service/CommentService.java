@@ -65,12 +65,11 @@ public class CommentService {
 		try {
 			fcmService.sendMessageTo(
 				board.getUser().getUserId(),
-				user.getUserId()+"이 댓글을 달았습니다.",
+				user.getUserId() + "이 댓글을 달았습니다.",
 				comment.getContent());
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-
 
 		return commentResponse;
 	}

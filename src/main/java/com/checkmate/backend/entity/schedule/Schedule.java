@@ -70,6 +70,9 @@ public class Schedule {
 	@Enumerated(EnumType.STRING)
 	private ScheduleType scheduleType;
 
+	@Column(name = "SCHEDULE_NOTIFICATION_TIME")
+	private int notificationTime;
+
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
 	@Column(name = "SCHEDULE_STARTDATE")
 	private LocalDateTime scheduleStartdate;
@@ -86,6 +89,7 @@ public class Schedule {
 		this.scheduleName = scheduleDto.getScheduleName();
 		this.scheduleDescription = scheduleDto.getScheduleDescription();
 		this.scheduleType = scheduleDto.getScheduleType();
+		this.notificationTime = scheduleDto.getNotificationTime();
 		this.scheduleStartdate = scheduleDto.getScheduleStartDate();
 		this.scheduleEnddate = scheduleDto.getScheduleEndDate();
 	}
@@ -94,6 +98,7 @@ public class Schedule {
 		this.scheduleName = scheduleDto.getScheduleName();
 		this.scheduleDescription = scheduleDto.getScheduleDescription();
 		this.scheduleType = scheduleDto.getScheduleType();
+		this.notificationTime = scheduleDto.getNotificationTime();
 		this.scheduleStartdate = scheduleDto.getScheduleStartDate();
 		this.scheduleEnddate = scheduleDto.getScheduleEndDate();
 	}

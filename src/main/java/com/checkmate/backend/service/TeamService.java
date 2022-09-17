@@ -69,6 +69,7 @@ public class TeamService {
 			TeamResponse response = TeamResponse.builder().
 				teamSeq(team.get().getTeamSeq())
 				.teamName(team.get().getTeamName())
+				.userId(team.get().getUser().getUserId())
 				.teamDescription(team.get().getTeamDescription())
 				.build();
 			//참여자 정보 담아줌
@@ -96,7 +97,7 @@ public class TeamService {
 	}
 
 	// 팀별 팀원 이름(챗봇 전용)
-	public List<String> findParticipantsByTeam(long teamId,String userId) {
+	public List<String> findParticipantsByTeam(long teamId, String userId) {
 		Team team = teamRepository.findById(teamId).orElseThrow(
 			() -> new ResourceNotExistException("해당 team은 존재하지 않습니다.")
 		);
@@ -105,7 +106,7 @@ public class TeamService {
 
 		List<String> participantResponses = new ArrayList<>();
 		for (TeamParticipant p : participants) {
-			if(p.getUser().getUsername()!=userId) {
+			if (p.getUser().getUsername() != userId) {
 				participantResponses.add(p.getUser().getUsername());
 			}
 		}

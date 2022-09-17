@@ -1,27 +1,15 @@
 package com.checkmate.backend.service;
 
 import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 
-import org.quartz.JobBuilder;
-import org.quartz.JobDataMap;
-import org.quartz.JobDetail;
 import org.quartz.Scheduler;
-import org.quartz.SchedulerException;
-import org.quartz.SimpleScheduleBuilder;
-import org.quartz.Trigger;
-import org.quartz.TriggerBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.checkmate.backend.common.job.NoticeJob;
 import com.checkmate.backend.entity.meeting.Meeting;
 import com.checkmate.backend.entity.meeting.MeetingParticipant;
 import com.checkmate.backend.entity.meeting.MeetingParticipantType;
@@ -121,6 +109,7 @@ public class ScheduleService {
 			.scheduleEndDate(schedule.getScheduleEnddate())
 			.teamId(schedule.getTeam().getTeamSeq())
 			.userId(schedule.getUser().getUserId())
+			.notificationTime(schedule.getNotificationTime())
 			.build();
 		//참여자 정보 담아줌
 		for (Participant scheduleP : schedule.getParticipants()) {
@@ -153,6 +142,7 @@ public class ScheduleService {
 				.scheduleEndDate(s.getScheduleEnddate())
 				.teamId(s.getTeam().getTeamSeq())
 				.userId(s.getUser().getUserId())
+				.notificationTime(s.getNotificationTime())
 				.build();
 
 			//참여자 정보 담아줌
@@ -172,7 +162,7 @@ public class ScheduleService {
 		LocalDateTime start = scheduleReq.getScheduleStartDate();
 
 		ScheduleDto scheduleDto = new ScheduleDto(scheduleReq.getScheduleName(), scheduleReq.getScheduleDescription(),
-			scheduleReq.getScheduleType()
+			scheduleReq.getScheduleType(), scheduleReq.getNotificationTime()
 			, scheduleReq.getScheduleStartDate(), scheduleReq.getScheduleEndDate());
 
 		Schedule schedule = new Schedule(scheduleDto);
@@ -219,56 +209,22 @@ public class ScheduleService {
 
 		save.addParticipant(participant);
 
-		if(scheduleReq.getNotificationTime()!=0){
+		if (scheduleReq.getNotificationTime() != 0) {
 			// //알림
-			Notification notification=new Notification(save.getScheduleName(), save.getScheduleDescription(),user.getUserId(), save.getScheduleStartdate().minusMinutes(scheduleReq.getNotificationTime()),false);
+			Notification notification = new Notification(save.getScheduleName(), save.getScheduleDescription(),
+				user.getUserId(), save.getScheduleStartdate().minusMinutes(scheduleReq.getNotificationTime()), false);
 			notificationRepository.save(notification);
 		}
 
 		return save;
 	}
-	//
-	// public void setNotification(ScheduleRequest scheduleReq){
-	// 	try {
-	// 		ZonedDateTime dateTime = ZonedDateTime.of(scheduleReq.getScheduleStartDate().minusMinutes(scheduleReq.getNotificationTime()), ZoneId.of("Asia/Seoul"));
-	//
-	// 		JobDetail jobDetail = buildJobDetail(scheduleReq);
-	// 		Trigger trigger = buildJobTrigger(jobDetail, dateTime);
-	// 		scheduler.scheduleJob(jobDetail, trigger);
-	//
-	// 	} catch (SchedulerException ex) {
-	// 		System.out.println("알림 예약 ㅣ실");
-	// 	}
-	// }
-	// private JobDetail buildJobDetail(ScheduleRequest scheduleRequest,User user) {
-	// 	JobDataMap jobDataMap = new JobDataMap();
-	//
-	// 	jobDataMap.put("title", scheduleRequest.getScheduleName());
-	// 	jobDataMap.put("doby", scheduleRequest.getScheduleDescription());
-	// 	jobDataMap.put("userId", user.getUserId());
-	//
-	// 	return JobBuilder.newJob(NoticeJob.class)
-	// 		.withIdentity(UUID.randomUUID().toString(), "notice-jobs")
-	// 		.withDescription("Send notification Job")
-	// 		.usingJobData(jobDataMap)
-	// 		.storeDurably()
-	// 		.build();
-	// }
-	//
-	// private Trigger buildJobTrigger(JobDetail jobDetail, ZonedDateTime startAt) {
-	// 	return TriggerBuilder.newTrigger()
-	// 		.forJob(jobDetail)
-	// 		.withIdentity(jobDetail.getKey().getName(), "notice-triggers")
-	// 		.withDescription("Send Email Trigger")
-	// 		.startAt(Date.from(startAt.toInstant()))
-	// 		.withSchedule(SimpleScheduleBuilder.simpleSchedule().withMisfireHandlingInstructionFireNow())
-	// 		.build();
-	// }
+
 	// 일정 수정
 	public Schedule update(Long scheduleId, ScheduleRequest scheduleReq) {
 
 		ScheduleDto scheduleDto = new ScheduleDto(scheduleReq.getScheduleName(), scheduleReq.getScheduleDescription()
-			, scheduleReq.getScheduleType(), scheduleReq.getScheduleStartDate(), scheduleReq.getScheduleEndDate());
+			, scheduleReq.getScheduleType(), scheduleReq.getNotificationTime(), scheduleReq.getScheduleStartDate(),
+			scheduleReq.getScheduleEndDate());
 		Schedule schedule = scheduleRepository.findById(scheduleId).orElseThrow(
 			() -> new IllegalArgumentException("해당 일정은 존재하지 않습니다.")
 		);

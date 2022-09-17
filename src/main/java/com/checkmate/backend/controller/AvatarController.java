@@ -1,6 +1,6 @@
 package com.checkmate.backend.controller;
 
-import java.io.File;
+import java.io.IOException;
 import java.time.LocalDateTime;
 
 import org.springframework.security.core.Authentication;
@@ -10,7 +10,6 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
@@ -38,6 +37,9 @@ import lombok.RequiredArgsConstructor;
 @RestController
 public class AvatarController {
 
+	private final static String AVATAR_FOLDER_DIRECTORY = "/avatar";
+	private final static String AVATAR_USER_IMAGE_FILES_POSTFIX = "_origin";
+	private final static String AVATAR_CREATED_IMAGE_FILES_POSTFIX = "_created";
 	private final AvatarService avatarService;
 	private final ResponseService responseService;
 	private final FileService fileService;
@@ -73,51 +75,55 @@ public class AvatarController {
 	@PostMapping
 	@Transactional
 	public SingleResult<Avatar> createAvatar(MultipartFile originfile, MultipartFile createdfile, String avatarName,
-		String avatarDescription, AvatarType avatarStyle, Long avatarStyleId) {
-		System.out.println(11);
+		String avatarDescription, AvatarType avatarStyle, Long avatarStyleId, String sadEmoticon, String happyEmoticon,
+		String winkEmoticon, String angryEmoticon) throws IOException {
+
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		String name = authentication.getName();
-		System.out.println(22);
+
 		User user = userService.getUser(name);
-		System.out.println(333);
+
 		LocalDateTime now = LocalDateTime.now();
 		avatarName = avatarName.replace("\"", "");
 
-		File OriginFile = fileService.saveFile(originfile, avatarName + "_" + user.getUserId() + "_origin");
-		File CreatedFile = fileService.saveFile(createdfile, avatarName + "_" + user.getUserId() + "_created");
+		String OriginFile = fileService.saveFile(originfile,
+			avatarName + "_" + user.getUserId() + AVATAR_USER_IMAGE_FILES_POSTFIX, AVATAR_FOLDER_DIRECTORY);
+		String CreatedFile = fileService.saveFile(createdfile,
+			avatarName + "_" + user.getUserId() + AVATAR_CREATED_IMAGE_FILES_POSTFIX, AVATAR_FOLDER_DIRECTORY);
 		Avatar avatar = new Avatar(user, avatarName, avatarDescription, avatarStyle, avatarStyleId,
-			OriginFile.getPath(), CreatedFile.getPath(), now);
+			OriginFile, CreatedFile, now);
 
-		Avatar result = avatarService.make(avatar, user);
+		Avatar result = avatarService.make(avatar, user, sadEmoticon, happyEmoticon, winkEmoticon, angryEmoticon);
+
 		return responseService.getSingleResult(result);
 	}
 
-	@Operation(summary = "캐릭터 수정: postman 사용", description = "캐릭터수정", security = {
-		@SecurityRequirement(name = "bearer-key")})
-	@PutMapping("/{avatarId}")
-	@Transactional
-	public SingleResult<Avatar> updateAvatar(@PathVariable Long avatarId, MultipartFile originfile,
-		MultipartFile createdfile, String avatarName, String avatarDescription, AvatarType avatarStyle,
-		Long avatarStyleId) {
-
-		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-		String name = authentication.getName();
-		User user = userService.getUser(name);
-		LocalDateTime now = LocalDateTime.now();
-
-		Avatar findAvtar = avatarService.findOne(avatarId);
-
-		File OriginFile = fileService.updateFile(originfile,
-			findAvtar.getAvatarOriginUrl(),
-			avatarName + "_" + user.getUserId() + "_origin");
-		File CreatedFile = fileService.updateFile(createdfile,
-			findAvtar.getAvatarCreatedUrl(),
-			avatarName + "_" + user.getUserId() + "_created");
-
-		Avatar result = avatarService.update(avatarId, avatarName, avatarDescription,
-			avatarStyle, avatarStyleId, OriginFile.getPath(), CreatedFile.getPath(), now);
-		return responseService.getSingleResult(result);
-	}
+	// @Operation(summary = "캐릭터 수정: postman 사용", description = "캐릭터수정", security = {
+	// 	@SecurityRequirement(name = "bearer-key")})
+	// @PutMapping("/{avatarId}")
+	// @Transactional
+	// public SingleResult<Avatar> updateAvatar(@PathVariable Long avatarId, MultipartFile originfile,
+	// 	MultipartFile createdfile, String avatarName, String avatarDescription, AvatarType avatarStyle,
+	// 	Long avatarStyleId) {
+	//
+	// 	Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+	// 	String name = authentication.getName();
+	// 	User user = userService.getUser(name);
+	// 	LocalDateTime now = LocalDateTime.now();
+	//
+	// 	Avatar findAvtar = avatarService.findOne(avatarId);
+	//
+	// 	File OriginFile = fileService.updateFile(originfile,
+	// 		findAvtar.getAvatarOriginUrl(),
+	// 		avatarName + "_" + user.getUserId() + "_origin");
+	// 	File CreatedFile = fileService.updateFile(createdfile,
+	// 		findAvtar.getAvatarCreatedUrl(),
+	// 		avatarName + "_" + user.getUserId() + "_created");
+	//
+	// 	Avatar result = avatarService.update(avatarId, avatarName, avatarDescription,
+	// 		avatarStyle, avatarStyleId, OriginFile.getPath(), CreatedFile.getPath(), now);
+	// 	return responseService.getSingleResult(result);
+	// }
 
 	@Operation(summary = "캐릭터 삭제", description = "캐릭터삭제", security = {@SecurityRequirement(name = "bearer-key")})
 	@DeleteMapping("/{avatarId}")

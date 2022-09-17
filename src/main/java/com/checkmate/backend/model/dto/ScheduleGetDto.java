@@ -29,6 +29,8 @@ public class ScheduleGetDto {
 
 	private String scheduleDescription;
 
+	private int notificationTime;
+
 	private ScheduleType scheduleType;
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
 	private LocalDateTime scheduleStartDate;
