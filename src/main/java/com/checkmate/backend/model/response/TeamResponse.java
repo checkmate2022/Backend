@@ -21,6 +21,8 @@ public class TeamResponse {
 
 	private String teamDescription;
 
+	private String userId;
+
 	private List<String> participants;
 
 	public void setParticipants(List<String> participants) {

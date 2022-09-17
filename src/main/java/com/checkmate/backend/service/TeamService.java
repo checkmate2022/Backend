@@ -69,6 +69,7 @@ public class TeamService {
 			TeamResponse response = TeamResponse.builder().
 				teamSeq(team.get().getTeamSeq())
 				.teamName(team.get().getTeamName())
+				.userId(team.get().getUser().getUserId())
 				.teamDescription(team.get().getTeamDescription())
 				.build();
 			//참여자 정보 담아줌
