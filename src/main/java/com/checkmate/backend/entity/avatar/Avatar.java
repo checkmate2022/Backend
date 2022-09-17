@@ -1,7 +1,10 @@
 package com.checkmate.backend.entity.avatar;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -12,10 +15,12 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import com.checkmate.backend.entity.meeting.MeetingParticipant;
 import com.checkmate.backend.entity.user.User;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -80,6 +85,9 @@ public class Avatar {
 	@Column(name = "AVATAR_BASIC", length = 100)
 	private Boolean isBasic = false;
 
+	@OneToMany(mappedBy = "avatar", cascade = CascadeType.ALL)
+	private List<Emoticon> emoticons = new ArrayList<>();
+
 	public Avatar(User user, String avatarName, String avatarDescription, AvatarType avatarStyle, Long avatarStyleId,
 		String originFileUrl, String createdFileUrl, LocalDateTime dateTime) {
 		this.user = user;
@@ -116,5 +124,9 @@ public class Avatar {
 	public void setUser(User user) {
 		this.user = user;
 		user.getAvatar().add(this);
+	}
+
+	public void setEmoticon(Emoticon emotion){
+		this.emoticons.add(emotion);
 	}
 }
