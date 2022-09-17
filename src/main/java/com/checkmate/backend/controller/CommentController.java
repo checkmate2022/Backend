@@ -17,7 +17,6 @@ import com.checkmate.backend.common.SingleResult;
 import com.checkmate.backend.entity.user.User;
 import com.checkmate.backend.model.response.CommentResponse;
 import com.checkmate.backend.service.CommentService;
-import com.checkmate.backend.service.FCMService;
 import com.checkmate.backend.service.ResponseService;
 import com.checkmate.backend.service.UserService;
 

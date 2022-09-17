@@ -20,7 +20,6 @@ import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
-import com.checkmate.backend.entity.meeting.MeetingParticipant;
 import com.checkmate.backend.entity.user.User;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -126,7 +125,7 @@ public class Avatar {
 		user.getAvatar().add(this);
 	}
 
-	public void setEmoticon(Emoticon emotion){
+	public void setEmoticon(Emoticon emotion) {
 		this.emoticons.add(emotion);
 	}
 }

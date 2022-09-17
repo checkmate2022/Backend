@@ -1,6 +1,5 @@
 package com.checkmate.backend.service;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -15,7 +14,6 @@ import org.springframework.web.multipart.MultipartFile;
 import com.amazonaws.AmazonServiceException;
 import com.amazonaws.auth.AWSStaticCredentialsProvider;
 import com.amazonaws.auth.BasicAWSCredentials;
-import com.amazonaws.client.builder.AwsClientBuilder;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import com.amazonaws.services.s3.model.CannedAccessControlList;
@@ -30,7 +28,6 @@ import lombok.RequiredArgsConstructor;
 public class FileService {
 
 	private AmazonS3 s3Client;
-
 
 	@Value("${cloud.aws.credentials.accessKey}")
 	private String accessKey;
@@ -52,11 +49,10 @@ public class FileService {
 			.build();
 	}
 
-	public String saveFile(MultipartFile file, String name,String folderName) throws IOException {
+	public String saveFile(MultipartFile file, String name, String folderName) throws IOException {
 		StringBuilder sb = new StringBuilder();
 		String fullBucketName = bucket + folderName;
 		String fileName = "";
-
 
 		// file image 가 없을 경우
 		if (file.isEmpty()) {

@@ -11,7 +11,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
-import com.checkmate.backend.entity.meeting.Meeting;
 import com.checkmate.backend.entity.user.User;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -54,10 +53,10 @@ public class Emoticon {
 	@JoinColumn(name = "AVATAR_SEQ")
 	private Avatar avatar;
 
-	public Emoticon(String emoticonUrl, EmoticonType emoticonType,User user){
-		this.emoticonUrl=emoticonUrl;
-		this.emoticonType=emoticonType;
-		this.user=user;
+	public Emoticon(String emoticonUrl, EmoticonType emoticonType, User user) {
+		this.emoticonUrl = emoticonUrl;
+		this.emoticonType = emoticonType;
+		this.user = user;
 	}
 
 	public void setAvatar(Avatar avatar) {

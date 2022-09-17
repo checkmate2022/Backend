@@ -1,6 +1,5 @@
 package com.checkmate.backend.controller;
 
-import java.io.File;
 import java.io.IOException;
 import java.time.LocalDateTime;
 
@@ -11,7 +10,6 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
@@ -77,7 +75,8 @@ public class AvatarController {
 	@PostMapping
 	@Transactional
 	public SingleResult<Avatar> createAvatar(MultipartFile originfile, MultipartFile createdfile, String avatarName,
-		String avatarDescription, AvatarType avatarStyle, Long avatarStyleId,String sadEmoticon, String happyEmoticon,String winkEmoticon,String angryEmoticon) throws IOException {
+		String avatarDescription, AvatarType avatarStyle, Long avatarStyleId, String sadEmoticon, String happyEmoticon,
+		String winkEmoticon, String angryEmoticon) throws IOException {
 
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		String name = authentication.getName();
@@ -87,12 +86,14 @@ public class AvatarController {
 		LocalDateTime now = LocalDateTime.now();
 		avatarName = avatarName.replace("\"", "");
 
-		String OriginFile = fileService.saveFile(originfile, avatarName + "_" + user.getUserId() +AVATAR_USER_IMAGE_FILES_POSTFIX,AVATAR_FOLDER_DIRECTORY);
-		String CreatedFile = fileService.saveFile(createdfile, avatarName + "_" + user.getUserId() +AVATAR_CREATED_IMAGE_FILES_POSTFIX,AVATAR_FOLDER_DIRECTORY);
+		String OriginFile = fileService.saveFile(originfile,
+			avatarName + "_" + user.getUserId() + AVATAR_USER_IMAGE_FILES_POSTFIX, AVATAR_FOLDER_DIRECTORY);
+		String CreatedFile = fileService.saveFile(createdfile,
+			avatarName + "_" + user.getUserId() + AVATAR_CREATED_IMAGE_FILES_POSTFIX, AVATAR_FOLDER_DIRECTORY);
 		Avatar avatar = new Avatar(user, avatarName, avatarDescription, avatarStyle, avatarStyleId,
 			OriginFile, CreatedFile, now);
 
-		Avatar result = avatarService.make(avatar, user,sadEmoticon, happyEmoticon,winkEmoticon,angryEmoticon);
+		Avatar result = avatarService.make(avatar, user, sadEmoticon, happyEmoticon, winkEmoticon, angryEmoticon);
 
 		return responseService.getSingleResult(result);
 	}

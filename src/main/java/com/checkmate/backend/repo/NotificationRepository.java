@@ -7,7 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 
 import com.checkmate.backend.entity.schedule.Notification;
 
-public interface NotificationRepository extends JpaRepository<Notification,Long> {
+public interface NotificationRepository extends JpaRepository<Notification, Long> {
 
 	@Query(
 		"select n from Notification n where function('YEAR',n.notificationDate)=function('YEAR',current_time) "
@@ -15,9 +15,7 @@ public interface NotificationRepository extends JpaRepository<Notification,Long>
 			+ "and function('DAY',n.notificationDate)=function('DAY',current_time) and n.isNotice=FALSE")
 	List<Notification> findNotificationsByNotificationDate();
 
-
 	@Query("select n from Notification n where n.userId=:userId and n.isNotice=TRUE")
 	List<Notification> findNotificationsByUserIdAndIsNoticeTrue(String userId);
-
 
 }

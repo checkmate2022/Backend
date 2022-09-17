@@ -51,7 +51,8 @@ public class AvatarService {
 	}
 
 	//  캐릭터 등록
-	public Avatar make(Avatar avatar, User user,String sadEmoticon, String happyEmoticon,String winkEmoticon,String angryEmoticon) {
+	public Avatar make(Avatar avatar, User user, String sadEmoticon, String happyEmoticon, String winkEmoticon,
+		String angryEmoticon) {
 		if (user.getAvatar().size() > 3) {
 			throw new MaximumException("아바타 개수 초과");
 		}
@@ -60,22 +61,22 @@ public class AvatarService {
 
 		Emoticon emoticon = new Emoticon(sadEmoticon, EmoticonType.SAD, user);
 		emoticon.setAvatar(save);
-		emoticon=emoticonRepository.save(emoticon);
+		emoticon = emoticonRepository.save(emoticon);
 		save.setEmoticon(emoticon);
 
 		emoticon = new Emoticon(happyEmoticon, EmoticonType.HAPPY, user);
 		emoticon.setAvatar(save);
-		emoticon=emoticonRepository.save(emoticon);
+		emoticon = emoticonRepository.save(emoticon);
 		save.setEmoticon(emoticon);
 
 		emoticon = new Emoticon(winkEmoticon, EmoticonType.WINK, user);
 		emoticon.setAvatar(save);
-		emoticon=emoticonRepository.save(emoticon);
+		emoticon = emoticonRepository.save(emoticon);
 		save.setEmoticon(emoticon);
 
 		emoticon = new Emoticon(angryEmoticon, EmoticonType.ANGRY, user);
 		emoticon.setAvatar(save);
-		emoticon=emoticonRepository.save(emoticon);
+		emoticon = emoticonRepository.save(emoticon);
 		save.setEmoticon(emoticon);
 		return save;
 	}

@@ -11,8 +11,6 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -52,7 +50,7 @@ public class ChatBotController {
 				.parse(GoogleCloudDialogflowV2WebhookRequest.class); // request 객체에서 파싱
 			GoogleCloudDialogflowV2Intent intent = request.getQueryResult().getIntent();
 			String name = intent.getDisplayName();
-			String userId= (String)request.getOriginalDetectIntentRequest().getPayload().get("userId");
+			String userId = (String)request.getOriginalDetectIntentRequest().getPayload().get("userId");
 			User user = userService.getUser(userId);
 			String query = request.getQueryResult().getQueryText();
 			String action = request.getQueryResult().getAction();
@@ -66,7 +64,7 @@ public class ChatBotController {
 			System.out.println((String)request.getOriginalDetectIntentRequest().getPayload().get("scheduleStartDate"));
 			System.out.println((String)request.getOriginalDetectIntentRequest().getPayload().get("scheduleEndDate"));
 			System.out.println(name);
-			System.out.println(name=="register_schedule_scheduleDateTime");
+			System.out.println(name == "register_schedule_scheduleDateTime");
 			switch (name) {
 				//날짜 일정 조회
 				case "detail schedule":
@@ -76,29 +74,42 @@ public class ChatBotController {
 					StringTokenizer st = new StringTokenizer(time, "T");
 					LocalDate date = LocalDate.parse(st.nextToken());
 					LocalDateTime localTime = date.atStartOfDay();
-					List<ScheduleChatbotResponse> chatbotResponses = scheduleService.getSchedulesForChatbot(localTime, user);
+					List<ScheduleChatbotResponse> chatbotResponses = scheduleService.getSchedulesForChatbot(localTime,
+						user);
 					sb.append(date.toString() + "일정은" + " ");
-					if(chatbotResponses.size()==0) sb.append("없습니다.");
+					if (chatbotResponses.size() == 0)
+						sb.append("없습니다.");
 					for (int i = 0; i < chatbotResponses.size(); i++) {
 						sb.append(chatbotResponses.get(i).getScheduleName() + "  ");
 					}
 					sb.append("입니다.");
 					break;
 				case "register_schedule_scheduleDateTime":
-					String scheduleTypeName=(String)request.getOriginalDetectIntentRequest().getPayload().get("scheduleType");
+					String scheduleTypeName = (String)request.getOriginalDetectIntentRequest()
+						.getPayload()
+						.get("scheduleType");
 					System.out.println(scheduleTypeName);
-					ScheduleType scheduleType=ScheduleType.valueOf(scheduleTypeName);
+					ScheduleType scheduleType = ScheduleType.valueOf(scheduleTypeName);
 					System.out.println(scheduleType.getDisplayName());
-					Long teamId= (Long)request.getOriginalDetectIntentRequest().getPayload().get("teamSeq");
-					String scheduleTitle=(String)request.getOriginalDetectIntentRequest().getPayload().get("scheduleTitle");
-					LocalDateTime startTime= (LocalDateTime)request.getOriginalDetectIntentRequest().getPayload().get("scheduleStartDate");
-					LocalDateTime endTime= (LocalDateTime)request.getOriginalDetectIntentRequest().getPayload().get("scheduleEndDate");
+					Long teamId = (Long)request.getOriginalDetectIntentRequest().getPayload().get("teamSeq");
+					String scheduleTitle = (String)request.getOriginalDetectIntentRequest()
+						.getPayload()
+						.get("scheduleTitle");
+					LocalDateTime startTime = (LocalDateTime)request.getOriginalDetectIntentRequest()
+						.getPayload()
+						.get("scheduleStartDate");
+					LocalDateTime endTime = (LocalDateTime)request.getOriginalDetectIntentRequest()
+						.getPayload()
+						.get("scheduleEndDate");
 
-					List<String> participantsName=teamService.findParticipantsByTeam(teamId,userId);
+					List<String> participantsName = teamService.findParticipantsByTeam(teamId, userId);
 
-					ScheduleRequest scheduleRequest=new ScheduleRequest(scheduleTitle,scheduleTitle,startTime,endTime,participantsName,teamId);
-					Schedule schedule= scheduleService.make(scheduleRequest,user);
-					sb.append("일정 "+schedule.getScheduleName()+"( "+schedule.getScheduleType().getDisplayName()+" )"+"시작 시간 "+schedule.getScheduleStartdate()+" 등록 하였습니다.");
+					ScheduleRequest scheduleRequest = new ScheduleRequest(scheduleTitle, scheduleTitle, startTime,
+						endTime, participantsName, teamId);
+					Schedule schedule = scheduleService.make(scheduleRequest, user);
+					sb.append(
+						"일정 " + schedule.getScheduleName() + "( " + schedule.getScheduleType().getDisplayName() + " )"
+							+ "시작 시간 " + schedule.getScheduleStartdate() + " 등록 하였습니다.");
 			}
 			response.setFulfillmentText(sb.toString());
 			//
