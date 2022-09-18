@@ -21,6 +21,8 @@ public class CommentResponse {
 
 	private String username;
 
+	private String emoticon;
+
 	private String userImage;
 
 	private LocalDateTime modifiedDate;

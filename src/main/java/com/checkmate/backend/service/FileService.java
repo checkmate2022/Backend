@@ -85,7 +85,8 @@ public class FileService {
 			fileName = sb.toString();
 			fileUpload(file, fullBucketName, fileName);
 		}
-		String fullFileName = s3Client.getUrl(bucket, fileName).toString();
+		String fullFileName = s3Client.getUrl(fullBucketName, fileName).toString();
+		System.out.println(fullFileName);
 		return fullFileName;
 
 	}

@@ -75,7 +75,7 @@ public class AvatarController {
 	@PostMapping
 	@Transactional
 	public SingleResult<Avatar> createAvatar(MultipartFile originfile, MultipartFile createdfile, String avatarName,
-		String avatarDescription, AvatarType avatarStyle, Long avatarStyleId, String sadEmoticon, String happyEmoticon,
+		String avatarDescription, String avatarStyle, Long avatarStyleId, String sadEmoticon, String happyEmoticon,
 		String winkEmoticon, String angryEmoticon) throws IOException {
 
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -90,7 +90,7 @@ public class AvatarController {
 			avatarName + "_" + user.getUserId() + AVATAR_USER_IMAGE_FILES_POSTFIX, AVATAR_FOLDER_DIRECTORY);
 		String CreatedFile = fileService.saveFile(createdfile,
 			avatarName + "_" + user.getUserId() + AVATAR_CREATED_IMAGE_FILES_POSTFIX, AVATAR_FOLDER_DIRECTORY);
-		Avatar avatar = new Avatar(user, avatarName, avatarDescription, avatarStyle, avatarStyleId,
+		Avatar avatar = new Avatar(user, avatarName, avatarDescription, AvatarType.valueOf(avatarStyle), avatarStyleId,
 			OriginFile, CreatedFile, now);
 
 		Avatar result = avatarService.make(avatar, user, sadEmoticon, happyEmoticon, winkEmoticon, angryEmoticon);
