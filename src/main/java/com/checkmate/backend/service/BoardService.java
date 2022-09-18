@@ -62,6 +62,7 @@ public class BoardService {
 				.content(comment.getContent())
 				.modifiedDate(comment.getModifiedAt())
 				.userImage(comment.getUser().getUserImage())
+				.emoticon(comment.getEmoticonUrl())
 				.username(comment.getUser().getUsername())
 				.build()).collect(Collectors.toList());
 
@@ -147,6 +148,7 @@ public class BoardService {
 				.content(comment.getContent())
 				.modifiedDate(comment.getModifiedAt())
 				.userImage(comment.getUser().getUserImage())
+				.emoticon(comment.getEmoticonUrl())
 				.username(comment.getUser().getUsername())
 				.build()).collect(Collectors.toList());
 

@@ -47,11 +47,11 @@ public class CommentService {
 	}
 
 	//댓글 생성
-	public CommentResponse create(String content, long boardSeq, User user) throws IOException {
+	public CommentResponse create(String content, long boardSeq, String emoticonUrl, User user) throws IOException {
 		Board board = boardRepository.findById(boardSeq).orElseThrow(
 			() -> new IllegalArgumentException("게시글이 존재하지 않습니다.")
 		);
-		Comment comment = new Comment(content, board, user);
+		Comment comment = new Comment(content, board, user, emoticonUrl);
 
 		commentRepository.save(comment);
 
@@ -61,6 +61,7 @@ public class CommentService {
 			.modifiedDate(comment.getModifiedAt())
 			.userImage(comment.getUser().getUserImage())
 			.username(comment.getUser().getUsername())
+			.emoticon(emoticonUrl)
 			.build();
 		try {
 			fcmService.sendMessageTo(

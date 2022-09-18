@@ -37,6 +37,9 @@ public class Comment {
 	@Column(name = "CONTENT")
 	private String content;
 
+	@Column(name = "EMOTICON")
+	private String emoticonUrl;
+
 	@JsonIgnore
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "BOARD_SEQ")
@@ -54,10 +57,11 @@ public class Comment {
 	@NotNull
 	private LocalDateTime modifiedAt;
 
-	public Comment(String content, Board board, User user) {
+	public Comment(String content, Board board, User user, String emoticonUrl) {
 		this.content = content;
 		this.board = board;
 		this.user = user;
+		this.emoticonUrl = emoticonUrl;
 		this.createdAt = LocalDateTime.now();
 		this.modifiedAt = LocalDateTime.now();
 	}
