@@ -53,7 +53,7 @@ public class AvatarController {
 	}
 
 	@Operation(summary = "전체 이모티콘 조회", security = {@SecurityRequirement(name = "bearer-key")})
-	@GetMapping
+	@GetMapping("/emoticons")
 	public ListResult<Emoticon> getEmoticons() {
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		String name = authentication.getName();
