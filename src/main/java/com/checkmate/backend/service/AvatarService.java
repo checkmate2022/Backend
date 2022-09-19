@@ -50,6 +50,13 @@ public class AvatarService {
 		return avatars;
 	}
 
+	// 사용자별 ㅇㅣ모티콘 조회
+	@Transactional(readOnly = true)
+	public List<Emoticon> findEmoticonsByUser(User user) {
+		List<Emoticon> emoticons = emoticonRepository.findAllByUser(user);
+		return emoticons;
+	}
+
 	//  캐릭터 등록
 	public Avatar make(Avatar avatar, User user, String sadEmoticon, String happyEmoticon, String winkEmoticon,
 		String angryEmoticon) {

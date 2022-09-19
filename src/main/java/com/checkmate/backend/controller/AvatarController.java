@@ -19,6 +19,7 @@ import com.checkmate.backend.common.ListResult;
 import com.checkmate.backend.common.SingleResult;
 import com.checkmate.backend.entity.avatar.Avatar;
 import com.checkmate.backend.entity.avatar.AvatarType;
+import com.checkmate.backend.entity.avatar.Emoticon;
 import com.checkmate.backend.entity.user.User;
 import com.checkmate.backend.service.AvatarService;
 import com.checkmate.backend.service.FileService;
@@ -49,6 +50,15 @@ public class AvatarController {
 	@GetMapping
 	public ListResult<Avatar> getAvatars() {
 		return responseService.getListResult(avatarService.findAvatars());
+	}
+
+	@Operation(summary = "전체 이모티콘 조회", security = {@SecurityRequirement(name = "bearer-key")})
+	@GetMapping
+	public ListResult<Emoticon> getEmoticons() {
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		String name = authentication.getName();
+		User user = userService.getUser(name);
+		return responseService.getListResult(avatarService.findEmoticonsByUser(user));
 	}
 
 	@Operation(summary = "단건 캐릭터 조회", description = "단건캐릭터조회")
