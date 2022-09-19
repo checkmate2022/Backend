@@ -41,6 +41,7 @@ public class CommentService {
 				.modifiedDate(comment.getModifiedAt())
 				.userImage(comment.getUser().getUserImage())
 				.username(comment.getUser().getUsername())
+				.emoticon(comment.getEmoticonUrl())
 				.build()).collect(Collectors.toList());
 
 		return collect;
