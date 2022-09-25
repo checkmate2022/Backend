@@ -1,27 +1,15 @@
 package com.checkmate.backend.service;
 
 import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 
-import org.quartz.JobBuilder;
-import org.quartz.JobDataMap;
-import org.quartz.JobDetail;
 import org.quartz.Scheduler;
-import org.quartz.SchedulerException;
-import org.quartz.SimpleScheduleBuilder;
-import org.quartz.Trigger;
-import org.quartz.TriggerBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.checkmate.backend.common.job.NoticeJob;
 import com.checkmate.backend.entity.meeting.Meeting;
 import com.checkmate.backend.entity.meeting.MeetingParticipant;
 import com.checkmate.backend.entity.meeting.MeetingParticipantType;
@@ -174,7 +162,7 @@ public class ScheduleService {
 		LocalDateTime start = scheduleReq.getScheduleStartDate();
 
 		ScheduleDto scheduleDto = new ScheduleDto(scheduleReq.getScheduleName(), scheduleReq.getScheduleDescription(),
-			scheduleReq.getScheduleType(),scheduleReq.getNotificationTime()
+			scheduleReq.getScheduleType(), scheduleReq.getNotificationTime()
 			, scheduleReq.getScheduleStartDate(), scheduleReq.getScheduleEndDate());
 
 		Schedule schedule = new Schedule(scheduleDto);
@@ -221,9 +209,10 @@ public class ScheduleService {
 
 		save.addParticipant(participant);
 
-		if(scheduleReq.getNotificationTime()!=0){
+		if (scheduleReq.getNotificationTime() != 0) {
 			// //알림
-			Notification notification=new Notification(save.getScheduleName(), save.getScheduleDescription(),user.getUserId(), save.getScheduleStartdate().minusMinutes(scheduleReq.getNotificationTime()),false);
+			Notification notification = new Notification(save.getScheduleName(), save.getScheduleDescription(),
+				user.getUserId(), save.getScheduleStartdate().minusMinutes(scheduleReq.getNotificationTime()), false);
 			notificationRepository.save(notification);
 		}
 
@@ -234,7 +223,8 @@ public class ScheduleService {
 	public Schedule update(Long scheduleId, ScheduleRequest scheduleReq) {
 
 		ScheduleDto scheduleDto = new ScheduleDto(scheduleReq.getScheduleName(), scheduleReq.getScheduleDescription()
-			, scheduleReq.getScheduleType(),scheduleReq.getNotificationTime(), scheduleReq.getScheduleStartDate(), scheduleReq.getScheduleEndDate());
+			, scheduleReq.getScheduleType(), scheduleReq.getNotificationTime(), scheduleReq.getScheduleStartDate(),
+			scheduleReq.getScheduleEndDate());
 		Schedule schedule = scheduleRepository.findById(scheduleId).orElseThrow(
 			() -> new IllegalArgumentException("해당 일정은 존재하지 않습니다.")
 		);
