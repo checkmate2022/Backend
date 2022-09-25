@@ -30,10 +30,12 @@ public class ScheduleRequest {
 
 	private int notificationTime;
 
-	public ScheduleRequest(String scheduleName, String scheduleDescription, LocalDateTime scheduleStartDate,
+	public ScheduleRequest(String scheduleName, String scheduleDescription, ScheduleType scheduleType,
+		LocalDateTime scheduleStartDate,
 		LocalDateTime scheduleEndDate, List<String> participantName, Long teamId) {
 		this.scheduleName = scheduleName;
 		this.scheduleDescription = scheduleDescription;
+		this.scheduleType = scheduleType;
 		this.scheduleStartDate = scheduleStartDate;
 		this.scheduleEndDate = scheduleEndDate;
 		this.participantName = participantName;

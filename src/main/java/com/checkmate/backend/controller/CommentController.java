@@ -17,7 +17,6 @@ import com.checkmate.backend.common.SingleResult;
 import com.checkmate.backend.entity.user.User;
 import com.checkmate.backend.model.response.CommentResponse;
 import com.checkmate.backend.service.CommentService;
-import com.checkmate.backend.service.FCMService;
 import com.checkmate.backend.service.ResponseService;
 import com.checkmate.backend.service.UserService;
 
@@ -44,13 +43,13 @@ public class CommentController {
 
 	@Operation(summary = "댓글 생성", security = {@SecurityRequirement(name = "bearer-key")})
 	@PostMapping("")
-	public SingleResult<CommentResponse> create(long boardId, String content) throws IOException {
+	public SingleResult<CommentResponse> create(long boardId, String content, String emoticonUrl) throws IOException {
 		org.springframework.security.core.userdetails.User principal = (org.springframework.security.core.userdetails.User)SecurityContextHolder
 			.getContext().getAuthentication().getPrincipal();
 
 		User user = userService.getUser(principal.getUsername());
 
-		return responseService.getSingleResult(commentService.create(content, boardId, user));
+		return responseService.getSingleResult(commentService.create(content, boardId, emoticonUrl, user));
 	}
 
 	@Operation(summary = "댓글 수정", security = {@SecurityRequirement(name = "bearer-key")})

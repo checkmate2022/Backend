@@ -1,12 +1,24 @@
 package com.checkmate.backend.service;
 
-import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 
+import javax.annotation.PostConstruct;
+
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.ObjectUtils;
 import org.springframework.web.multipart.MultipartFile;
+
+import com.amazonaws.AmazonServiceException;
+import com.amazonaws.auth.AWSStaticCredentialsProvider;
+import com.amazonaws.auth.BasicAWSCredentials;
+import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.AmazonS3ClientBuilder;
+import com.amazonaws.services.s3.model.CannedAccessControlList;
+import com.amazonaws.services.s3.model.ObjectMetadata;
+import com.amazonaws.services.s3.model.PutObjectRequest;
 
 import lombok.RequiredArgsConstructor;
 
@@ -15,9 +27,33 @@ import lombok.RequiredArgsConstructor;
 @Transactional
 public class FileService {
 
-	public File saveFile(MultipartFile file, String name) {
+	private AmazonS3 s3Client;
+
+	@Value("${cloud.aws.credentials.accessKey}")
+	private String accessKey;
+
+	@Value("${cloud.aws.credentials.secretKey}")
+	private String secretKey;
+
+	@Value("${cloud.aws.s3.bucket}")
+	private String bucket;
+
+	@Value("${cloud.aws.region.static}")
+	private String region;
+
+	@PostConstruct
+	public void setS3Client() {
+		s3Client = AmazonS3ClientBuilder.standard()
+			.withRegion(region)
+			.withCredentials(new AWSStaticCredentialsProvider(new BasicAWSCredentials(accessKey, secretKey)))
+			.build();
+	}
+
+	public String saveFile(MultipartFile file, String name, String folderName) throws IOException {
 		StringBuilder sb = new StringBuilder();
-		File dest = null;
+		String fullBucketName = bucket + folderName;
+		String fileName = "";
+
 		// file image 가 없을 경우
 		if (file.isEmpty()) {
 			sb.append("none");
@@ -46,32 +82,43 @@ public class FileService {
 				}
 				sb.append(name + originalFileExtension);
 			}
-
-			dest = new File(
-				//클라우드 스토리지로 변경필요
-				"/Users/jifrozen/project/checkmate/Backend-2/image/" + sb.toString());
-			try {
-				file.transferTo(dest);
-			} catch (IllegalStateException e) {
-				e.printStackTrace();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
+			fileName = sb.toString();
+			fileUpload(file, fullBucketName, fileName);
 		}
-		return dest;
+		String fullFileName = s3Client.getUrl(fullBucketName, fileName).toString();
+		System.out.println(fullFileName);
+		return fullFileName;
 
 	}
 
-	public File updateFile(MultipartFile file, String orgin_name, String name) {
+	private void fileUpload(MultipartFile multipartFile, String fullBucketName, String newFileName) throws IOException {
+		InputStream input = multipartFile.getInputStream();
+		ObjectMetadata metadata = new ObjectMetadata();
 
-		File existFile = new File(orgin_name);
-
-		if (existFile.exists()) {
-			existFile.delete();
+		try {
+			PutObjectRequest putObjectRequest = new PutObjectRequest(fullBucketName, newFileName, input,
+				metadata);
+			putObjectRequest.setCannedAcl(CannedAccessControlList.PublicRead);
+			s3Client.putObject(putObjectRequest);
+		} catch (AmazonServiceException ase) {
+			ase.printStackTrace();
+		} catch (IllegalStateException e) {
+			e.printStackTrace();
+		} finally {
+			input.close();
 		}
-
-		return saveFile(file, name);
-
 	}
+	//
+	// public File updateFile(MultipartFile file, String orgin_name, String name) {
+	//
+	// 	File existFile = new File(orgin_name);
+	//
+	// 	if (existFile.exists()) {
+	// 		existFile.delete();
+	// 	}
+	//
+	// 	return saveFile(file, name);
+	//
+	// }
 
 }

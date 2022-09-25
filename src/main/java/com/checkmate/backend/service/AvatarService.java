@@ -11,8 +11,11 @@ import com.checkmate.backend.advice.exception.MaximumException;
 import com.checkmate.backend.advice.exception.ResourceNotExistException;
 import com.checkmate.backend.entity.avatar.Avatar;
 import com.checkmate.backend.entity.avatar.AvatarType;
+import com.checkmate.backend.entity.avatar.Emoticon;
+import com.checkmate.backend.entity.avatar.EmoticonType;
 import com.checkmate.backend.entity.user.User;
 import com.checkmate.backend.repo.AvatarRepository;
+import com.checkmate.backend.repo.EmoticonRepository;
 
 import lombok.RequiredArgsConstructor;
 
@@ -22,6 +25,7 @@ import lombok.RequiredArgsConstructor;
 public class AvatarService {
 
 	private final AvatarRepository avatarRepository;
+	private final EmoticonRepository emoticonRepository;
 
 	// 전체 캐릭터 조회
 	@Transactional(readOnly = true)
@@ -46,13 +50,41 @@ public class AvatarService {
 		return avatars;
 	}
 
+	// 사용자별 ㅇㅣ모티콘 조회
+	@Transactional(readOnly = true)
+	public List<Emoticon> findEmoticonsByUser(User user) {
+		List<Emoticon> emoticons = emoticonRepository.findAllByUser(user);
+		return emoticons;
+	}
+
 	//  캐릭터 등록
-	public Avatar make(Avatar avatar, User user) {
+	public Avatar make(Avatar avatar, User user, String sadEmoticon, String happyEmoticon, String winkEmoticon,
+		String angryEmoticon) {
 		if (user.getAvatar().size() > 3) {
 			throw new MaximumException("아바타 개수 초과");
 		}
 		avatar.setUser(user);
 		Avatar save = avatarRepository.save(avatar);
+
+		Emoticon emoticon = new Emoticon(sadEmoticon, EmoticonType.SAD, user);
+		emoticon.setAvatar(save);
+		emoticon = emoticonRepository.save(emoticon);
+		save.setEmoticon(emoticon);
+
+		emoticon = new Emoticon(happyEmoticon, EmoticonType.HAPPY, user);
+		emoticon.setAvatar(save);
+		emoticon = emoticonRepository.save(emoticon);
+		save.setEmoticon(emoticon);
+
+		emoticon = new Emoticon(winkEmoticon, EmoticonType.WINK, user);
+		emoticon.setAvatar(save);
+		emoticon = emoticonRepository.save(emoticon);
+		save.setEmoticon(emoticon);
+
+		emoticon = new Emoticon(angryEmoticon, EmoticonType.ANGRY, user);
+		emoticon.setAvatar(save);
+		emoticon = emoticonRepository.save(emoticon);
+		save.setEmoticon(emoticon);
 		return save;
 	}
 
