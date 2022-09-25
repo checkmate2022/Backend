@@ -87,6 +87,7 @@ class TeamServiceTest {
 			.teamSeq(1L)
 			.teamName("team")
 			.teamDescription("team")
+			.user(mockUser)
 			.participants(new ArrayList<>()).build();
 		TeamParticipant teamParticipant = new TeamParticipant(mockUser, mockTeam, TeamRoleType.MEMBER);
 

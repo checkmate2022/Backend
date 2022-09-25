@@ -16,8 +16,10 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.checkmate.backend.advice.exception.DuplicateException;
 import com.checkmate.backend.entity.avatar.Avatar;
+import com.checkmate.backend.entity.avatar.Emoticon;
 import com.checkmate.backend.entity.user.User;
 import com.checkmate.backend.repo.AvatarRepository;
+import com.checkmate.backend.repo.EmoticonRepository;
 import com.checkmate.backend.repo.UserRepository;
 
 @ExtendWith(MockitoExtension.class)
@@ -28,11 +30,13 @@ class AvatarServiceTest {
 	@Mock
 	AvatarRepository avatarRepository;
 	@Mock
+	EmoticonRepository emoticonRepository;
+	@Mock
 	UserRepository userRepository;
 
 	@BeforeEach
 	void setUp() {
-		this.avatarService = new AvatarService(this.avatarRepository);
+		this.avatarService = new AvatarService(this.avatarRepository,this.emoticonRepository);
 	}
 
 	@Test
@@ -85,15 +89,19 @@ class AvatarServiceTest {
 			.avatarCreatedUrl("캐릭터")
 			.avatarOriginUrl("원본")
 			.avatarDate(now)
+			.emoticons(new ArrayList<>())
 			.build();
+		Emoticon mockEmoticons= Emoticon.builder().build();
 
 		List<Avatar> avatars = new ArrayList<>();
 		mockUser.setAvatar(avatars);
 
 		given(avatarRepository.save(any())).willReturn(mockAvatar);
+		given(emoticonRepository.save(any())).willReturn(mockEmoticons);
 
-		Avatar avatar = avatarService.make(mockAvatar, mockUser);
+		Avatar avatar = avatarService.make(mockAvatar, mockUser,"sad","happy","wink","angry");
 		assertEquals(mockAvatar, avatar);
+		assertEquals(mockEmoticons,avatar.getEmoticons().get(0));
 	}
 
 	@Test
