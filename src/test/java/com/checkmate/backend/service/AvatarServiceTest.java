@@ -36,7 +36,7 @@ class AvatarServiceTest {
 
 	@BeforeEach
 	void setUp() {
-		this.avatarService = new AvatarService(this.avatarRepository,this.emoticonRepository);
+		this.avatarService = new AvatarService(this.avatarRepository, this.emoticonRepository);
 	}
 
 	@Test
@@ -91,7 +91,7 @@ class AvatarServiceTest {
 			.avatarDate(now)
 			.emoticons(new ArrayList<>())
 			.build();
-		Emoticon mockEmoticons= Emoticon.builder().build();
+		Emoticon mockEmoticons = Emoticon.builder().build();
 
 		List<Avatar> avatars = new ArrayList<>();
 		mockUser.setAvatar(avatars);
@@ -99,9 +99,9 @@ class AvatarServiceTest {
 		given(avatarRepository.save(any())).willReturn(mockAvatar);
 		given(emoticonRepository.save(any())).willReturn(mockEmoticons);
 
-		Avatar avatar = avatarService.make(mockAvatar, mockUser,"sad","happy","wink","angry");
+		Avatar avatar = avatarService.make(mockAvatar, mockUser, "sad", "happy", "wink", "angry");
 		assertEquals(mockAvatar, avatar);
-		assertEquals(mockEmoticons,avatar.getEmoticons().get(0));
+		assertEquals(mockEmoticons, avatar.getEmoticons().get(0));
 	}
 
 	@Test

@@ -103,7 +103,7 @@ class AvatarControllerTest {
 				.characterEncoding("UFT-8"));
 		actions
 			.andExpect(status().is2xxSuccessful());
-			// .andExpect(jsonPath("$.list[0].username").value("test@gmail.com"));
+		// .andExpect(jsonPath("$.list[0].username").value("test@gmail.com"));
 
 	}
 
