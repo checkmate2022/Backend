@@ -38,8 +38,9 @@ public class FCMService {
 	private final UserDeviceTokenRepository userDeviceTokenRepository;
 	private final NotificationRepository notificationRepository;
 
-	public List<Notification> findNotificationByUser(String userId){
-		return notificationRepository.findNotificationsByUserIdAndIsNoticeTrue(userId);}
+	public List<Notification> findNotificationByUser(String userId) {
+		return notificationRepository.findNotificationsByUserIdAndIsNoticeTrue(userId);
+	}
 
 	public void registerDeviceToken(String token, String userId) throws Throwable {
 		User user = (User)userRepository.findByUserId(userId);
@@ -73,7 +74,7 @@ public class FCMService {
 			.build();
 
 		Response response = client.newCall(request).execute();
-		Notification notification=new Notification(title,body,userId, LocalDateTime.now(),true);
+		Notification notification = new Notification(title, body, userId, LocalDateTime.now(), true);
 		notificationRepository.save(notification);
 
 		System.out.println(response.body().string());

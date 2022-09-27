@@ -11,8 +11,6 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -52,7 +50,7 @@ public class ChatBotController {
 				.parse(GoogleCloudDialogflowV2WebhookRequest.class); // request 객체에서 파싱
 			GoogleCloudDialogflowV2Intent intent = request.getQueryResult().getIntent();
 			String name = intent.getDisplayName();
-			String userId= (String)request.getOriginalDetectIntentRequest().getPayload().get("userId");
+			String userId = (String)request.getOriginalDetectIntentRequest().getPayload().get("userId");
 			User user = userService.getUser(userId);
 			String query = request.getQueryResult().getQueryText();
 			String action = request.getQueryResult().getAction();
@@ -66,47 +64,64 @@ public class ChatBotController {
 			System.out.println((String)request.getOriginalDetectIntentRequest().getPayload().get("scheduleStartDate"));
 			System.out.println((String)request.getOriginalDetectIntentRequest().getPayload().get("scheduleEndDate"));
 			System.out.println(name);
-			System.out.println(name=="register_schedule_scheduleDateTime");
-			switch (name) {
+			System.out.println(name.equals("register_schedule_scheduleDateTime"));
+			if (name.equals("detail schedule")) {
 				//날짜 일정 조회
-				case "detail schedule":
-					String time = (String)params.get("date-time");
-					// DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-					// LocalDateTime dateTime = LocalDateTime.parse(time, formatter);
-					StringTokenizer st = new StringTokenizer(time, "T");
-					LocalDate date = LocalDate.parse(st.nextToken());
-					LocalDateTime localTime = date.atStartOfDay();
-					List<ScheduleChatbotResponse> chatbotResponses = scheduleService.getSchedulesForChatbot(localTime, user);
-					sb.append(date.toString() + "일정은" + " ");
-					if(chatbotResponses.size()==0) sb.append("없습니다.");
-					for (int i = 0; i < chatbotResponses.size(); i++) {
-						sb.append(chatbotResponses.get(i).getScheduleName() + "  ");
-					}
-					sb.append("입니다.");
-					break;
-				case "register_schedule_scheduleDateTime":
-					String scheduleTypeName=(String)request.getOriginalDetectIntentRequest().getPayload().get("scheduleType");
-					System.out.println(scheduleTypeName);
-					ScheduleType scheduleType=ScheduleType.valueOf(scheduleTypeName);
-					System.out.println(scheduleType.getDisplayName());
-					Long teamId= (Long)request.getOriginalDetectIntentRequest().getPayload().get("teamSeq");
-					String scheduleTitle=(String)request.getOriginalDetectIntentRequest().getPayload().get("scheduleTitle");
-					LocalDateTime startTime= (LocalDateTime)request.getOriginalDetectIntentRequest().getPayload().get("scheduleStartDate");
-					LocalDateTime endTime= (LocalDateTime)request.getOriginalDetectIntentRequest().getPayload().get("scheduleEndDate");
+				// case "detail schedule":
+				String time = (String)params.get("date-time");
+				// DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+				// LocalDateTime dateTime = LocalDateTime.parse(time, formatter);
+				StringTokenizer st = new StringTokenizer(time, "T");
+				LocalDate date = LocalDate.parse(st.nextToken());
+				LocalDateTime localTime = date.atStartOfDay();
+				List<ScheduleChatbotResponse> chatbotResponses = scheduleService.getSchedulesForChatbot(localTime,
+					user);
+				sb.append(date.toString() + "일정은" + " ");
+				if (chatbotResponses.size() == 0)
+					sb.append("없습니다.");
+				for (int i = 0; i < chatbotResponses.size(); i++) {
+					sb.append(chatbotResponses.get(i).getScheduleName() + "입니다");
+				}
 
-					List<String> participantsName=teamService.findParticipantsByTeam(teamId,userId);
+			}
+			// case "register_schedule_scheduleDateTime":
+			if (name.equals("register_schedule_scheduleDateTime")) {
+				String scheduleTypeName = (String)request.getOriginalDetectIntentRequest()
+					.getPayload()
+					.get("scheduleType");
 
-					ScheduleRequest scheduleRequest=new ScheduleRequest(scheduleTitle,scheduleTitle,startTime,endTime,participantsName,teamId);
-					Schedule schedule= scheduleService.make(scheduleRequest,user);
-					sb.append("일정 "+schedule.getScheduleName()+"( "+schedule.getScheduleType().getDisplayName()+" )"+"시작 시간 "+schedule.getScheduleStartdate()+" 등록 하였습니다.");
+				Long teamId = Long.parseLong(
+					(String)request.getOriginalDetectIntentRequest().getPayload().get("teamSeq"));
+
+				String scheduleTitle = (String)request.getOriginalDetectIntentRequest()
+					.getPayload()
+					.get("scheduleTitle");
+
+				LocalDateTime startTime = LocalDateTime.parse((String)request.getOriginalDetectIntentRequest()
+					.getPayload()
+					.get("scheduleStartDate"));
+
+				LocalDateTime endTime = LocalDateTime.parse((String)request.getOriginalDetectIntentRequest()
+					.getPayload()
+					.get("scheduleEndDate"));
+
+				List<String> participantsName = teamService.findParticipantsByTeam(teamId, userId);
+
+				ScheduleRequest scheduleRequest = new ScheduleRequest(scheduleTitle, scheduleTitle,
+					ScheduleType.CONFERENCE, startTime,
+					endTime, participantsName, teamId);
+				Schedule schedule = scheduleService.make(scheduleRequest, user);
+				sb.append(
+					"( " + schedule.getScheduleType().getDisplayName() + " )" + schedule.getScheduleName() +
+						" " + schedule.getScheduleStartdate() + " 일정이 등록되었습니다.");
 			}
 			response.setFulfillmentText(sb.toString());
 			//
 			// if (params.size() > 0) {
-			// 	System.out.println(params);
-			// 	response.setFulfillmentText("다음과 같은 파라미터가 나왔습니다 " + "스프링에서 보내는 테스트입니다.");
+			//    System.out.println(params);
+			//    response.setFulfillmentText("다음과 같은 파라미터가 나왔습니다 " + "스프링에서 보내는 테스트입니다.");
 			// } else {
-			// 	response.setFulfillmentText("Sorry you didn't send enough to process");
+			//    response.setFulfillmentText("Sorry you didn't send enough to process");
 			// }
 
 			return new ResponseEntity<GoogleCloudDialogflowV2WebhookResponse>(response, HttpStatus.OK);
@@ -116,4 +131,3 @@ public class ChatBotController {
 	}
 
 }
-

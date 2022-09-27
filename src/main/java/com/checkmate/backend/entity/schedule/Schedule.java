@@ -89,7 +89,7 @@ public class Schedule {
 		this.scheduleName = scheduleDto.getScheduleName();
 		this.scheduleDescription = scheduleDto.getScheduleDescription();
 		this.scheduleType = scheduleDto.getScheduleType();
-		this.notificationTime=scheduleDto.getNotificationTime();
+		this.notificationTime = scheduleDto.getNotificationTime();
 		this.scheduleStartdate = scheduleDto.getScheduleStartDate();
 		this.scheduleEnddate = scheduleDto.getScheduleEndDate();
 	}
@@ -98,7 +98,7 @@ public class Schedule {
 		this.scheduleName = scheduleDto.getScheduleName();
 		this.scheduleDescription = scheduleDto.getScheduleDescription();
 		this.scheduleType = scheduleDto.getScheduleType();
-		this.notificationTime=scheduleDto.getNotificationTime();
+		this.notificationTime = scheduleDto.getNotificationTime();
 		this.scheduleStartdate = scheduleDto.getScheduleStartDate();
 		this.scheduleEnddate = scheduleDto.getScheduleEndDate();
 	}
