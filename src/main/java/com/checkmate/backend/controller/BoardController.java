@@ -1,5 +1,6 @@
 package com.checkmate.backend.controller;
 
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -38,7 +39,7 @@ public class BoardController {
 	private final UserService userService;
 
 	@Operation(summary = "게시판 단건 조회")
-	@GetMapping("/board/{boardId}")
+	@GetMapping("/{boardId}")
 	public SingleResult<BoardResponse> findById(
 		@Parameter(description = "게시글 id") @PathVariable long boardId) {
 		return responseService.getSingleResult(boardService.findById(boardId));
@@ -62,10 +63,10 @@ public class BoardController {
 		@SecurityRequirement(name = "bearer-key")})
 	@PostMapping("")
 	public SingleResult<Board> create(@RequestBody BoardDto boardDto, long channelId) {
-		org.springframework.security.core.userdetails.User principal = (org.springframework.security.core.userdetails.User)SecurityContextHolder
-			.getContext().getAuthentication().getPrincipal();
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		String name = authentication.getName();
 
-		User user = userService.getUser(principal.getUsername());
+		User user = userService.getUser(name);
 
 		return responseService.getSingleResult(boardService.create(channelId, boardDto, user));
 	}
@@ -74,10 +75,10 @@ public class BoardController {
 		@SecurityRequirement(name = "bearer-key")})
 	@PutMapping("/{boardId}")
 	public SingleResult<BoardResponse> modify(@PathVariable long boardId, @RequestBody BoardDto boardDto) {
-		org.springframework.security.core.userdetails.User principal = (org.springframework.security.core.userdetails.User)SecurityContextHolder
-			.getContext().getAuthentication().getPrincipal();
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		String name = authentication.getName();
 
-		User user = userService.getUser(principal.getUsername());
+		User user = userService.getUser(name);
 
 		return responseService.getSingleResult(boardService.modify(boardId, boardDto, user));
 	}
@@ -85,11 +86,11 @@ public class BoardController {
 	@Operation(summary = "게시판 삭제", description = "게시판을 삭제한다.", security = {
 		@SecurityRequirement(name = "bearer-key")})
 	@DeleteMapping("/{boardId}")
-	public CommonResult modify(@PathVariable long boardId) {
-		org.springframework.security.core.userdetails.User principal = (org.springframework.security.core.userdetails.User)SecurityContextHolder
-			.getContext().getAuthentication().getPrincipal();
+	public CommonResult delete(@PathVariable long boardId) {
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		String name = authentication.getName();
 
-		User user = userService.getUser(principal.getUsername());
+		User user = userService.getUser(name);
 		boardService.delete(boardId, user);
 		return responseService.getSuccessResult();
 	}

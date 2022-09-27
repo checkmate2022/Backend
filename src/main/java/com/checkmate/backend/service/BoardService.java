@@ -1,6 +1,5 @@
 package com.checkmate.backend.service;
 
-import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -33,13 +32,10 @@ public class BoardService {
 
 	//ㄱㅔ시판 생성 (채널마다)
 	public Board create(long channelId, BoardDto boardDto, User user) {
-		LocalDateTime now = LocalDateTime.now();
-		System.out.println("this");
 		Channel channel = channelRepository.findById(channelId).orElseThrow(
 			() -> new IllegalArgumentException("채널이 존재하지 않습니다.")
 		);
-		System.out.println("this");
-		Board board = new Board(boardDto.getTitle(), boardDto.getContent(), user, channel, channel.getTeam(), now, now);
+		Board board = new Board(boardDto.getTitle(), boardDto.getContent(), user, channel, channel.getTeam());
 		return boardRepository.save(board);
 	}
 
@@ -141,7 +137,7 @@ public class BoardService {
 			.build();
 
 		List<Comment> commentList = board.getComments();
-		System.out.println(commentList.size());
+
 		List<CommentResponse> collect =
 			commentList.stream().map(comment -> CommentResponse.builder()
 				.commentSeq(comment.getCommentSeq())

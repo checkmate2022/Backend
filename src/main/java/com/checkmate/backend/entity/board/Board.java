@@ -75,22 +75,21 @@ public class Board {
 		String content,
 		User user,
 		Channel channel,
-		Team team,
-		LocalDateTime createdAt,
-		LocalDateTime modifiedAt
+		Team team
 	) {
 		this.title = title;
 		this.content = content;
 		this.user = user;
 		this.channel = channel;
 		this.team = team;
-		this.createdAt = createdAt;
-		this.modifiedAt = modifiedAt;
+		this.createdAt = LocalDateTime.now();
+		this.modifiedAt = LocalDateTime.now();
 	}
 
 	public void update(String title, String content) {
 		this.title = title;
 		this.content = content;
+		this.modifiedAt = LocalDateTime.now();
 	}
 
 }
