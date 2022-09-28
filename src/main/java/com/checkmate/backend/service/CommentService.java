@@ -77,7 +77,7 @@ public class CommentService {
 	}
 
 	//댓글 수정
-	public CommentResponse update(String content, long commentSeq, User user) {
+	public CommentResponse update(String content, long commentSeq, String emoticonUrl, User user) {
 		Comment comment = commentRepository.findById(commentSeq).orElseThrow(
 			() -> new IllegalArgumentException("댓글이 존재하지 않습니다.")
 		);
@@ -86,11 +86,12 @@ public class CommentService {
 			throw new UserNotFoundException("댓글 작성자가 아닙니다.");
 		}
 
-		comment.update(content);
+		comment.update(content, emoticonUrl);
 
 		CommentResponse commentResponse = CommentResponse.builder()
 			.commentSeq(comment.getCommentSeq())
 			.content(comment.getContent())
+			.emoticon(emoticonUrl)
 			.modifiedDate(comment.getModifiedAt())
 			.userImage(comment.getUser().getUserImage())
 			.username(comment.getUser().getUsername())

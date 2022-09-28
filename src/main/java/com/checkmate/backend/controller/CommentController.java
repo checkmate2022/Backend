@@ -2,6 +2,7 @@ package com.checkmate.backend.controller;
 
 import java.io.IOException;
 
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -44,33 +45,33 @@ public class CommentController {
 	@Operation(summary = "댓글 생성", security = {@SecurityRequirement(name = "bearer-key")})
 	@PostMapping("")
 	public SingleResult<CommentResponse> create(long boardId, String content, String emoticonUrl) throws IOException {
-		org.springframework.security.core.userdetails.User principal = (org.springframework.security.core.userdetails.User)SecurityContextHolder
-			.getContext().getAuthentication().getPrincipal();
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		String name = authentication.getName();
 
-		User user = userService.getUser(principal.getUsername());
+		User user = userService.getUser(name);
 
 		return responseService.getSingleResult(commentService.create(content, boardId, emoticonUrl, user));
 	}
 
 	@Operation(summary = "댓글 수정", security = {@SecurityRequirement(name = "bearer-key")})
 	@PutMapping("")
-	public SingleResult<CommentResponse> update(long commentSeq, String content) {
-		org.springframework.security.core.userdetails.User principal = (org.springframework.security.core.userdetails.User)SecurityContextHolder
-			.getContext().getAuthentication().getPrincipal();
+	public SingleResult<CommentResponse> update(long commentSeq, String content, String emoticonUrl) {
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		String name = authentication.getName();
 
-		User user = userService.getUser(principal.getUsername());
+		User user = userService.getUser(name);
 
-		return responseService.getSingleResult(commentService.update(content, commentSeq, user));
+		return responseService.getSingleResult(commentService.update(content, commentSeq, emoticonUrl, user));
 	}
 
 	@Operation(summary = "댓글 삭제", security = {
 		@SecurityRequirement(name = "bearer-key")})
 	@DeleteMapping("")
-	public CommonResult modify(long commentSeq) {
-		org.springframework.security.core.userdetails.User principal = (org.springframework.security.core.userdetails.User)SecurityContextHolder
-			.getContext().getAuthentication().getPrincipal();
+	public CommonResult delete(long commentSeq) {
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		String name = authentication.getName();
 
-		User user = userService.getUser(principal.getUsername());
+		User user = userService.getUser(name);
 		commentService.delete(commentSeq, user);
 		return responseService.getSuccessResult();
 	}
