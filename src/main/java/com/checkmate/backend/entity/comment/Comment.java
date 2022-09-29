@@ -18,13 +18,14 @@ import com.checkmate.backend.entity.user.User;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Getter
-
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 @Entity
 @Table(name = "COMMENT")
 public class Comment {
@@ -66,8 +67,9 @@ public class Comment {
 		this.modifiedAt = LocalDateTime.now();
 	}
 
-	public void update(String content) {
+	public void update(String content, String emoticonUrl) {
 		this.content = content;
+		this.emoticonUrl = emoticonUrl;
 		this.modifiedAt = LocalDateTime.now();
 	}
 
