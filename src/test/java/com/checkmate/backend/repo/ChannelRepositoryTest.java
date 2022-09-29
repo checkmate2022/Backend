@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 import java.util.List;
 
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -24,6 +25,8 @@ class ChannelRepositoryTest {
 	ChannelRepository channelRepository;
 	@Autowired
 	TeamRepository teamRepository;
+	Channel savedChannel1;
+	Channel savedChannel2;
 
 	@BeforeEach
 	void 채널생성() {
@@ -33,9 +36,9 @@ class ChannelRepositoryTest {
 		save = teamRepository.save(team);
 
 		Channel channel1 = new Channel("channel1", save);
-		Channel savedChannel1 = channelRepository.save(channel1);
+		savedChannel1 = channelRepository.save(channel1);
 		Channel channel2 = new Channel("channel2", save);
-		Channel savedChannel2 = channelRepository.save(channel2);
+		savedChannel2 = channelRepository.save(channel2);
 
 		//then
 		assertEquals(savedChannel1.getTeam(), save);
@@ -50,6 +53,12 @@ class ChannelRepositoryTest {
 		for (int i = 1; i < channels.size() + 1; i++) {
 			assertEquals(channels.get(i - 1).getChannelName(), "channel" + i);
 		}
+	}
 
+	@AfterEach
+	void delete() {
+		channelRepository.delete(savedChannel1);
+		channelRepository.delete(savedChannel2);
+		teamRepository.delete(save);
 	}
 }
