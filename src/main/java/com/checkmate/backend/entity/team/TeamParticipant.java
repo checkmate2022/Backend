@@ -25,7 +25,7 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "TEAMPATICIPANT")
+@Table(name = "TEAM_PARTICIPANT")
 public class TeamParticipant {
 	@JsonIgnore
 	@GeneratedValue(strategy = GenerationType.IDENTITY)

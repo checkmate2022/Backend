@@ -23,7 +23,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "MEETING_PATICIPANT")
+@Table(name = "MEETING_PARTICIPANT")
 public class MeetingParticipant {
 
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
