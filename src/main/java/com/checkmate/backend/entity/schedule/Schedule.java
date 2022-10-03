@@ -122,6 +122,10 @@ public class Schedule {
 		team.getSchedules().add(this);
 	}
 
+	public void setNotificationTime(int notificationTime) {
+		this.notificationTime = notificationTime;
+	}
+
 	//participant 추가
 	public void addParticipant(Participant participant) {
 		participants.add(participant);

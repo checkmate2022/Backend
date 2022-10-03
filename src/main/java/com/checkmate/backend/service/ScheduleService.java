@@ -5,8 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import org.quartz.Scheduler;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -46,8 +45,6 @@ public class ScheduleService {
 	private final MeetingRepository meetingRepository;
 	private final MeetingParticipantRepository meetingParticipantRepository;
 	private final NotificationRepository notificationRepository;
-	@Autowired
-	private Scheduler scheduler;
 	/*
 	// 전체 일정 조회
 	@Transactional(readOnly = true)
@@ -56,16 +53,40 @@ public class ScheduleService {
 		return schedules;
 	}*/
 
+	//챗봇 알림 설정
+	public void updateNotification(long id, int notificationTime, User user) {
+		Schedule schedule = scheduleRepository.findById(id).orElseThrow(
+			() -> new IllegalArgumentException("해당 schedule은 존재하지 않습니다.")
+		);
+
+		schedule.setNotificationTime(notificationTime);
+		Notification notification = new Notification(schedule.getScheduleName(), schedule.getScheduleDescription(),
+			user.getUserId(), schedule.getScheduleStartdate().minusMinutes(notificationTime), false);
+		notificationRepository.save(notification);
+
+	}
+
+	//챗봇 -> 알람 설정 안된 일정 반환
+	public List<ScheduleChatbotResponse> getSchedulesForChatBotNotification(User user) {
+		List<Schedule> schedules = scheduleRepository.findSchedulesByNotificationTimeAndAndScheduleStartdateAndUser(
+			user);
+
+		return getScheduleChatbotResponses(schedules);
+	}
+
 	//챗봇 일정 조회(날짜 받으면 일정 조회)
 	public List<ScheduleChatbotResponse> getSchedulesForChatbot(LocalDateTime time, User user) {
 		List<Schedule> schedules = scheduleRepository.findSchedulesByScheduleStartdateBetweenAndScheduleEnddate(time,
 			user);
-		//반환 리스트 생성
+
+		return getScheduleChatbotResponses(schedules);
+	}
+
+	@NotNull
+	private List<ScheduleChatbotResponse> getScheduleChatbotResponses(List<Schedule> schedules) {
 		List<ScheduleChatbotResponse> response = new ArrayList<>();
 
 		for (Schedule s : schedules) {
-
-			List<String> users = new ArrayList<>();
 
 			ScheduleChatbotResponse scheduleChatbotResponse = ScheduleChatbotResponse.builder()
 				.scheduleName(s.getScheduleName())
@@ -77,12 +98,6 @@ public class ScheduleService {
 				.userId(s.getUser().getUserId())
 				.build();
 
-			// //참여자 정보 담아줌
-			// for (Participant scheduleP : s.getParticipants()) {
-			// 	users.add(scheduleP.getUser().getUsername());
-			// }
-			// scheduleChatbotResponse.setParticipants(users);
-
 			//List 담기
 			response.add(scheduleChatbotResponse);
 		}
@@ -90,7 +105,6 @@ public class ScheduleService {
 	}
 
 	// 일정 단건 조회
-	@Transactional(readOnly = true)
 	public ScheduleGetDto findOne(Long scheduleId) {
 		Schedule schedule = scheduleRepository.findById(scheduleId).orElseThrow(
 			() -> new IllegalArgumentException("해당 schedule은 존재하지 않습니다.")

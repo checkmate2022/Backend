@@ -1,7 +1,6 @@
 package com.checkmate.backend.model.response;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 import com.checkmate.backend.entity.schedule.ScheduleType;
 import com.fasterxml.jackson.annotation.JsonFormat;
@@ -31,11 +30,5 @@ public class ScheduleChatbotResponse {
 	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm:ss")
 	private LocalDateTime scheduleEndDate;
 
-	private List<String> participants;
-
 	private String teamName;
-
-	public void setParticipants(List<String> participants) {
-		this.participants = participants;
-	}
 }

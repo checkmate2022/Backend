@@ -11,16 +11,21 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.checkmate.backend.common.ListResult;
 import com.checkmate.backend.entity.schedule.Schedule;
 import com.checkmate.backend.entity.schedule.ScheduleType;
 import com.checkmate.backend.entity.user.User;
 import com.checkmate.backend.model.request.ScheduleRequest;
 import com.checkmate.backend.model.response.ScheduleChatbotResponse;
+import com.checkmate.backend.service.ResponseService;
 import com.checkmate.backend.service.ScheduleService;
 import com.checkmate.backend.service.TeamService;
 import com.checkmate.backend.service.UserService;
@@ -29,6 +34,8 @@ import com.google.api.services.dialogflow.v2beta1.model.GoogleCloudDialogflowV2I
 import com.google.api.services.dialogflow.v2beta1.model.GoogleCloudDialogflowV2WebhookRequest;
 import com.google.api.services.dialogflow.v2beta1.model.GoogleCloudDialogflowV2WebhookResponse;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import lombok.RequiredArgsConstructor;
 
 @RequestMapping("/chatbot")
@@ -39,6 +46,18 @@ public class ChatBotController {
 	private final ScheduleService scheduleService;
 	private final UserService userService;
 	private final TeamService teamService;
+	private final ResponseService responseService;
+
+	@Operation(summary = "챗봇 알림 일정 조회", security = {
+		@SecurityRequirement(name = "bearer-key")})
+	@GetMapping("")
+	public ListResult<ScheduleChatbotResponse> getSchedulesforChatBot() {
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		String name = authentication.getName();
+
+		User user = userService.getUser(name);
+		return responseService.getListResult(scheduleService.getSchedulesForChatBotNotification(user));
+	}
 
 	@RequestMapping(method = RequestMethod.POST, value = "/dialogFlowWebHook")
 	public ResponseEntity<?> dialogFlowWebHook(@RequestBody String requestStr, HttpServletRequest servletRequest) throws
@@ -52,25 +71,12 @@ public class ChatBotController {
 			String name = intent.getDisplayName();
 			String userId = (String)request.getOriginalDetectIntentRequest().getPayload().get("userId");
 			User user = userService.getUser(userId);
-			String query = request.getQueryResult().getQueryText();
-			String action = request.getQueryResult().getAction();
 
 			Map<String, Object> params = request.getQueryResult().getParameters(); // 파라미터 받아서 map에다 저장
 			StringBuilder sb = new StringBuilder();
-			System.out.println((String)request.getOriginalDetectIntentRequest().getPayload().get("scheduleType"));
-			System.out.println((String)request.getOriginalDetectIntentRequest().getPayload().get("teamSeq"));
-			System.out.println((String)request.getOriginalDetectIntentRequest().getPayload().get("userId"));
-			System.out.println((String)request.getOriginalDetectIntentRequest().getPayload().get("scheduleTitle"));
-			System.out.println((String)request.getOriginalDetectIntentRequest().getPayload().get("scheduleStartDate"));
-			System.out.println((String)request.getOriginalDetectIntentRequest().getPayload().get("scheduleEndDate"));
-			System.out.println(name);
-			System.out.println(name.equals("register_schedule_scheduleDateTime"));
-			if (name.equals("detail schedule")) {
+			if (name.equals("ask - scheduleDate")) {
 				//날짜 일정 조회
-				// case "detail schedule":
 				String time = (String)params.get("date-time");
-				// DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-				// LocalDateTime dateTime = LocalDateTime.parse(time, formatter);
 				StringTokenizer st = new StringTokenizer(time, "T");
 				LocalDate date = LocalDate.parse(st.nextToken());
 				LocalDateTime localTime = date.atStartOfDay();
@@ -82,10 +88,7 @@ public class ChatBotController {
 				for (int i = 0; i < chatbotResponses.size(); i++) {
 					sb.append(chatbotResponses.get(i).getScheduleName() + "입니다");
 				}
-
-			}
-			// case "register_schedule_scheduleDateTime":
-			if (name.equals("register_schedule_scheduleDateTime")) {
+			} else if (name.equals("register - scheduleDateTime")) {
 				String scheduleTypeName = (String)request.getOriginalDetectIntentRequest()
 					.getPayload()
 					.get("scheduleType");
@@ -114,15 +117,21 @@ public class ChatBotController {
 				sb.append(
 					"( " + schedule.getScheduleType().getDisplayName() + " )" + schedule.getScheduleName() +
 						" " + schedule.getScheduleStartdate() + " 일정이 등록되었습니다.");
+			} else if (name.equals("notification - notificationTime")) {
+
+				int notificationTime = Integer.parseInt(
+					(String)request.getOriginalDetectIntentRequest().getPayload().get("notificationTime"));
+				Long scheduleId = Long.parseLong(
+					(String)request.getOriginalDetectIntentRequest().getPayload().get("scheduleSeq"));
+
+				scheduleService.updateNotification(scheduleId, notificationTime, user);
+
+				sb.append("알람 설정이 완료되었습니다.");
+
+			} else {
+				sb.append("서버 연결 불안정");
 			}
 			response.setFulfillmentText(sb.toString());
-			//
-			// if (params.size() > 0) {
-			//    System.out.println(params);
-			//    response.setFulfillmentText("다음과 같은 파라미터가 나왔습니다 " + "스프링에서 보내는 테스트입니다.");
-			// } else {
-			//    response.setFulfillmentText("Sorry you didn't send enough to process");
-			// }
 
 			return new ResponseEntity<GoogleCloudDialogflowV2WebhookResponse>(response, HttpStatus.OK);
 		} catch (Exception ex) {

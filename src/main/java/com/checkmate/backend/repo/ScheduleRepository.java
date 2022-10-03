@@ -24,6 +24,10 @@ public interface ScheduleRepository extends JpaRepository<Schedule, Long> {
 			+ "and function('DAY',s.scheduleEnddate)>=function('DAY',:time)")
 	List<Schedule> findSchedulesByScheduleStartdateBetweenAndScheduleEnddate(LocalDateTime time, User user);
 
+	@Query(
+		"select s from Schedule s where s.user=:user and s.scheduleStartdate>CURRENT_DATE and s.notificationTime=0")
+	List<Schedule> findSchedulesByNotificationTimeAndAndScheduleStartdateAndUser(User user);
+
 	// @Query("select s from Schedule s where s.user=:user and s.scheduleStartdate<=:time or s.scheduleEnddate>=:time")
 	// List<Schedule> findSchedulesByScheduleStartdateBetweenAndScheduleEnddate(LocalDateTime time, User user);
 }
