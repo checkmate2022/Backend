@@ -6,8 +6,8 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public enum ScheduleType {
-	BASIC("BASIC", "기본"),
-	CONFERENCE("CONFERENCE", "회의");
+	BASIC("basic", "basic"),
+	CONFERENCE("conference", "conference");
 
 	private final String code;
 	private final String displayName;
