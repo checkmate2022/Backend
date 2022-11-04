@@ -55,10 +55,10 @@ class CommentRepositoryTest {
 		Channel channel1 = new Channel("channel1", savedTeam);
 		savedChannel = channelRepository.save(channel1);
 
-		Board board = new Board("제목", "내용", savedUser, savedChannel, savedTeam);
+		Board board = new Board("제목", "내용", savedChannel, savedTeam.getTeamSeq(), savedUser.getUserSeq());
 		savedBoard = boardRepository.save(board);
 
-		Comment comment = new Comment("내용", savedBoard, savedUser, "emoticon");
+		Comment comment = new Comment("내용", savedBoard, savedUser.getUserSeq(), "emoticon");
 		savedComment = commentRepository.save(comment);
 
 	}

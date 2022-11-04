@@ -113,7 +113,7 @@ public class Schedule {
 	//user설정
 	public void setUser(User user) {
 		this.user = user;
-		user.getSchedule().add(this);
+		// user.getSchedule().add(this);
 	}
 
 	//team설정
@@ -137,5 +137,5 @@ public class Schedule {
 			participants.remove(i);
 		}
 	}
-
 }
+

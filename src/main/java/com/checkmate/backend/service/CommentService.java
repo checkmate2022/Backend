@@ -1,8 +1,8 @@
 package com.checkmate.backend.service;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -14,6 +14,7 @@ import com.checkmate.backend.entity.user.User;
 import com.checkmate.backend.model.response.CommentResponse;
 import com.checkmate.backend.repo.BoardRepository;
 import com.checkmate.backend.repo.CommentRepository;
+import com.checkmate.backend.repo.UserRepository;
 
 import lombok.RequiredArgsConstructor;
 
@@ -25,6 +26,7 @@ public class CommentService {
 	private final CommentRepository commentRepository;
 	private final FCMService fcmService;
 	private final BoardRepository boardRepository;
+	private final UserRepository userRepository;
 
 	//게시글 별 댓글 조회
 	public List<CommentResponse> findAllByBoard(long boardSeq) {
@@ -33,16 +35,19 @@ public class CommentService {
 		);
 
 		List<Comment> commentList = commentRepository.findAllByBoard(board);
-
-		List<CommentResponse> collect =
-			commentList.stream().map(comment -> CommentResponse.builder()
+		List<CommentResponse> collect = new ArrayList<>();
+		for (Comment comment : commentList) {
+			User user = userRepository.findById(comment.getUserId()).orElseThrow();
+			CommentResponse commentResponse = CommentResponse.builder()
 				.commentSeq(comment.getCommentSeq())
 				.content(comment.getContent())
 				.modifiedDate(comment.getModifiedAt())
-				.userImage(comment.getUser().getUserImage())
-				.username(comment.getUser().getUsername())
+				.userImage(user.getUserImage())
+				.username(user.getUsername())
 				.emoticon(comment.getEmoticonUrl())
-				.build()).collect(Collectors.toList());
+				.build();
+			collect.add(commentResponse);
+		}
 
 		return collect;
 	}
@@ -52,7 +57,8 @@ public class CommentService {
 		Board board = boardRepository.findById(boardSeq).orElseThrow(
 			() -> new IllegalArgumentException("게시글이 존재하지 않습니다.")
 		);
-		Comment comment = new Comment(content, board, user, emoticonUrl);
+		User boardUser = userRepository.findById(board.getUserId()).orElseThrow();
+		Comment comment = new Comment(content, board, user.getUserSeq(), emoticonUrl);
 
 		commentRepository.save(comment);
 
@@ -60,13 +66,13 @@ public class CommentService {
 			.commentSeq(comment.getCommentSeq())
 			.content(comment.getContent())
 			.modifiedDate(comment.getModifiedAt())
-			.userImage(comment.getUser().getUserImage())
-			.username(comment.getUser().getUsername())
+			.userImage(user.getUserImage())
+			.username(user.getUsername())
 			.emoticon(emoticonUrl)
 			.build();
 		try {
 			fcmService.sendMessageTo(
-				board.getUser().getUserId(),
+				boardUser.getUserId(),
 				user.getUserId() + "이 댓글을 달았습니다.",
 				comment.getContent());
 		} catch (Exception e) {
@@ -82,7 +88,7 @@ public class CommentService {
 			() -> new IllegalArgumentException("댓글이 존재하지 않습니다.")
 		);
 
-		if (!comment.getUser().equals(user)) {
+		if (comment.getCommentSeq() != user.getUserSeq()) {
 			throw new UserNotFoundException("댓글 작성자가 아닙니다.");
 		}
 
@@ -93,8 +99,8 @@ public class CommentService {
 			.content(comment.getContent())
 			.emoticon(emoticonUrl)
 			.modifiedDate(comment.getModifiedAt())
-			.userImage(comment.getUser().getUserImage())
-			.username(comment.getUser().getUsername())
+			.userImage(user.getUserImage())
+			.username(user.getUsername())
 			.build();
 
 		return commentResponse;
@@ -106,7 +112,7 @@ public class CommentService {
 			() -> new IllegalArgumentException("댓글이 존재하지 않습니다.")
 		);
 
-		if (!comment.getUser().equals(user)) {
+		if (comment.getCommentSeq() != user.getUserSeq()) {
 			throw new UserNotFoundException("댓글 작성자가 아닙니다.");
 		}
 

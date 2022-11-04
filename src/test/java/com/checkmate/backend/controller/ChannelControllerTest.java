@@ -107,6 +107,7 @@ class ChannelControllerTest {
 	void deleteAll() {
 		channelRepository.deleteAll();
 		teamRepository.deleteById(Long.valueOf(teamId));
+		userRepository.deleteAll();
 	}
 
 	private String getToken() throws Exception {

@@ -1,8 +1,9 @@
 package com.checkmate.backend.service;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
+import org.jetbrains.annotations.NotNull;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,6 +19,7 @@ import com.checkmate.backend.model.response.CommentResponse;
 import com.checkmate.backend.repo.BoardRepository;
 import com.checkmate.backend.repo.ChannelRepository;
 import com.checkmate.backend.repo.TeamRepository;
+import com.checkmate.backend.repo.UserRepository;
 
 import lombok.RequiredArgsConstructor;
 
@@ -29,13 +31,15 @@ public class BoardService {
 	private final BoardRepository boardRepository;
 	private final ChannelRepository channelRepository;
 	private final TeamRepository teamRepository;
+	private final UserRepository userRepository;
 
 	//ㄱㅔ시판 생성 (채널마다)
 	public Board create(long channelId, BoardDto boardDto, User user) {
 		Channel channel = channelRepository.findById(channelId).orElseThrow(
 			() -> new IllegalArgumentException("채널이 존재하지 않습니다.")
 		);
-		Board board = new Board(boardDto.getTitle(), boardDto.getContent(), user, channel, channel.getTeam());
+		Board board = new Board(boardDto.getTitle(), boardDto.getContent(), channel, channel.getTeam().getTeamSeq(),
+			user.getUserSeq());
 		return boardRepository.save(board);
 	}
 
@@ -45,29 +49,21 @@ public class BoardService {
 			() -> new IllegalArgumentException("게시글이 존재하지 않습니다.")
 		);
 
-		if (!board.getUser().equals(user)) {
+		if (board.getUserId() != user.getUserSeq()) {
 			throw new UserNotFoundException("작성자가 일치하지 않습니다");
 		}
 		board.update(boardDto.getTitle(), boardDto.getContent());
 
 		List<Comment> commentList = board.getComments();
 
-		List<CommentResponse> collect =
-			commentList.stream().map(comment -> CommentResponse.builder()
-				.commentSeq(comment.getCommentSeq())
-				.content(comment.getContent())
-				.modifiedDate(comment.getModifiedAt())
-				.userImage(comment.getUser().getUserImage())
-				.emoticon(comment.getEmoticonUrl())
-				.username(comment.getUser().getUsername())
-				.build()).collect(Collectors.toList());
+		List<CommentResponse> collect = getCommentResponses(commentList);
 
 		BoardResponse boardResponse = BoardResponse.builder()
 			.boardSeq(boardSeq)
 			.content(board.getContent())
 			.title(board.getTitle())
-			.username(board.getUser().getUsername())
-			.userImage(board.getUser().getUserImage())
+			.username(user.getUsername())
+			.userImage(user.getUserImage())
 			.createDate(board.getCreatedAt())
 			.comments(collect)
 			.build();
@@ -80,7 +76,7 @@ public class BoardService {
 			() -> new IllegalArgumentException("게시글이 존재하지 않습니다.")
 		);
 
-		if (!board.getUser().equals(user)) {
+		if (board.getUserId() != user.getUserSeq()) {
 			throw new UserNotFoundException("작성자가 일치하지 않습니다");
 		}
 		boardRepository.delete(board);
@@ -92,15 +88,25 @@ public class BoardService {
 			() -> new IllegalArgumentException("채널이 존재하지 않습니다.")
 		);
 		List<Board> boards = boardRepository.findAllByChannel(channel);
-		List<BoardResponse> collect =
-			boards.stream().map(p -> BoardResponse.builder()
+		List<BoardResponse> collect = getBoardResponses(boards);
+		return collect;
+	}
+
+	@NotNull
+	private List<BoardResponse> getBoardResponses(List<Board> boards) {
+		List<BoardResponse> collect = new ArrayList<>();
+		for (Board p : boards) {
+			User user = userRepository.findById(p.getUserId()).orElseThrow();
+			BoardResponse boardResponse = BoardResponse.builder()
 				.boardSeq(p.getBoardSeq())
 				.content(p.getContent())
 				.title(p.getTitle())
-				.username(p.getUser().getUsername())
-				.userImage(p.getUser().getUserImage())
+				.username(user.getUsername())
+				.userImage(user.getUserImage())
 				.createDate(p.getCreatedAt())
-				.build()).collect(Collectors.toList());
+				.build();
+			collect.add(boardResponse);
+		}
 		return collect;
 	}
 
@@ -109,16 +115,8 @@ public class BoardService {
 		Team team = teamRepository.findById(teamId).orElseThrow(
 			() -> new IllegalArgumentException("팀이 존재하지 않습니다.")
 		);
-		List<Board> boards = boardRepository.findAllByTeam(team);
-		List<BoardResponse> collect =
-			boards.stream().map(p -> BoardResponse.builder()
-				.boardSeq(p.getBoardSeq())
-				.content(p.getContent())
-				.title(p.getTitle())
-				.username(p.getUser().getUsername())
-				.userImage(p.getUser().getUserImage())
-				.createDate(p.getCreatedAt())
-				.build()).collect(Collectors.toList());
+		List<Board> boards = boardRepository.findAllByTeamId(teamId);
+		List<BoardResponse> collect = getBoardResponses(boards);
 		return collect;
 	}
 
@@ -127,30 +125,43 @@ public class BoardService {
 		Board board = boardRepository.findById(boardId).orElseThrow(
 			() -> new IllegalArgumentException("게시글이 존재하지 않습니다.")
 		);
+		User user = userRepository.findById(board.getUserId()).orElseThrow(
+			() -> new IllegalArgumentException("사용자가 존재하지 않습니다.")
+		);
 		BoardResponse boardResponse = BoardResponse.builder()
 			.boardSeq(board.getBoardSeq())
 			.content(board.getContent())
 			.title(board.getTitle())
-			.username(board.getUser().getUsername())
-			.userImage(board.getUser().getUserImage())
+			.username(user.getUsername())
+			.userImage(user.getUserImage())
 			.createDate(board.getCreatedAt())
 			.build();
 
 		List<Comment> commentList = board.getComments();
 
-		List<CommentResponse> collect =
-			commentList.stream().map(comment -> CommentResponse.builder()
-				.commentSeq(comment.getCommentSeq())
-				.content(comment.getContent())
-				.modifiedDate(comment.getModifiedAt())
-				.userImage(comment.getUser().getUserImage())
-				.emoticon(comment.getEmoticonUrl())
-				.username(comment.getUser().getUsername())
-				.build()).collect(Collectors.toList());
+		List<CommentResponse> collect = getCommentResponses(commentList);
 
 		boardResponse.setComments(collect);
 
 		return boardResponse;
+	}
+
+	@NotNull
+	private List<CommentResponse> getCommentResponses(List<Comment> commentList) {
+		List<CommentResponse> collect = new ArrayList<>();
+		for (Comment comment : commentList) {
+			User commentUser = userRepository.findById(comment.getUserId()).orElseThrow();
+			CommentResponse commentResponse = CommentResponse.builder()
+				.commentSeq(comment.getCommentSeq())
+				.content(comment.getContent())
+				.modifiedDate(comment.getModifiedAt())
+				.userImage(commentUser.getUserImage())
+				.username(commentUser.getUsername())
+				.emoticon(comment.getEmoticonUrl())
+				.build();
+			collect.add(commentResponse);
+		}
+		return collect;
 	}
 }
 

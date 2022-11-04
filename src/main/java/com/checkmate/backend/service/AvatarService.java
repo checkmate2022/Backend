@@ -49,11 +49,21 @@ public class AvatarService {
 		List<Avatar> avatars = avatarRepository.findAllByUser(user);
 		return avatars;
 	}
+	//
+	// // 사용자별 ㅇㅣ모티콘 조회
+	// @Transactional(readOnly = true)
+	// public List<Emoticon> findEmoticonsByUser(User user) {
+	// 	List<Emoticon> emoticons = emoticonRepository.findAllByUser(user);
+	// 	return emoticons;
+	// }
 
-	// 사용자별 ㅇㅣ모티콘 조회
+	// 아바타별 ㅇㅣ모티콘 조회
 	@Transactional(readOnly = true)
-	public List<Emoticon> findEmoticonsByUser(User user) {
-		List<Emoticon> emoticons = emoticonRepository.findAllByUser(user);
+	public List<Emoticon> findEmoticonsByAvatar(long avatarId) {
+		Avatar avatar = avatarRepository.findById(avatarId).orElseThrow(
+			() -> new ResourceNotExistException("해당 캐릭터는 존재하지 않습니다.")
+		);
+		List<Emoticon> emoticons = emoticonRepository.findEmoticonsByAvatar(avatar);
 		return emoticons;
 	}
 
@@ -66,22 +76,22 @@ public class AvatarService {
 		avatar.setUser(user);
 		Avatar save = avatarRepository.save(avatar);
 
-		Emoticon emoticon = new Emoticon(sadEmoticon, EmoticonType.SAD, user);
+		Emoticon emoticon = new Emoticon(sadEmoticon, EmoticonType.SAD);
 		emoticon.setAvatar(save);
 		emoticon = emoticonRepository.save(emoticon);
 		save.setEmoticon(emoticon);
 
-		emoticon = new Emoticon(happyEmoticon, EmoticonType.HAPPY, user);
+		emoticon = new Emoticon(happyEmoticon, EmoticonType.HAPPY);
 		emoticon.setAvatar(save);
 		emoticon = emoticonRepository.save(emoticon);
 		save.setEmoticon(emoticon);
 
-		emoticon = new Emoticon(winkEmoticon, EmoticonType.WINK, user);
+		emoticon = new Emoticon(winkEmoticon, EmoticonType.WINK);
 		emoticon.setAvatar(save);
 		emoticon = emoticonRepository.save(emoticon);
 		save.setEmoticon(emoticon);
 
-		emoticon = new Emoticon(angryEmoticon, EmoticonType.ANGRY, user);
+		emoticon = new Emoticon(angryEmoticon, EmoticonType.ANGRY);
 		emoticon.setAvatar(save);
 		emoticon = emoticonRepository.save(emoticon);
 		save.setEmoticon(emoticon);
