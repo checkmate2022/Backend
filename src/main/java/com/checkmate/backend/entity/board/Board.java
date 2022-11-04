@@ -18,8 +18,6 @@ import javax.persistence.Table;
 
 import com.checkmate.backend.entity.channel.Channel;
 import com.checkmate.backend.entity.comment.Comment;
-import com.checkmate.backend.entity.team.Team;
-import com.checkmate.backend.entity.user.User;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import lombok.AllArgsConstructor;
@@ -52,19 +50,21 @@ public class Board {
 	@Column(name = "MODIFIED_AT")
 	private LocalDateTime modifiedAt;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "USER_ID")
-	private User user;
+	@Column(name = "USER")
+	private long userId;
 
 	@JsonIgnore
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "CHANNEL_ID")
 	private Channel channel;
 
-	@JsonIgnore
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "TEAM_ID")
-	private Team team;
+	@Column(name = "TEAM")
+	private Long teamId;
+
+	// @JsonIgnore
+	// @ManyToOne(fetch = FetchType.LAZY)
+	// @JoinColumn(name = "TEAM_ID")
+	// private Team team;
 
 	@OneToMany(mappedBy = "board", cascade = CascadeType.ALL)
 	@JsonIgnore
@@ -73,15 +73,16 @@ public class Board {
 	public Board(
 		String title,
 		String content,
-		User user,
 		Channel channel,
-		Team team
+		Long teamId,
+		Long userId
+
 	) {
 		this.title = title;
 		this.content = content;
-		this.user = user;
 		this.channel = channel;
-		this.team = team;
+		this.teamId = teamId;
+		this.userId = userId;
 		this.createdAt = LocalDateTime.now();
 		this.modifiedAt = LocalDateTime.now();
 	}

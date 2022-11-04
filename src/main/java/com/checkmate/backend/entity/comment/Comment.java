@@ -14,7 +14,6 @@ import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
 import com.checkmate.backend.entity.board.Board;
-import com.checkmate.backend.entity.user.User;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import lombok.AllArgsConstructor;
@@ -46,9 +45,8 @@ public class Comment {
 	@JoinColumn(name = "BOARD_SEQ")
 	private Board board;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "USER_ID")
-	private User user;
+	@Column(name = "USER")
+	private Long userId;
 
 	@Column(name = "CREATED_AT")
 	@NotNull
@@ -58,10 +56,10 @@ public class Comment {
 	@NotNull
 	private LocalDateTime modifiedAt;
 
-	public Comment(String content, Board board, User user, String emoticonUrl) {
+	public Comment(String content, Board board, long userId, String emoticonUrl) {
 		this.content = content;
 		this.board = board;
-		this.user = user;
+		this.userId = userId;
 		this.emoticonUrl = emoticonUrl;
 		this.createdAt = LocalDateTime.now();
 		this.modifiedAt = LocalDateTime.now();

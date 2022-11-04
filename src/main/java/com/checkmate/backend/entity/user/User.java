@@ -21,7 +21,6 @@ import javax.validation.constraints.Size;
 import com.checkmate.backend.entity.avatar.Avatar;
 import com.checkmate.backend.entity.oauth.ProviderType;
 import com.checkmate.backend.entity.oauth.RoleType;
-import com.checkmate.backend.entity.schedule.Schedule;
 import com.checkmate.backend.entity.team.Team;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
@@ -81,10 +80,6 @@ public class User {
 
 	@Column(name = "USER_IMAGE")
 	private String userImage;
-
-	@JsonIgnore
-	@OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-	private List<Schedule> schedule = new ArrayList<>();
 
 	@JsonIgnore
 	@OneToMany(mappedBy = "user", fetch = FetchType.LAZY, cascade = CascadeType.ALL)

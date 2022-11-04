@@ -11,7 +11,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
-import com.checkmate.backend.entity.user.User;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import lombok.AllArgsConstructor;
@@ -43,20 +42,14 @@ public class Emoticon {
 	@Column(name = "EMOTICON_TYPE", length = 100)
 	private EmoticonType emoticonType;
 
-	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = "USER_ID")
-	@JsonIgnore
-	private User user;
-
 	@JsonIgnore
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = "AVATAR_SEQ")
 	private Avatar avatar;
 
-	public Emoticon(String emoticonUrl, EmoticonType emoticonType, User user) {
+	public Emoticon(String emoticonUrl, EmoticonType emoticonType) {
 		this.emoticonUrl = emoticonUrl;
 		this.emoticonType = emoticonType;
-		this.user = user;
 	}
 
 	public void setAvatar(Avatar avatar) {

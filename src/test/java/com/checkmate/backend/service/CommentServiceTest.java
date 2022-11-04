@@ -25,6 +25,7 @@ import com.checkmate.backend.model.dto.BoardDto;
 import com.checkmate.backend.model.response.CommentResponse;
 import com.checkmate.backend.repo.BoardRepository;
 import com.checkmate.backend.repo.CommentRepository;
+import com.checkmate.backend.repo.UserRepository;
 
 @ExtendWith(MockitoExtension.class)
 @DisplayName("CommentServiceTest 테스트")
@@ -36,25 +37,28 @@ class CommentServiceTest {
 	FCMService fcmService;
 	@Mock
 	BoardRepository boardRepository;
+	@Mock
+	UserRepository userRepository;
 
 	@BeforeEach
 	void setUp() {
-		this.commentService = new CommentService(this.commentRepository, this.fcmService, this.boardRepository);
+		this.commentService = new CommentService(this.commentRepository, this.fcmService, this.boardRepository,
+			this.userRepository);
 	}
 
 	@Test
 	void findAllByBoard() {
-		User mockUser = User.builder().userId("repo1").build();
+		User mockUser = User.builder().userSeq(1L).userId("repo1").build();
 		Team mockTeam = Team.builder()
 			.teamSeq(1L)
 			.teamName("test")
 			.teamDescription("test")
 			.build();
 		Channel mockChannel = new Channel("채널", mockTeam);
-		Board board = new Board("제목", "내용", mockUser, mockChannel, mockTeam);
+		Board board = new Board("제목", "내용", mockChannel, mockTeam.getTeamSeq(), mockUser.getUserSeq());
 
 		List<Comment> commentList = new ArrayList<>();
-		commentList.add(new Comment("내용", board, mockUser, "emoticon"));
+		commentList.add(new Comment("내용", board, mockUser.getUserSeq(), "emoticon"));
 
 		given(boardRepository.findById(any())).willReturn(java.util.Optional.of(board));
 		given(commentRepository.findAllByBoard(any())).willReturn(commentList);
@@ -67,7 +71,7 @@ class CommentServiceTest {
 
 	@Test
 	void create() throws IOException {
-		User mockUser = User.builder().userId("repo1").build();
+		User mockUser = User.builder().userSeq(1L).userId("repo1").build();
 		Team mockTeam = Team.builder()
 			.teamSeq(1L)
 			.teamName("test")
@@ -75,9 +79,10 @@ class CommentServiceTest {
 			.build();
 		Channel mockChannel = new Channel("채널", mockTeam);
 		BoardDto boardDto = new BoardDto("제목", "내용");
-		Board board = new Board("제목", "내용", mockUser, mockChannel, mockTeam);
+		Board board = new Board("제목", "내용", mockChannel, mockTeam.getTeamSeq(), mockUser.getUserSeq());
 
-		Comment comment = new Comment("내용", board, mockUser, "emoticon");
+		Comment comment = new Comment("내용", board, mockUser.getUserSeq(), "emoticon");
+		given(userRepository.findById(any())).willReturn(java.util.Optional.of(mockUser));
 		given(boardRepository.findById(any())).willReturn(java.util.Optional.of(board));
 		given(commentRepository.save(any())).willReturn(comment);
 		CommentResponse createComment = commentService.create("내용", 1L, "emoticon", mockUser);
@@ -87,16 +92,16 @@ class CommentServiceTest {
 
 	@Test
 	void update() {
-		User mockUser = User.builder().userId("repo1").build();
+		User mockUser = User.builder().userSeq(1L).userId("repo1").build();
 		Team mockTeam = Team.builder()
 			.teamSeq(1L)
 			.teamName("test")
 			.teamDescription("test")
 			.build();
 		Channel mockChannel = new Channel("채널", mockTeam);
-		Board board = new Board("제목", "내용", mockUser, mockChannel, mockTeam);
+		Board board = new Board("제목", "내용", mockChannel, mockTeam.getTeamSeq(), mockUser.getUserSeq());
 
-		Comment comment = new Comment("내용", board, mockUser, "emoticon");
+		Comment comment = new Comment("내용", board, mockUser.getUserSeq(), "emoticon");
 		given(commentRepository.findById(any())).willReturn(java.util.Optional.of(comment));
 		CommentResponse createComment = commentService.update("내용1", 1L, "이모티콘", mockUser);
 
@@ -108,13 +113,13 @@ class CommentServiceTest {
 	@DisplayName("댓글 작성자와 사용자가 일치하지 않으면 UserNotFoundException 에러 반환")
 	public void userNotEqualsThrowUserNotFoundException() {
 		User user1 = User.builder()
-			.username("user1").build();
+			.userSeq(1L).username("user1").build();
 		User user2 = User.builder()
-			.username("user2").build();
+			.userSeq(2L).username("user2").build();
 
 		Comment comment = Comment.builder()
 			.content("내용")
-			.user(user1)
+			.userId(user1.getUserSeq())
 			.build();
 
 		when(commentRepository.findById(any())).thenReturn(java.util.Optional.ofNullable(comment));
