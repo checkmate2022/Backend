@@ -61,10 +61,13 @@ public class AvatarController {
 	// 	return responseService.getListResult(avatarService.findEmoticonsByUser(user));
 	// }
 
-	@Operation(summary = "캐릭터별 이모티콘 조회", security = {@SecurityRequirement(name = "bearer-key")})
-	@GetMapping("/{avatarId}/emoticons")
-	public ListResult<Emoticon> getEmoticonsByAvatar(@Parameter(description = "캐릭터id") @PathVariable Long avatarId) {
-		return responseService.getListResult(avatarService.findEmoticonsByAvatar(avatarId));
+	@Operation(summary = "기본 캐릭터 이모티콘 조회", security = {@SecurityRequirement(name = "bearer-key")})
+	@GetMapping("/basic/emoticons")
+	public ListResult<Emoticon> getEmoticonsByAvatar() {
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		String name = authentication.getName();
+		User user = userService.getUser(name);
+		return responseService.getListResult(avatarService.findEmoticonsByBasicAvatar(user));
 	}
 
 	@Operation(summary = "단건 캐릭터 조회", description = "단건캐릭터조회")
@@ -72,6 +75,16 @@ public class AvatarController {
 	public SingleResult<Avatar> getAvatar(
 		@Parameter(description = "캐릭터id") @PathVariable Long avatarId) {
 		return responseService.getSingleResult(avatarService.findOne(avatarId));
+	}
+
+	@Operation(summary = "기본 캐릭터 조회", description = "해당 사용자의 기본 캐릭터 조회", security = {
+		@SecurityRequirement(name = "bearer-key")})
+	@GetMapping("/basic")
+	public SingleResult<Avatar> getBasicAvatar() {
+		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+		String name = authentication.getName();
+		User user = userService.getUser(name);
+		return responseService.getSingleResult(avatarService.findBasicAvatar(user));
 	}
 
 	@Operation(summary = "사용자별 캐릭터 조회", description = "사용자별 캐릭터 조회", security = {

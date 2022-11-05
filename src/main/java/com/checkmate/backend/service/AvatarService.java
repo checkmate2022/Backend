@@ -43,6 +43,15 @@ public class AvatarService {
 		return avatar;
 	}
 
+	//기본캐릭터 조회
+	@Transactional(readOnly = true)
+	public Avatar findBasicAvatar(User user) {
+		Avatar avatar = avatarRepository.findAvatarByUserAndIsBasicTrue(user).orElseThrow(
+			() -> new ResourceNotExistException("해당 캐릭터는 존재하지 않습니다.")
+		);
+		return avatar;
+	}
+
 	// 사용자별 캐릭터 조회
 	@Transactional(readOnly = true)
 	public List<Avatar> findAvatarByUser(User user) {
@@ -57,10 +66,10 @@ public class AvatarService {
 	// 	return emoticons;
 	// }
 
-	// 아바타별 ㅇㅣ모티콘 조회
+	// 기본 아바타 ㅇㅣ모티콘 조회
 	@Transactional(readOnly = true)
-	public List<Emoticon> findEmoticonsByAvatar(long avatarId) {
-		Avatar avatar = avatarRepository.findById(avatarId).orElseThrow(
+	public List<Emoticon> findEmoticonsByBasicAvatar(User user) {
+		Avatar avatar = avatarRepository.findAvatarByUserAndIsBasicTrue(user).orElseThrow(
 			() -> new ResourceNotExistException("해당 캐릭터는 존재하지 않습니다.")
 		);
 		List<Emoticon> emoticons = emoticonRepository.findEmoticonsByAvatar(avatar);
