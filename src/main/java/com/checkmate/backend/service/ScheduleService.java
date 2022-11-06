@@ -89,6 +89,7 @@ public class ScheduleService {
 		for (Schedule s : schedules) {
 
 			ScheduleChatbotResponse scheduleChatbotResponse = ScheduleChatbotResponse.builder()
+				.scheduleSeq(s.getScheduleSeq())
 				.scheduleName(s.getScheduleName())
 				.scheduleDescription(s.getScheduleDescription())
 				.scheduleType(s.getScheduleType())

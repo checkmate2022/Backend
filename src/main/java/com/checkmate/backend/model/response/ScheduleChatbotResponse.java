@@ -18,6 +18,8 @@ import lombok.Setter;
 @Builder
 public class ScheduleChatbotResponse {
 
+	private long scheduleSeq;
+
 	private String userId;
 
 	private String scheduleName;
