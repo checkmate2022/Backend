@@ -5,6 +5,7 @@ import static org.mockito.BDDMockito.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -13,6 +14,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import com.checkmate.backend.advice.exception.ResourceNotExistException;
+import com.checkmate.backend.advice.exception.UserNotFoundException;
 import com.checkmate.backend.entity.channel.Channel;
 import com.checkmate.backend.entity.team.Team;
 import com.checkmate.backend.repo.ChannelRepository;
@@ -88,5 +91,22 @@ class ChannelServiceTest {
 		Channel channel = channelService.modify(1L, "수정");
 
 		assertEquals(channel.getChannelName(), "수정");
+	}
+
+	@Test
+	@DisplayName("teamId를 통해 team find시 team 없으면 IllegalArgumentException")
+	void teamfindByIdThrowIllegalArgumentException() {
+		when(teamRepository.findById(1L)).thenReturn(Optional.ofNullable(null));
+
+		assertThrows(ResourceNotExistException.class, () -> channelService.findAllByTeam(1L));
+		assertThrows(ResourceNotExistException.class, () -> channelService.create(1L,"공지"));
+	}
+
+	@Test
+	@DisplayName("channelId를 통해 channel find시 channel 없으면 IllegalArgumentException")
+	void channelfindByIdThrowIllegalArgumentException() {
+		when(channelRepository.findById(1L)).thenReturn(Optional.ofNullable(null));
+
+		assertThrows(ResourceNotExistException.class, () -> channelService.modify(1L,"이름"));
 	}
 }

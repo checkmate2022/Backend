@@ -106,7 +106,7 @@ public class TeamService {
 
 		List<String> participantResponses = new ArrayList<>();
 		for (TeamParticipant p : participants) {
-			if (p.getUser().getUsername() != userId) {
+			if (!p.getUser().getUsername().equals(userId)) {
 				participantResponses.add(p.getUser().getUsername());
 			}
 		}
@@ -120,11 +120,12 @@ public class TeamService {
 		for (TeamParticipant p : participants) {
 			//response 객체 생성
 			Optional<User> user = userRepository.findById(p.getUser().getUserSeq());
+			if(!user.isPresent()) break;
 			ParticipantResponse response = ParticipantResponse.builder().
 				userSeq(user.get().getUserSeq())
 				.userId(user.get().getUserId())
 				.username(user.get().getUsername())
-				.userImg(user.get().getUserImage())
+				.userImage(user.get().getUserImage())
 				.teamRoleType(p.getTeamRoleType())
 				.build();
 

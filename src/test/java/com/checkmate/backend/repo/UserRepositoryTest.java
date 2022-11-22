@@ -5,6 +5,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -88,5 +89,10 @@ class UserRepositoryTest {
 		//then
 		assertEquals(users.size(), 1);
 		assertEquals(users.get(0).getUsername(), "repo");
+	}
+
+	@AfterEach
+	void delete() {
+		userRepository.deleteAll();
 	}
 }
