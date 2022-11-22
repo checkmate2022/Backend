@@ -44,24 +44,24 @@ public class CommentController {
 
 	@Operation(summary = "댓글 생성", security = {@SecurityRequirement(name = "bearer-key")})
 	@PostMapping("")
-	public SingleResult<CommentResponse> create(long boardId, String content, String emoticonUrl) throws IOException {
+	public SingleResult<CommentResponse> create(long boardId, String content, String emoticon) throws IOException {
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		String name = authentication.getName();
 
 		User user = userService.getUser(name);
 
-		return responseService.getSingleResult(commentService.create(content, boardId, emoticonUrl, user));
+		return responseService.getSingleResult(commentService.create(content, boardId, emoticon, user));
 	}
 
 	@Operation(summary = "댓글 수정", security = {@SecurityRequirement(name = "bearer-key")})
 	@PutMapping("")
-	public SingleResult<CommentResponse> update(long commentSeq, String content, String emoticonUrl) {
+	public SingleResult<CommentResponse> update(long commentSeq, String content, String emoticon) {
 		Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 		String name = authentication.getName();
 
 		User user = userService.getUser(name);
 
-		return responseService.getSingleResult(commentService.update(content, commentSeq, emoticonUrl, user));
+		return responseService.getSingleResult(commentService.update(content, commentSeq, emoticon, user));
 	}
 
 	@Operation(summary = "댓글 삭제", security = {

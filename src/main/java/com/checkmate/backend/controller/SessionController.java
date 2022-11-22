@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.checkmate.backend.advice.exception.ResourceNotExistException;
 import com.checkmate.backend.entity.meeting.Meeting;
 import com.checkmate.backend.entity.meeting.MeetingParticipant;
 import com.checkmate.backend.entity.meeting.MeetingParticipantType;
@@ -183,7 +184,9 @@ public class SessionController {
 
 		User user = userService.getUser(principal.getUsername());
 
-		Meeting c = meetingRepository.findById(meetingId).get();
+		Meeting c = meetingRepository.findById(meetingId).orElseThrow(
+			()->new ResourceNotExistException("회의가 없습니다")
+		);
 
 		String sessionId = this.meetingIdSession.get(meetingId).getSessionId();
 		if (this.sessionIdUserIdToken.get(sessionId).remove(user.getUserSeq()) != null) {

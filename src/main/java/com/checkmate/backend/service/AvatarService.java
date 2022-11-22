@@ -131,7 +131,7 @@ public class AvatarService {
 		List<Avatar> userAvatar = user.getAvatar();
 		for (Avatar a : userAvatar) {
 			a.setIsBasicFalse();
-			if (a.getAvatarSeq() == avatar.getAvatarSeq()) {
+			if (a.getAvatarSeq().equals(avatar.getAvatarSeq())) {
 				avatar.setIsBasic();
 			}
 		}

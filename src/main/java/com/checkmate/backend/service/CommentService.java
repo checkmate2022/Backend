@@ -7,6 +7,7 @@ import java.util.List;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.checkmate.backend.advice.exception.ResourceNotExistException;
 import com.checkmate.backend.advice.exception.UserNotFoundException;
 import com.checkmate.backend.entity.board.Board;
 import com.checkmate.backend.entity.comment.Comment;
@@ -31,7 +32,7 @@ public class CommentService {
 	//게시글 별 댓글 조회
 	public List<CommentResponse> findAllByBoard(long boardSeq) {
 		Board board = boardRepository.findById(boardSeq).orElseThrow(
-			() -> new IllegalArgumentException("게시글이 존재하지 않습니다.")
+			() -> new ResourceNotExistException("게시글이 존재하지 않습니다.")
 		);
 
 		List<Comment> commentList = commentRepository.findAllByBoard(board);
@@ -53,12 +54,12 @@ public class CommentService {
 	}
 
 	//댓글 생성
-	public CommentResponse create(String content, long boardSeq, String emoticonUrl, User user) throws IOException {
+	public CommentResponse create(String content, long boardSeq, String emoticon, User user) throws IOException {
 		Board board = boardRepository.findById(boardSeq).orElseThrow(
-			() -> new IllegalArgumentException("게시글이 존재하지 않습니다.")
+			() -> new ResourceNotExistException("게시글이 존재하지 않습니다.")
 		);
 		User boardUser = userRepository.findById(board.getUserId()).orElseThrow();
-		Comment comment = new Comment(content, board, user.getUserSeq(), emoticonUrl);
+		Comment comment = new Comment(content, board, user.getUserSeq(), emoticon);
 
 		commentRepository.save(comment);
 
@@ -68,7 +69,7 @@ public class CommentService {
 			.modifiedDate(comment.getModifiedAt())
 			.userImage(user.getUserImage())
 			.username(user.getUsername())
-			.emoticon(emoticonUrl)
+			.emoticon(emoticon)
 			.build();
 		try {
 			fcmService.sendMessageTo(
@@ -83,21 +84,21 @@ public class CommentService {
 	}
 
 	//댓글 수정
-	public CommentResponse update(String content, long commentSeq, String emoticonUrl, User user) {
+	public CommentResponse update(String content, long commentSeq, String emoticon, User user) {
 		Comment comment = commentRepository.findById(commentSeq).orElseThrow(
-			() -> new IllegalArgumentException("댓글이 존재하지 않습니다.")
+			() -> new ResourceNotExistException("댓글이 존재하지 않습니다.")
 		);
 
-		if (comment.getCommentSeq() != user.getUserSeq()) {
+		if (!comment.getUserId().equals(user.getUserSeq())) {
 			throw new UserNotFoundException("댓글 작성자가 아닙니다.");
 		}
 
-		comment.update(content, emoticonUrl);
+		comment.update(content, emoticon);
 
 		CommentResponse commentResponse = CommentResponse.builder()
 			.commentSeq(comment.getCommentSeq())
 			.content(comment.getContent())
-			.emoticon(emoticonUrl)
+			.emoticon(emoticon)
 			.modifiedDate(comment.getModifiedAt())
 			.userImage(user.getUserImage())
 			.username(user.getUsername())
@@ -109,10 +110,10 @@ public class CommentService {
 	//댓글 삭제
 	public void delete(long commentSeq, User user) {
 		Comment comment = commentRepository.findById(commentSeq).orElseThrow(
-			() -> new IllegalArgumentException("댓글이 존재하지 않습니다.")
+			() -> new ResourceNotExistException("댓글이 존재하지 않습니다.")
 		);
 
-		if (comment.getCommentSeq() != user.getUserSeq()) {
+		if (!comment.getUserId().equals(user.getUserSeq())) {
 			throw new UserNotFoundException("댓글 작성자가 아닙니다.");
 		}
 
