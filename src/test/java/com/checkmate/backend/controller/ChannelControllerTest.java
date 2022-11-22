@@ -116,7 +116,7 @@ class ChannelControllerTest {
 		User user = User.builder()
 			.userSeq(1L)
 			.password(passwordEncoder.encode("1234"))
-			.userId("test@gmail.com")
+			.userId("channel")
 			.username("repo1")
 			.providerType(ProviderType.LOCAL)
 			.roleType(RoleType.USER)
@@ -127,7 +127,7 @@ class ChannelControllerTest {
 		userRepository.save(user);
 		MvcResult result = mvc.perform(post("http://localhost:8080/api/v1/auth/login")
 			.content("{"
-				+ "  \"id\" : \"test@gmail.com\", "
+				+ "  \"id\" : \"channel\", "
 				+ "  \"password\": \"1234\" "
 				+ "}")
 			.contentType(MediaType.APPLICATION_JSON)

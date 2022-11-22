@@ -7,6 +7,7 @@ import static org.mockito.BDDMockito.*;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -15,6 +16,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
+import com.checkmate.backend.advice.exception.ResourceNotExistException;
 import com.checkmate.backend.advice.exception.UserNotFoundException;
 import com.checkmate.backend.entity.board.Board;
 import com.checkmate.backend.entity.channel.Channel;
@@ -59,7 +61,7 @@ class CommentServiceTest {
 
 		List<Comment> commentList = new ArrayList<>();
 		commentList.add(new Comment("내용", board, mockUser.getUserSeq(), "emoticon"));
-
+		given(userRepository.findById(any())).willReturn(java.util.Optional.of(mockUser));
 		given(boardRepository.findById(any())).willReturn(java.util.Optional.of(board));
 		given(commentRepository.findAllByBoard(any())).willReturn(commentList);
 
@@ -127,5 +129,23 @@ class CommentServiceTest {
 		assertThrows(UserNotFoundException.class, () -> commentService.update("내용", 1L, "emoticon", user2));
 		assertThrows(UserNotFoundException.class, () -> commentService.delete(1L, user2));
 	}
+	@Test
+	@DisplayName("channelId를 통해 channel find시 channel 없으면 ResourceNotExistException")
+	void boardfindByIdThrowResourceNotExistException() {
+		User mockUser = User.builder().userSeq(1L).userId("repo1").build();
+		when(boardRepository.findById(1L)).thenReturn(Optional.ofNullable(null));
 
+		assertThrows(ResourceNotExistException.class, () -> commentService.findAllByBoard(1L));
+		assertThrows(ResourceNotExistException.class, () -> commentService.create("content",1L,"",mockUser));
+	}
+
+	@Test
+	@DisplayName("channelId를 통해 channel find시 channel 없으면 ResourceNotExistException")
+	void commentfindByIdThrowResourceNotExistException() {
+		User mockUser = User.builder().userSeq(1L).userId("repo1").build();
+		when(commentRepository.findById(1L)).thenReturn(Optional.ofNullable(null));
+
+		assertThrows(ResourceNotExistException.class, () -> commentService.update("content",1L,"",mockUser));
+		assertThrows(ResourceNotExistException.class, () -> commentService.delete(1L,mockUser));
+	}
 }
