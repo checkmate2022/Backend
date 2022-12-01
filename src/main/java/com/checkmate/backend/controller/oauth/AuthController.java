@@ -112,25 +112,19 @@ public class AuthController {
 		if (!authToken.validate()) {
 			throw new TokenValidFailedException();
 		}
-
 		// expired access token 인지 확인
-		Claims claims = authToken.getExpiredTokenClaims();
+		Claims claims = authToken.getTokenClaims();
 		String userId = claims.getSubject();
 		RoleType roleType = RoleType.of(claims.get("role", String.class));
 
-		// refresh token
+		// refresh tokenx
 		String refreshToken = CookieUtil.getCookie(request, REFRESH_TOKEN)
 			.map(Cookie::getValue)
 			.orElse((null));
 		AuthToken authRefreshToken = tokenProvider.convertAuthToken(refreshToken);
 
-		if (authRefreshToken.validate()) {
-			throw new TokenValidFailedException("refresh Token 유효하지 않음.");
-		}
-
 		// userId refresh token 으로 DB 확인
-		UserRefreshToken userRefreshToken = userRefreshTokenRepository.findByUserIdAndRefreshToken(userId,
-			refreshToken);
+		UserRefreshToken userRefreshToken = userRefreshTokenRepository.findByUserId(userId);
 		if (userRefreshToken == null) {
 			throw new TokenValidFailedException("refresh Token 유효하지 않음.");
 		}
